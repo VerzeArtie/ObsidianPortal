@@ -619,8 +619,8 @@ namespace ObsidianPortal
                             //if (this.CurrentUnit.CurrentEarthBind > 0) // アースバインドでダッシュの移動を防ぐことはできない。
                             this.CurrentUnit.Move(direction);
                         }
-                        Debug.Log("ActionPhase.SelectTarget:ExecDamage: " + this.CurrentUnit.EffectValue.ToString());
-                        ExecDamage(this.CurrentTarget, this.CurrentUnit.EffectValue - this.CurrentTarget.DefenseValue);
+                        Debug.Log("ActionPhase.SelectTarget:ExecDamage: " + ActionCommand.EffectValue(this.currentCommand).ToString());
+                        ExecDamage(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
 
                         Debug.Log("ActionPhase.SelectTarget:now ClearAttackTile");
                         ClearAttackTile();
@@ -847,7 +847,7 @@ namespace ObsidianPortal
                     if (this.currentCommand == FIX.FIREBLADE)
                     {
                         this.CurrentTarget = this.CurrentUnit;
-                        StartAnimation(this.CurrentUnit, "STR + " + this.CurrentUnit.EffectValue.ToString(), Color.yellow);
+                        StartAnimation(this.CurrentUnit, "STR + " + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
                     }
                     else if (this.currentCommand == FIX.HOLYBULLET)
                     {
@@ -884,12 +884,12 @@ namespace ObsidianPortal
                                 //if (this.CurrentUnit.CurrentEarthBind > 0) // アースバインドでダッシュの移動を防ぐことはできない。
                                 this.CurrentUnit.Move(direction);
                             }
-                            int damage = this.CurrentUnit.EffectValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
+                            int damage = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
                             StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
                         }
                         else if (this.currentCommand == FIX.NEEDLESPEAR || this.currentCommand == FIX.SILVERARROW)
                         {
-                            int damage = this.CurrentUnit.EffectValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
+                            int damage = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
                             StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
                         }
                         else if (this.currentCommand == FIX.EARTHBIND)
@@ -898,7 +898,7 @@ namespace ObsidianPortal
                         }
                         else if (this.currentCommand == FIX.EXPLOSION)
                         {
-                            int damage = this.CurrentUnit.EffectValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
+                            int damage = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
                             StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
                         }
                         else if (this.currentCommand == FIX.REACHABLETARGET)
@@ -931,7 +931,7 @@ namespace ObsidianPortal
                             }
 
                             this.CurrentTarget = target;
-                            StartAnimation(this.CurrentTarget, this.CurrentUnit.HealValue.ToString(), Color.yellow);
+                            StartAnimation(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
                         }
                         // 効果
                         else if (CheckAllyEffectArea(Cursor.transform.localPosition))
@@ -951,15 +951,15 @@ namespace ObsidianPortal
                             this.CurrentTarget = target;
                             if (this.currentCommand == FIX.POWERWORD)
                             {
-                                StartAnimation(this.CurrentTarget, "STR +" + this.CurrentUnit.EffectValue.ToString(), Color.yellow);
+                                StartAnimation(this.CurrentTarget, "STR +" + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
                             }
                             else if (this.currentCommand == FIX.PROTECTION)
                             {
-                                StartAnimation(this.CurrentTarget, "DEF +" + this.CurrentUnit.EffectValue.ToString(), Color.yellow);
+                                StartAnimation(this.CurrentTarget, "DEF +" + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
                             }
                             else if (this.currentCommand == FIX.HEATBOOST)
                             {
-                                StartAnimation(this.CurrentUnit, "TIME -" + this.CurrentUnit.EffectValue.ToString(), Color.yellow);
+                                StartAnimation(this.CurrentUnit, "SPD +" + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
                             }
                         }
                     }
@@ -1029,7 +1029,7 @@ namespace ObsidianPortal
                 }
                 else if (this.currentCommand == FIX.DASH)
                 {
-                    ExecDamage(this.CurrentTarget, this.CurrentUnit.EffectValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
+                    ExecDamage(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
                 }
                 else if (this.currentCommand == FIX.REACHABLETARGET)
                 {
@@ -1037,8 +1037,7 @@ namespace ObsidianPortal
                 }
                 else if (this.currentCommand == FIX.EARTHBIND)
                 {
-                    this.CurrentTarget.CurrentEarthBind = 3;
-                    this.CurrentTarget.CurrentEarthBindValue = this.CurrentUnit.EffectValue;
+                    ExecEarthBind(this.CurrentUnit, this.CurrentTarget);
                 }
                 else if (this.currentCommand == FIX.POWERWORD)
                 {
@@ -1046,12 +1045,12 @@ namespace ObsidianPortal
                 }
                 else if (this.currentCommand == FIX.HEALINGWORD)
                 {
-                    ExecHeal(this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.HealValue);
+                    ExecHeal(this.CurrentUnit, this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand));
                     ExecHealingWord(this.CurrentUnit, this.CurrentTarget);
                 }
                 else if (this.currentCommand == FIX.NEEDLESPEAR)
                 {
-                    ExecDamage(this.CurrentTarget, this.CurrentUnit.EffectValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
+                    ExecDamage(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
 
                     int dummy = 0;
                     FIX.Direction direction = ExistAttackableUnitLinerGroup(ref dummy, this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.EffectRange);
@@ -1059,7 +1058,7 @@ namespace ObsidianPortal
                 }
                 else if (this.currentCommand == FIX.SILVERARROW)
                 {
-                    ExecDamage(this.CurrentTarget, this.CurrentUnit.EffectValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
+                    ExecDamage(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
                     ExecSilence(this.CurrentTarget);
                 }
                 else if (this.currentCommand == FIX.HOLYBULLET)
@@ -1085,7 +1084,7 @@ namespace ObsidianPortal
                 }
                 else if (this.currentCommand == FIX.FRESHHEAL)
                 {
-                    ExecHeal(this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.HealValue);
+                    ExecHeal(this.CurrentUnit, this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand));
                 }
                 else if (this.currentCommand == FIX.FIREBLADE)
                 {
@@ -1113,7 +1112,7 @@ namespace ObsidianPortal
                         if (target != null && target.Type != Unit.UnitType.Wall)
                         {
                             Debug.Log("Blaze detect: " + target.transform.localPosition.ToString());
-                            int value = this.CurrentUnit.EffectValue + target.CurrentReachabletargetValue - target.DefenseValue;
+                            int value = ActionCommand.EffectValue(this.currentCommand) + target.CurrentReachabletargetValue - target.DefenseValue;
                             ExecDamage(target, value);
                         }
                     }
@@ -1124,7 +1123,7 @@ namespace ObsidianPortal
                 }
                 else if (this.currentCommand == FIX.EXPLOSION)
                 {
-                    int value = this.CurrentUnit.EffectValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
+                    int value = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
                     ExecDamage(this.CurrentTarget, value);
                     this.CurrentUnit.CurrentLife = 0;
                     this.CurrentUnit.Dead = true;

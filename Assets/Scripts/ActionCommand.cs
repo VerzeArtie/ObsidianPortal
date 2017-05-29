@@ -144,8 +144,23 @@ namespace ObsidianPortal
 
         public static int EffectValue(string command)
         {
-            if (command == FIX.HOLYBULLET) { return 5; }
+            if (command == FIX.DASH) { return 3; }
             if (command == FIX.REACHABLETARGET) { return 2; }
+            if (command == FIX.EARTHBIND) { return 1; }
+            if (command == FIX.HEALINGWORD) { return 3; }
+            if (command == FIX.POWERWORD) { return 2; }
+
+            if (command == FIX.FIREBLADE) { return 3; }
+            if (command == FIX.LAVAWALL) { return 0; } // no meaning
+            if (command == FIX.BLAZE) { return 5; }
+            if (command == FIX.HEATBOOST) { return 8; }
+            if (command == FIX.EXPLOSION) { return 25; }
+
+            if (command == FIX.NEEDLESPEAR) { return 3; }
+            if (command == FIX.SILVERARROW) { return 3; }
+            if (command == FIX.HOLYBULLET) { return 5; }
+            if (command == FIX.FRESHHEAL) { return 6; }
+            if (command == FIX.PROTECTION) { return 2; }
 
             return 0;
         }            

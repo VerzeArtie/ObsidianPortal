@@ -30,36 +30,36 @@ namespace ObsidianPortal
         private void ExecFireBlade(Unit player)
         {
             player.CurrentFireBlade = ActionCommand.IsBuffTurn(FIX.FIREBLADE);
-            player.CurrentFireBladeValue = player.EffectValue;
+            player.CurrentFireBladeValue = ActionCommand.EffectValue(FIX.FIREBLADE);
         }
 
         private void ExecProtection(Unit player, Unit target)
         {
             target.CurrentProtection = ActionCommand.IsBuffTurn(FIX.PROTECTION);
-            target.CurrentProtectionValue = player.EffectValue;
+            target.CurrentProtectionValue = ActionCommand.EffectValue(FIX.PROTECTION);
         }
 
         private void ExecSilverArrow(Unit player, Unit target)
         {
             target.CurrentSilverArrow = ActionCommand.IsBuffTurn(FIX.SILVERARROW);
-            target.CurrentSilverArrowValue = player.EffectValue;
+            target.CurrentSilverArrowValue = ActionCommand.EffectValue(FIX.SILVERARROW);
         }
 
         private void ExecEarthBind(Unit player, Unit target)
         {
             target.CurrentEarthBind = ActionCommand.IsBuffTurn(FIX.EARTHBIND);
-            target.CurrentEarthBindValue = player.EffectValue;
+            target.CurrentEarthBindValue = ActionCommand.EffectValue(FIX.EARTHBIND);
         }
 
         private void ExecPowerWord(Unit player, Unit target)
         {
             target.CurrentPowerWord = ActionCommand.IsBuffTurn(FIX.POWERWORD);
-            target.CurrentPowerWordValue = player.EffectValue;
+            target.CurrentPowerWordValue = ActionCommand.EffectValue(FIX.POWERWORD);
         }
 
         private void ExecHeatBoost(Unit player, Unit target)
         {
-            target.CurrentTime -= player.EffectValue;
+            target.CurrentTime -= ActionCommand.EffectValue(FIX.HEATBOOST);
             //animation; // todo change new spell ( dont use heatboost)
             //AddUnitWithAdjustTime(target);
         }
@@ -67,7 +67,7 @@ namespace ObsidianPortal
         private void ExecHealingWord(Unit player, Unit target)
         {
             target.CurrentHealingWord = ActionCommand.IsBuffTurn(FIX.HEALINGWORD);
-            target.CurrentHealingWordValue = player.EffectValue;
+            target.CurrentHealingWordValue = ActionCommand.EffectValue(FIX.HEALINGWORD);
         }
 
         private void ExecReachableTarget(Unit player, Unit target)

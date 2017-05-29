@@ -41,9 +41,7 @@ namespace ObsidianPortal
         private int MovePoint = 1; // à⁄ìÆóÕ
         private int Attack = 1; // çUåÇóÕ
         public int AttackRange = 1; // çUåÇîÕàÕ
-        public int HealValue = 1; // âÒïúóÕ
         public int HealRange = 1; // âÒïúîÕàÕ
-        public int EffectValue = 1; // ñ°ï˚Ç÷å¯â Çó^Ç¶ÇÈíl
         public int EffectRange = 1; // ñ°ï˚å¯â îÕàÕ
         public string SkillName = "";
         private int Defense = 1; // ñhå‰óÕ
@@ -106,30 +104,30 @@ namespace ObsidianPortal
                 this.ally = Ally.Ally;
             }
 
-            // êlä‘ë∞                                                                                                   L,  A, D,  S,  M, MD,MV,AR, H,HR, E,ER, C, SKILL 
-            if (race == RaceType.Human && type == UnitType.Fighter)   { SetupProperty(race, type, FIX.HUMAN_FIGHTER,   20, 12, 3,  7,  1,  1, 4, 1, 0, 0, 3, 2, 10, FIX.DASH); }
-            if (race == RaceType.Human && type == UnitType.Archer)    { SetupProperty(race, type, FIX.HUMAN_ARCHER,    16,  8, 2, 11,  1,  2, 4, 2, 0, 0, 2, 3, 10, FIX.REACHABLETARGET); }
-            if (race == RaceType.Human && type == UnitType.Sorcerer)  { SetupProperty(race, type, FIX.HUMAN_SORCERER,  13,  3, 1,  9, 10,  3, 4, 2, 0, 0, 1, 2, 10, FIX.EARTHBIND); }
-            if (race == RaceType.Human && type == UnitType.Enchanter) { SetupProperty(race, type, FIX.HUMAN_ENCHANTER, 11,  5, 2,  6,  8,  2, 4, 1, 0, 0, 2, 1, 10, FIX.POWERWORD); }
-            if (race == RaceType.Human && type == UnitType.Priest)    { SetupProperty(race, type, FIX.HUMAN_PRIEST,    10,  1, 1,  5,  6,  2, 3, 1, 3, 2, 3, 2, 10, FIX.HEALINGWORD); }
+            // êlä‘ë∞                                                                                                   L,  A, D,  S,  M, MD,MV,AR, HR, ER, C, SKILL 
+            if (race == RaceType.Human && type == UnitType.Fighter)   { SetupProperty(race, type, FIX.HUMAN_FIGHTER,   20, 12, 3,  7,  1,  1, 4, 1,  0,  2, 10, FIX.DASH); }
+            if (race == RaceType.Human && type == UnitType.Archer)    { SetupProperty(race, type, FIX.HUMAN_ARCHER,    16,  8, 2, 11,  1,  2, 4, 2,  0,  3, 10, FIX.REACHABLETARGET); }
+            if (race == RaceType.Human && type == UnitType.Sorcerer)  { SetupProperty(race, type, FIX.HUMAN_SORCERER,  13,  3, 1,  9, 10,  3, 4, 2,  0,  2, 10, FIX.EARTHBIND); }
+            if (race == RaceType.Human && type == UnitType.Enchanter) { SetupProperty(race, type, FIX.HUMAN_ENCHANTER, 11,  5, 2,  6,  8,  2, 4, 1,  0,  1, 10, FIX.POWERWORD); }
+            if (race == RaceType.Human && type == UnitType.Priest)    { SetupProperty(race, type, FIX.HUMAN_PRIEST,    10,  1, 1,  5,  6,  2, 3, 1,  2,  2, 10, FIX.HEALINGWORD); }
             // ìVégë∞
-            if (race == RaceType.Angel && type == UnitType.Fighter)   { SetupProperty(race, type, FIX.ANGEL_DOMINION,  19, 11, 3,  7,  3,  2, 4, 1, 0, 0, 3, 1, 10, FIX.NEEDLESPEAR); }
-            if (race == RaceType.Angel && type == UnitType.Archer)    { SetupProperty(race, type, FIX.ANGEL_VALKYRIE,  16,  7, 2, 12,  7,  3, 4, 2, 0, 0, 3, 2, 10, FIX.SILVERARROW); }
-            if (race == RaceType.Angel && type == UnitType.Sorcerer)  { SetupProperty(race, type, FIX.ANGEL_HOLYEYE,   14,  4, 1, 10,  9,  4, 4, 2, 0, 0, 1, 2, 10, FIX.HOLYBULLET); }
-            if (race == RaceType.Angel && type == UnitType.Enchanter) { SetupProperty(race, type, FIX.ANGEL_QUPID,     10,  3, 1,  9,  6,  2, 3, 1, 0, 0, 2, 2, 10, FIX.PROTECTION); }
-            if (race == RaceType.Angel && type == UnitType.Priest)    { SetupProperty(race, type, FIX.ANGEL_ANGEL,     12,  2, 1,  6,  8,  3, 3, 1, 6, 2, 0, 0, 10, FIX.FRESHHEAL); }
+            if (race == RaceType.Angel && type == UnitType.Fighter)   { SetupProperty(race, type, FIX.ANGEL_DOMINION,  19, 11, 3,  7,  3,  2, 4, 1,  0,  1, 10, FIX.NEEDLESPEAR); }
+            if (race == RaceType.Angel && type == UnitType.Archer)    { SetupProperty(race, type, FIX.ANGEL_VALKYRIE,  16,  7, 2, 12,  7,  3, 4, 2,  0,  2, 10, FIX.SILVERARROW); }
+            if (race == RaceType.Angel && type == UnitType.Sorcerer)  { SetupProperty(race, type, FIX.ANGEL_HOLYEYE,   14,  4, 1, 10,  9,  4, 4, 2,  0,  2, 10, FIX.HOLYBULLET); }
+            if (race == RaceType.Angel && type == UnitType.Enchanter) { SetupProperty(race, type, FIX.ANGEL_QUPID,     10,  3, 1,  9,  6,  2, 3, 1,  0,  2, 10, FIX.PROTECTION); }
+            if (race == RaceType.Angel && type == UnitType.Priest)    { SetupProperty(race, type, FIX.ANGEL_ANGEL,     12,  2, 1,  6,  8,  3, 3, 1,  2,  0, 10, FIX.FRESHHEAL); }
             // âäóÏë∞
-            if (race == RaceType.Fire && type == UnitType.Fighter)    { SetupProperty(race, type, FIX.FIRE_SALAMANDER, 22, 13, 2,  7,  1,  1, 4, 1, 0, 0, 3, 0, 10, FIX.FIREBLADE); } 
-            if (race == RaceType.Fire && type == UnitType.Archer)     { SetupProperty(race, type, FIX.FIRE_FLAMEBIRD,  18,  9, 1, 10,  1,  2, 3, 1, 0, 0, 3, 1, 10, FIX.LAVAWALL); }
-            if (race == RaceType.Fire && type == UnitType.Sorcerer)   { SetupProperty(race, type, FIX.FIRE_EFREET,     14,  5, 1, 12, 12,  2, 4, 2, 0, 0, 5, 3, 10, FIX.BLAZE); }
-            if (race == RaceType.Fire && type == UnitType.Enchanter)  { SetupProperty(race, type, FIX.FIRE_ELEMENTAL,  12,  8, 1,  8,  8,  1, 4, 2, 0, 0, 5, 1, 10, FIX.HEATBOOST); }
-            if (race == RaceType.Fire && type == UnitType.Priest)     { SetupProperty(race, type, FIX.FIRE_REDBOMB,     8,  4, 1,  5,  4,  5, 3, 1, 0, 0,25, 1, 10, FIX.EXPLOSION); }
+            if (race == RaceType.Fire && type == UnitType.Fighter)    { SetupProperty(race, type, FIX.FIRE_SALAMANDER, 22, 13, 2,  7,  1,  1, 4, 1,  0,  0, 10, FIX.FIREBLADE); } 
+            if (race == RaceType.Fire && type == UnitType.Archer)     { SetupProperty(race, type, FIX.FIRE_FLAMEBIRD,  18,  9, 1, 10,  1,  2, 3, 1,  0,  1, 10, FIX.LAVAWALL); }
+            if (race == RaceType.Fire && type == UnitType.Sorcerer)   { SetupProperty(race, type, FIX.FIRE_EFREET,     14,  5, 1, 12, 12,  2, 4, 2,  0,  3, 10, FIX.BLAZE); }
+            if (race == RaceType.Fire && type == UnitType.Enchanter)  { SetupProperty(race, type, FIX.FIRE_ELEMENTAL,  12,  8, 1,  8,  8,  1, 4, 2,  0,  1, 10, FIX.HEATBOOST); }
+            if (race == RaceType.Fire && type == UnitType.Priest)     { SetupProperty(race, type, FIX.FIRE_REDBOMB,     8,  4, 1,  5,  4,  5, 3, 1,  0,  1, 10, FIX.EXPLOSION); }
 
-            if (race == RaceType.Fire && type == UnitType.Wall)       { SetupProperty(race, type, FIX.OBJ_LAVAWALL,    99,  0, 0,  0,  0,  0, 0, 0, 0, 0, 0, 0,  0, FIX.NONE); }
+            if (race == RaceType.Fire && type == UnitType.Wall)       { SetupProperty(race, type, FIX.OBJ_LAVAWALL,    99,  0, 0,  0,  0,  0, 0, 0,  0,  0,  0, FIX.NONE); }
 
         }
 
-        private void SetupProperty(RaceType race, UnitType type, string unitName, int maxLife, int attack, int def, int spd, int mag, int mdf, int move, int range, int heal, int healRange, int effect, int effectRange, int cost, string skill)
+        private void SetupProperty(RaceType race, UnitType type, string unitName, int maxLife, int attack, int def, int spd, int mag, int mdf, int move, int range, int healRange, int effectRange, int cost, string skill)
         {
             this.Race = race;
             this.Type = type;
@@ -141,8 +139,6 @@ namespace ObsidianPortal
             this.MagicAttack = mag;
             this.MagicDefense = mdf;
             this.AttackRange = range;
-            this.HealValue = heal;
-            this.EffectValue = effect;
             this.EffectRange = effectRange;
             this.HealRange = healRange;
             this.MovePoint = move;
