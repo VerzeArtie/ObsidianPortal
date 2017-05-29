@@ -2,6 +2,13 @@
 Thumbs.db
 ehthumbs.db
 
+# Folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Ss]ave/
+
 # Folder config file
 Desktop.ini
 
