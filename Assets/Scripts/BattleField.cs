@@ -663,6 +663,7 @@ namespace ObsidianPortal
                     Debug.Log("ActionPhase.End");
                     System.Threading.Thread.Sleep(500);
                     CurrentUnit.Completed();
+                    AdjustTime(this.CurrentUnit);
                     JudgeGameEnd();
                     this.currentCommand = String.Empty;
                     this.currentDirection = FIX.Direction.None;
@@ -841,6 +842,7 @@ namespace ObsidianPortal
                     if (obj.name == "back_Command3")
                     {
                         CurrentUnit.Completed();
+                        AdjustTime(this.CurrentUnit);
                         this.Phase = ActionPhase.End;
                     }
                 }
@@ -1145,6 +1147,7 @@ namespace ObsidianPortal
             else if (this.Phase == ActionPhase.End)
             {
                 CurrentUnit.Completed();
+                AdjustTime(this.CurrentUnit);
                 JudgeGameEnd();
                 this.currentCommand = String.Empty;
                 this.currentDirection = FIX.Direction.None;
