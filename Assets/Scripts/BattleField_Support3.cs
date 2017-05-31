@@ -60,8 +60,7 @@ namespace ObsidianPortal
         private void ExecHeatBoost(Unit player, Unit target)
         {
             target.CurrentTime -= ActionCommand.EffectValue(FIX.HEATBOOST);
-            //animation; // todo change new spell ( dont use heatboost)
-            //AddUnitWithAdjustTime(target);
+            AdjustTime(target);
         }
 
         private void ExecHealingWord(Unit player, Unit target)
@@ -78,8 +77,47 @@ namespace ObsidianPortal
 
         private void ExecLavaWall(Unit player, FIX.Direction direction)
         {
-            Vector3 result = player.GetNeighborhood(direction);
-            SetupUnit(ref this.AllList, 999, false, Unit.RaceType.Fire, Unit.UnitType.Wall, result.x, result.z, false);
+            List<Vector3> list = new List<Vector3>();
+            list.Add(player.GetNeighborhood(direction));
+            if (direction == FIX.Direction.Top)
+            {
+                list.Add(player.GetNeighborhood(FIX.Direction.TopRight));
+                list.Add(player.GetNeighborhood(FIX.Direction.TopLeft));
+            }
+            else if (direction == FIX.Direction.TopRight)
+            {
+                list.Add(player.GetNeighborhood(FIX.Direction.Top));
+                list.Add(player.GetNeighborhood(FIX.Direction.BottomRight));
+            }
+            else if (direction == FIX.Direction.BottomRight)
+            {
+                list.Add(player.GetNeighborhood(FIX.Direction.TopRight));
+                list.Add(player.GetNeighborhood(FIX.Direction.Bottom));
+            }
+            else if (direction == FIX.Direction.Bottom)
+            {
+                list.Add(player.GetNeighborhood(FIX.Direction.BottomRight));
+                list.Add(player.GetNeighborhood(FIX.Direction.BottomLeft));
+            }
+            else if (direction == FIX.Direction.BottomLeft)
+            {
+                list.Add(player.GetNeighborhood(FIX.Direction.Bottom));
+                list.Add(player.GetNeighborhood(FIX.Direction.TopLeft));
+            }
+            else if (direction == FIX.Direction.TopLeft)
+            {
+                list.Add(player.GetNeighborhood(FIX.Direction.Top));
+                list.Add(player.GetNeighborhood(FIX.Direction.BottomLeft));
+            }
+
+            for (int ii = 0; ii < list.Count; ii++)
+            {
+                if (ExistUnitFromLocation(list[ii]) == null &&
+                    ExistAreaFromLocation(list[ii]) != null)
+                {
+                    SetupUnit(ref this.AllList, 999, false, Unit.RaceType.Fire, Unit.UnitType.Wall, list[ii].x, list[ii].z, false);
+                }
+            }
         }
     }
 }

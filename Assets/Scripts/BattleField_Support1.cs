@@ -337,7 +337,7 @@ namespace ObsidianPortal
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        private Unit SearchUnitFromLocation(Vector3 src)
+        private Unit ExistUnitFromLocation(Vector3 src)
         {
             for (int ii = 0; ii < AllyList.Count; ii++)
             {
@@ -363,7 +363,7 @@ namespace ObsidianPortal
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        private AreaInformation SearchAreaFromLocation(Vector3 src)
+        private AreaInformation ExistAreaFromLocation(Vector3 src)
         {
             for (int ii = 0; ii < fieldTile.Count; ii++)
             {
@@ -650,47 +650,54 @@ namespace ObsidianPortal
             }
             AddUnitWithAdjustTime(unit);
         }
-        
+
+        /// <summary>
+        /// タイマーコストが同値で競合しないように調整します。
+        /// </summary>
+        /// <param name="unit"></param>
+        private void AdjustTime(Unit unit)
+        {
+            for (int ii = 0; ii < AllList.Count; ii++)
+            {
+                if (AllList[ii].Equals(unit)) { continue;}
+
+                if (AllList[ii].CurrentTime == unit.CurrentTime)
+                {
+                    for (int jj = ii; jj < AllList.Count; jj++)
+                    {
+                        if (AllList[jj].Equals(unit)) { continue; }
+                        if (AllList[jj].CurrentTime >= unit.CurrentTime)
+                        {
+                            AllList[jj].CurrentTime++;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
         /// <summary>
         /// タイマーコストが同値で競合しないように新しいユニットを追加します。
         /// </summary>
         /// <param name="unit"></param>
         private void AddUnitWithAdjustTime(Unit unit)
         {
-            string debug = "time0: ";
-            for (int ii = 0; ii < AllList.Count; ii++)
-            {
-                debug += AllList[ii].CurrentTime.ToString() + " ";
-            }
-            Debug.Log(debug);
             AllList.Sort(Unit.Compare);
-            bool detect = false;
             for (int ii = 0; ii < AllList.Count; ii++)
             {
                 if (AllList[ii].CurrentTime == unit.CurrentTime)
                 {
                     Debug.Log("equal detect: " + AllList[ii].CurrentTime.ToString());
-                    detect = true;
                     unit.CurrentTime++;
                     for (int jj = ii+1; jj < AllList.Count; jj++)
                     {
                         AllList[jj].CurrentTime++;
-                        break;
                     }
-                    if (detect)
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
 
             AllList.Add(unit);
-            debug = "time1: ";
-            for (int ii = 0; ii < AllList.Count; ii++)
-            {
-                debug += AllList[ii].CurrentTime.ToString() + " ";
-            }
-            Debug.Log(debug);
         }
 
         /// <summary>
@@ -867,7 +874,7 @@ namespace ObsidianPortal
                 {
                     if (ristriction)
                     {
-                        Unit target = SearchUnitFromLocation(fieldTile[ii].transform.localPosition);
+                        Unit target = ExistUnitFromLocation(fieldTile[ii].transform.localPosition);
                         if (target != null)
                         {
                             if (attr == Unit.Ally.Ally && target.ally == Unit.Ally.Enemy)

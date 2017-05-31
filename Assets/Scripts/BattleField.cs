@@ -252,10 +252,12 @@ namespace ObsidianPortal
                 Debug.Log("stage Stage2_2");
 
                 // ユニット配置(味方)
-                SetupUnit(ref AllList, 1, false, Unit.RaceType.Fire, Unit.UnitType.Sorcerer, 0, 4, true);
+                SetupUnit(ref AllList, 1, false, Unit.RaceType.Fire, Unit.UnitType.Enchanter, 0, 4, true);
+                SetupUnit(ref AllList, 2, false, Unit.RaceType.Fire, Unit.UnitType.Fighter, 0, 3, true);
                 // ユニット配置(敵)
-                SetupUnit(ref AllList, 2, true, Unit.RaceType.Human, Unit.UnitType.Enchanter, 5, 0, true);
-                SetupUnit(ref AllList, 3, true, Unit.RaceType.Human, Unit.UnitType.Enchanter, 6, 0, true);
+                SetupUnit(ref AllList, 3, true, Unit.RaceType.Human, Unit.UnitType.Priest, 5, 2, true);
+                SetupUnit(ref AllList, 4, true, Unit.RaceType.Human, Unit.UnitType.Sorcerer, 5, 3, true);
+                SetupUnit(ref AllList, 5, true, Unit.RaceType.Human, Unit.UnitType.Enchanter, 5, 4, true);
             }
             else if (ONE.CurrentStage == FIX.Stage.Stage2_3)
             {
@@ -370,7 +372,14 @@ namespace ObsidianPortal
                     this.Cursor.transform.localPosition = new Vector3(detect.transform.localPosition.x,
                                                                       Cursor.transform.localPosition.y,
                                                                       detect.transform.localPosition.z);
-                    this.Phase = ActionPhase.SelectFirst;
+                    if (this.CurrentUnit.Type == Unit.UnitType.Wall)
+                    {
+                        this.Phase = ActionPhase.End;
+                    }
+                    else
+                    {
+                        this.Phase = ActionPhase.SelectFirst;
+                    }
                     return;
                 }
                 return;
@@ -496,7 +505,7 @@ namespace ObsidianPortal
                     }
 
                     // 移動コストが大きい場合、移動完了します。
-                    AreaInformation nextArea = SearchAreaFromLocation(this.CurrentUnit.GetNeighborhood(direction));
+                    AreaInformation nextArea = ExistAreaFromLocation(this.CurrentUnit.GetNeighborhood(direction));
                     if (this.CurrentUnit.CurrentMovePoint < nextArea.MoveCost)
                     {
                         this.CurrentUnit.CurrentMovePoint = 0;
@@ -677,7 +686,7 @@ namespace ObsidianPortal
                 GameObject obj = hit.collider.gameObject;
                 // フィールド操作
                 Cursor.transform.localPosition = new Vector3(obj.transform.localPosition.x, Cursor.transform.localPosition.y, obj.transform.localPosition.z);
-                Unit loc = SearchUnitFromLocation(Cursor.transform.localPosition);
+                Unit loc = ExistUnitFromLocation(Cursor.transform.localPosition);
                 if (loc != null)
                 {
                     UpdateUnitStatus(loc);
@@ -735,7 +744,7 @@ namespace ObsidianPortal
                 if (CheckMoveableArea(Cursor.transform.localPosition) && Input.GetMouseButtonDown(0))
                 {
                     Debug.Log("mousedown, nowselectmoveale");
-                    Unit target = SearchUnitFromLocation(Cursor.transform.localPosition);
+                    Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
                     if (target != null && target.Equals(this.CurrentUnit) == false)
                     {
                         Debug.Log("already exist unit, then no action.");
@@ -862,7 +871,7 @@ namespace ObsidianPortal
                         CheckAttackableArea(Cursor.transform.localPosition))
                     {
                         detectAction = true;
-                        Unit target = SearchUnitFromLocation(Cursor.transform.localPosition);
+                        Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
                         if (target == null)
                         {
                             Debug.Log("unit is not exist, then no action.");
@@ -918,7 +927,7 @@ namespace ObsidianPortal
                         if (ActionCommand.IsHeal(this.currentCommand) && CheckHealableArea(Cursor.transform.localPosition))
                         {
                             detectAction = true;
-                            Unit target = SearchUnitFromLocation(Cursor.transform.localPosition);
+                            Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
                             if (target == null)
                             {
                                 Debug.Log("unit is not exist, then no action.");
@@ -937,7 +946,7 @@ namespace ObsidianPortal
                         else if (CheckAllyEffectArea(Cursor.transform.localPosition))
                         {
                             detectAction = true;
-                            Unit target = SearchUnitFromLocation(Cursor.transform.localPosition);
+                            Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
                             if (target == null)
                             {
                                 Debug.Log("unit is not exist, then no action.");
@@ -984,8 +993,8 @@ namespace ObsidianPortal
                             detectAction = true;
                             this.currentDirection = direction;
                             this.currentDistance = move;
+                            StartAnimation(this.CurrentUnit, "LAVAWALL", Color.yellow);
                         }
-                        StartAnimation(this.CurrentUnit, "LAVAWALL", Color.yellow);
                     }
                 }
                 if (detectAction)
@@ -1066,7 +1075,7 @@ namespace ObsidianPortal
                     FIX.Direction[] direction = { FIX.Direction.Top, FIX.Direction.TopRight, FIX.Direction.BottomRight, FIX.Direction.TopLeft, FIX.Direction.BottomLeft, FIX.Direction.Bottom };
                     for (int ii = 0; ii < direction.Length; ii++)
                     {
-                        Unit unit = SearchUnitFromLocation(this.CurrentUnit.GetNeighborhood(direction[ii]));
+                        Unit unit = ExistUnitFromLocation(this.CurrentUnit.GetNeighborhood(direction[ii]));
                         if (unit != null)
                         {
                             Debug.Log("detect holy target");
@@ -1106,7 +1115,7 @@ namespace ObsidianPortal
                         else if (currentDirection == FIX.Direction.TopLeft) { x = -FIX.HEX_MOVE_X2 * (ii + 1); z = -FIX.HEX_MOVE_Z * (ii + 1); }
                         else if (currentDirection == FIX.Direction.BottomLeft) { x = FIX.HEX_MOVE_X2 * (ii + 1); z = -FIX.HEX_MOVE_Z * (ii + 1); }
                         else if (currentDirection == FIX.Direction.Bottom) { x = FIX.HEX_MOVE_X * (ii + 1); z = 0; }
-                        Unit target = SearchUnitFromLocation(new Vector3(this.CurrentUnit.transform.position.x + x,
+                        Unit target = ExistUnitFromLocation(new Vector3(this.CurrentUnit.transform.position.x + x,
                                                                          this.CurrentUnit.transform.position.y,
                                                                          this.CurrentUnit.transform.position.z + z));
                         if (target != null && target.Type != Unit.UnitType.Wall)

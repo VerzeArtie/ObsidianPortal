@@ -10,13 +10,13 @@ namespace ObsidianPortal
 
         private bool CanMove(FIX.Direction direction)
         {
-            AreaInformation nextArea = SearchAreaFromLocation(this.CurrentUnit.GetNeighborhood(direction));
+            AreaInformation nextArea = ExistAreaFromLocation(this.CurrentUnit.GetNeighborhood(direction));
             if (nextArea == null)
             {
                 return false;
             }
 
-            Unit nextUnit = SearchUnitFromLocation(nextArea.transform.localPosition);
+            Unit nextUnit = ExistUnitFromLocation(nextArea.transform.localPosition);
             if (nextUnit != null)
             {
                 return false;
