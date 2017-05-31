@@ -65,7 +65,16 @@ namespace ObsidianPortal
                 this.currentLife = value;
             }
         }
-        public int CurrentTime = 100; // 現在待機時間
+        public int currentTime = 100; // 現在待機時間
+        public int CurrentTime
+        {
+            get { return this.currentTime; }
+            set
+            {
+                if (value <= 0) { value = 0; }
+                this.currentTime = value;
+            }
+        }
         public int CurrentMovePoint = 1; // 現在移動可能ポイント（敵専用）
 
         // BUFF効果
