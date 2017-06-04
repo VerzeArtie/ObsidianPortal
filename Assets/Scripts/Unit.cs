@@ -184,7 +184,11 @@ namespace ObsidianPortal
 
             if (this.CurrentHealingWord > 0)
             {
-                this.currentLife += 3;
+                this.currentLife += ActionCommand.EffectValue(FIX.HEALINGWORD);
+                if (this.IsAlly)
+                {
+                    ONE.BattleHealingDone += ActionCommand.EffectValue(FIX.HEALINGWORD);
+                }
             }
             // todo healingWord
         }

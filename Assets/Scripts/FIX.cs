@@ -78,6 +78,7 @@ namespace ObsidianPortal
         public const string SCENE_MAINMENU = "MainMenu";
         public const string SCENE_STAGESELECT = "StageSelect";
         public const string SCENE_BATTLEFIELD = "BattleField";
+        public const string SCENE_GAMERESULT = "GameResult";
         public enum Stage
         {
             Stage1_1,

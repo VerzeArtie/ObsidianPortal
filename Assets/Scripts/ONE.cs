@@ -11,6 +11,13 @@ namespace ObsidianPortal
         public static MainCharacter Player;
         public static bool AlreadyInitialize = false; // 既に一度InitializeGroundOneを呼んだかどうか
 
+        public static int BattleElimination = 0;
+        public static int BattleTacticsPoint = 0;
+        public static int BattleTotalTurn = 0;
+        public static int BattleDamageDone = 0;
+        public static int BattleHealingDone = 0;
+        public static int BattleGettingExp = 0;
+            
         public static void Initialize()
         {
             if (AlreadyInitialize == false) { AlreadyInitialize = true; }
@@ -25,6 +32,16 @@ namespace ObsidianPortal
             Player.Exp = 65;
             Player.Race = FIX.Race.Angel;
             UnityEngine.Object.DontDestroyOnLoad(Player);
+        }
+
+        public static void ResetBattleData()
+        {
+            BattleElimination = 0;
+            BattleTacticsPoint = 0;
+            BattleTotalTurn = 0;
+            BattleDamageDone = 0;
+            BattleHealingDone = 0;
+            BattleGettingExp = 0;
         }
     }
 }

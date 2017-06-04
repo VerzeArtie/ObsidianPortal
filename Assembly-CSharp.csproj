@@ -65,10 +65,12 @@
      <Compile Include="Assets\Scripts\CameraControl.cs" />
      <Compile Include="Assets\Scripts\DAT.cs" />
      <Compile Include="Assets\Scripts\FIX.cs" />
+     <Compile Include="Assets\Scripts\GameResult.cs" />
      <Compile Include="Assets\Scripts\Item.cs" />
      <Compile Include="Assets\Scripts\MainMenu.cs" />
      <Compile Include="Assets\Scripts\MotherForm.cs" />
      <Compile Include="Assets\Scripts\ONE.cs" />
+     <Compile Include="Assets\Scripts\PivotControl.cs" />
      <Compile Include="Assets\Scripts\PlayerInfo.cs" />
      <Compile Include="Assets\Scripts\StageSelect.cs" />
      <Compile Include="Assets\Scripts\Unit.cs" />

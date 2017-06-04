@@ -293,14 +293,22 @@ namespace ObsidianPortal
             #endregion
         }
 
-        void Update()
+        private int AutoClose = 300;
+        new void Update()
         {
+            base.Update();
+
             #region "ゲーム終了"
             if (this.GameEnd)
             {
-                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                this.AutoClose--;
+                if (this.AutoClose <= 0)
                 {
-                    SceneManager.LoadSceneAsync(0);
+                    SceneManager.LoadSceneAsync(FIX.SCENE_GAMERESULT);
+                }
+                else if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+                {
+                    SceneManager.LoadSceneAsync(FIX.SCENE_GAMERESULT);
                 }
                 return;
             }
@@ -629,7 +637,7 @@ namespace ObsidianPortal
                             this.CurrentUnit.Move(direction);
                         }
                         Debug.Log("ActionPhase.SelectTarget:ExecDamage: " + ActionCommand.EffectValue(this.currentCommand).ToString());
-                        ExecDamage(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
+                        ExecDamage(this.CurrentUnit, this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
 
                         Debug.Log("ActionPhase.SelectTarget:now ClearAttackTile");
                         ClearAttackTile();
@@ -1036,11 +1044,11 @@ namespace ObsidianPortal
                 Debug.Log("ExecCommand: " + this.currentCommand);
                 if (this.currentCommand == FIX.NORMAL_ATTACK)
                 {
-                    ExecDamage(this.CurrentTarget, this.CurrentUnit.AttackValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
+                    ExecDamage(this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.AttackValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
                 }
                 else if (this.currentCommand == FIX.DASH)
                 {
-                    ExecDamage(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
+                    ExecDash(this.CurrentUnit, this.CurrentTarget);
                 }
                 else if (this.currentCommand == FIX.REACHABLETARGET)
                 {
@@ -1056,38 +1064,19 @@ namespace ObsidianPortal
                 }
                 else if (this.currentCommand == FIX.HEALINGWORD)
                 {
-                    ExecHeal(this.CurrentUnit, this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand));
                     ExecHealingWord(this.CurrentUnit, this.CurrentTarget);
                 }
                 else if (this.currentCommand == FIX.NEEDLESPEAR)
                 {
-                    ExecDamage(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
-
-                    int dummy = 0;
-                    FIX.Direction direction = ExistAttackableUnitLinerGroup(ref dummy, this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.EffectRange);
-                    this.CurrentTarget.Move(direction); // 敵を一歩後退させる。
+                    ExecNeedleSpear(this.CurrentUnit, this.CurrentTarget);
                 }
                 else if (this.currentCommand == FIX.SILVERARROW)
                 {
-                    ExecDamage(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue);
-                    ExecSilence(this.CurrentTarget);
+                    ExecSilverArrow(this.CurrentUnit, this.CurrentTarget);
                 }
                 else if (this.currentCommand == FIX.HOLYBULLET)
                 {
-                    FIX.Direction[] direction = { FIX.Direction.Top, FIX.Direction.TopRight, FIX.Direction.BottomRight, FIX.Direction.TopLeft, FIX.Direction.BottomLeft, FIX.Direction.Bottom };
-                    for (int ii = 0; ii < direction.Length; ii++)
-                    {
-                        Unit unit = ExistUnitFromLocation(this.CurrentUnit.GetNeighborhood(direction[ii]));
-                        if (unit != null)
-                        {
-                            Debug.Log("detect holy target");
-                            ExecDamage(unit, ActionCommand.EffectValue(FIX.HOLYBULLET) + unit.CurrentReachabletargetValue - unit.DefenseValue);
-                        }
-                        else
-                        {
-                            Debug.Log("holy target null...");
-                        }
-                    }
+                    ExecHolyBullet(this.CurrentUnit);
                 }
                 else if (this.currentCommand == FIX.PROTECTION)
                 {
@@ -1095,7 +1084,7 @@ namespace ObsidianPortal
                 }
                 else if (this.currentCommand == FIX.FRESHHEAL)
                 {
-                    ExecHeal(this.CurrentUnit, this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand));
+                    ExecFreshHeal(this.CurrentUnit, this.CurrentTarget);
                 }
                 else if (this.currentCommand == FIX.FIREBLADE)
                 {
@@ -1107,26 +1096,7 @@ namespace ObsidianPortal
                 }
                 else if (this.currentCommand == FIX.BLAZE)
                 {
-                    for (int ii = 0; ii < this.CurrentUnit.EffectRange; ii++)
-                    {
-                        float x = 0;
-                        float z = 0;
-                        if (currentDirection == FIX.Direction.Top) { x = -FIX.HEX_MOVE_X * (ii + 1); z = 0; }
-                        else if (currentDirection == FIX.Direction.TopRight) { x = -FIX.HEX_MOVE_X2 * (ii + 1); z = FIX.HEX_MOVE_Z * (ii + 1); }
-                        else if (currentDirection == FIX.Direction.BottomRight) { x = FIX.HEX_MOVE_X2 * (ii + 1); z = FIX.HEX_MOVE_Z * (ii + 1); }
-                        else if (currentDirection == FIX.Direction.TopLeft) { x = -FIX.HEX_MOVE_X2 * (ii + 1); z = -FIX.HEX_MOVE_Z * (ii + 1); }
-                        else if (currentDirection == FIX.Direction.BottomLeft) { x = FIX.HEX_MOVE_X2 * (ii + 1); z = -FIX.HEX_MOVE_Z * (ii + 1); }
-                        else if (currentDirection == FIX.Direction.Bottom) { x = FIX.HEX_MOVE_X * (ii + 1); z = 0; }
-                        Unit target = ExistUnitFromLocation(new Vector3(this.CurrentUnit.transform.position.x + x,
-                                                                         this.CurrentUnit.transform.position.y,
-                                                                         this.CurrentUnit.transform.position.z + z));
-                        if (target != null && target.Type != Unit.UnitType.Wall)
-                        {
-                            Debug.Log("Blaze detect: " + target.transform.localPosition.ToString());
-                            int value = ActionCommand.EffectValue(this.currentCommand) + target.CurrentReachabletargetValue - target.DefenseValue;
-                            ExecDamage(target, value);
-                        }
-                    }
+                    ExecBlaze(this.CurrentUnit, this.currentDirection);
                 }
                 else if (this.currentCommand == FIX.HEATBOOST)
                 {
@@ -1134,12 +1104,7 @@ namespace ObsidianPortal
                 }
                 else if (this.currentCommand == FIX.EXPLOSION)
                 {
-                    int value = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
-                    ExecDamage(this.CurrentTarget, value);
-                    this.CurrentUnit.CurrentLife = 0;
-                    this.CurrentUnit.Dead = true;
-                    this.CurrentUnit.gameObject.SetActive(false);
-                    EnemyList.Remove(this.CurrentUnit);
+                    ExecExplosion(this.CurrentUnit, this.CurrentTarget);
                 }
                 this.Phase = ActionPhase.End;
             }
@@ -1220,10 +1185,6 @@ namespace ObsidianPortal
         }
         #endregion
 
-        private void ExecSilence(Unit target, int value = 1)
-        {
-            target.CurrentSilverArrow = value;
-        }
         private GameObject currentPrefabObject = null;
         private FireBaseScript currentPrefabScript;
 
