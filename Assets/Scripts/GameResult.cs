@@ -106,7 +106,6 @@ namespace ObsidianPortal
             }
         }
 
-        private int AutoClose = 300;
         new void Update()
         {
             base.Update();
@@ -154,29 +153,11 @@ namespace ObsidianPortal
 
             if (GettingGauge <= 0)
             {
-                this.AutoClose--;
-                if (this.AutoClose <= 0)
-                {
-                    SceneManager.LoadSceneAsync(FIX.SCENE_MAINMENU);
-                }
-                else if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
+                if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
                 {
                     SceneManager.LoadSceneAsync(FIX.SCENE_MAINMENU);
                 }
             }
-
-            //for (int ii = 0; ii < ExpGauge.Length; ii++)
-            //{
-            //    if (ExpGauge[ii].transform.localScale.x < 1.0f)
-            //    {
-            //        float x = ExpGauge[ii].transform.localScale.x + 0.1f;
-            //        if (x > 1.0f) { x = 1.0f; }
-            //        ExpGauge[ii].transform.localScale = new Vector3(x,
-            //            ExpGauge[ii].transform.localScale.y,
-            //            ExpGauge[ii].transform.localScale.z);
-            //        break;
-            //    }
-            //}
         }
 
         private void IncreaseExpGauge()
