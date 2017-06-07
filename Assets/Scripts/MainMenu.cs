@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,12 @@ namespace ObsidianPortal
         public GameObject txtMostTacticsPoints;
         public GameObject txtMostEliminations;
         public GameObject groupCanvasObject;
+        public Text supportMessage;
+
+        public GameObject GroupSystemMessage;
+        public GameObject GroupMenu;
+        public GameObject groupAccount;
+        public Text account;
 
         private bool MoveCamera1 = false;
         private bool MoveCamera2 = false;
@@ -26,6 +33,25 @@ namespace ObsidianPortal
         new void Start()
         {
             base.Start();
+
+            // 初期開始時、ファイルが無い場合準備しておく。
+            Method.MakeDirectory();
+
+            // GroundOne.WE2はゲーム全体のセーブデータであり、ここで読み込んでおく。
+            Method.ReloadTruthWorldEnvironment();
+
+            if (ONE.WE2.Account != null && ONE.WE2.Account != String.Empty)
+            {
+                groupAccount.SetActive(false);
+                supportMessage.gameObject.SetActive(false);
+                GroupMenu.SetActive(true);
+            }
+            else
+            {
+                groupAccount.SetActive(true);
+                supportMessage.gameObject.SetActive(true);
+                GroupMenu.SetActive(false);
+            }
         }
 
         float currentCameraX = 0.0f;
@@ -106,6 +132,30 @@ namespace ObsidianPortal
         public void TapExit()
         {
             Application.Quit();
+        }
+
+        public void tapAccountOK(Text account)
+        {
+            if (account.text.Length < 2)
+            {
+                supportMessage.text = "Please enter 2 or more characters.";
+                supportMessage.gameObject.SetActive(true);
+                return;
+            }
+
+            if (ONE.SQL.ExistOwnerName(account.text))
+            {
+                supportMessage.text = "A character with that name already exists.";
+                supportMessage.gameObject.SetActive(true);
+                return;
+            }
+
+            ONE.SQL.CreateOwner(account.text);
+            ONE.WE2.Account = account.text;
+            Method.AutoSaveTruthWorldEnvironment();
+            groupAccount.SetActive(false);
+            GroupMenu.SetActive(true);
+            supportMessage.gameObject.SetActive(false);
         }
     }
 }

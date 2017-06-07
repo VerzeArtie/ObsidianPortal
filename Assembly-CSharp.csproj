@@ -69,11 +69,13 @@
      <Compile Include="Assets\Scripts\GameResult.cs" />
      <Compile Include="Assets\Scripts\Item.cs" />
      <Compile Include="Assets\Scripts\MainMenu.cs" />
+     <Compile Include="Assets\Scripts\Method.cs" />
      <Compile Include="Assets\Scripts\MotherForm.cs" />
      <Compile Include="Assets\Scripts\ONE.cs" />
      <Compile Include="Assets\Scripts\PivotControl.cs" />
      <Compile Include="Assets\Scripts\PlayerInfo.cs" />
      <Compile Include="Assets\Scripts\StageSelect.cs" />
+     <Compile Include="Assets\Scripts\TruthWorldEnvironment.cs" />
      <Compile Include="Assets\Scripts\Unit.cs" />
      <Compile Include="Assets\Scripts\ap.cs" />
      <None Include="Assets\PyroParticles\Prefab\Materials\AdditiveTintable.shader" />

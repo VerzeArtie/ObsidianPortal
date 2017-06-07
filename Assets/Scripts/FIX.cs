@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -117,6 +118,9 @@ namespace ObsidianPortal
         #region "DungeonPlayerからインポート"
         public static int INFINITY = 99999;
         public static int MAX_BACKPACK_SIZE = 20; // 10->20 後編編集
+        public const string WE2_FILE = @"TruthWorldEnvironment.xml";
+        public static string BaseSaveFolder = Environment.CurrentDirectory + @"\Save\";
+
         #region "アイテム名称"
         #region "初期"
         // アイテム名称を各ソースコードに記述すると誤りが発生するため、こちらで記載します。

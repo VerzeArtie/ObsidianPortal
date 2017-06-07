@@ -8,7 +8,12 @@ namespace ObsidianPortal
     {
         public static FIX.Stage CurrentStage = FIX.Stage.Stage2_4;
         private static GameObject objPlayer;
+        private static GameObject objSQL = null;
+        private static GameObject objWE2 = null;
+        public static TruthWorldEnvironment WE2 = null; // ゲームストーリー全体のワールド環境フラグ
+
         public static MainCharacter Player;
+        public static ControlSQL SQL = null;
         public static bool AlreadyInitialize = false; // 既に一度InitializeGroundOneを呼んだかどうか
         public static bool SupportLog = true;
 
@@ -21,12 +26,22 @@ namespace ObsidianPortal
             
         public static void Initialize()
         {
+            // すでに初期化済の場合は、何もせず終了
             if (AlreadyInitialize == false) { AlreadyInitialize = true; }
             else { Debug.Log("already initialize"); return; }
 
+            // オブジェクトを生成
             objPlayer = new GameObject("objPlayer");
-            Player = objPlayer.AddComponent<MainCharacter>();
+            objWE2 = new GameObject("objWE2");
+            objSQL = new GameObject("objSQL");
 
+            // オブジェクトに暮らすを付与
+            Player = objPlayer.AddComponent<MainCharacter>();
+            WE2 = objWE2.AddComponent<TruthWorldEnvironment>();
+            SQL = objSQL.AddComponent<ControlSQL>();
+            SQL.SetupSql();
+
+            // デバッグ用データ
             Player.FullName = "Altomo";
             Player.ObsidianStone = 3;
             Player.Level = 4;
