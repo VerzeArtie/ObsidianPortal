@@ -63,6 +63,7 @@
      <Compile Include="Assets\Scripts\BattleField_Support2.cs" />
      <Compile Include="Assets\Scripts\BattleField_Support3.cs" />
      <Compile Include="Assets\Scripts\CameraControl.cs" />
+     <Compile Include="Assets\Scripts\ControlSQL.cs" />
      <Compile Include="Assets\Scripts\DAT.cs" />
      <Compile Include="Assets\Scripts\FIX.cs" />
      <Compile Include="Assets\Scripts\GameResult.cs" />

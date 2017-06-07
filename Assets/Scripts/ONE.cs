@@ -10,6 +10,7 @@ namespace ObsidianPortal
         private static GameObject objPlayer;
         public static MainCharacter Player;
         public static bool AlreadyInitialize = false; // 既に一度InitializeGroundOneを呼んだかどうか
+        public static bool SupportLog = true;
 
         public static int BattleElimination = 0;
         public static int BattleTacticsPoint = 0;

@@ -36,7 +36,6 @@ namespace ObsidianPortal
             if (this.MoveCamera2)
             {
                 groupCanvasObject.SetActive(false);
-                Debug.Log("Detect movecamera2");
                 Color current = this.background.GetComponent<Image>().color;
                 if (current.a > 0.0f)
                 {
@@ -44,18 +43,12 @@ namespace ObsidianPortal
                 }
                 if (currentCameraX < 10.0f)
                 {
-                    Debug.Log("detect increase: " + currentCameraX.ToString());
                     currentCameraX += 1.0f;
                     if (currentCameraX >= 10.0f) { currentCameraX = 10.0f; }
                     camera.transform.localPosition = new Vector3(currentCameraX,
                                                  camera.transform.localPosition.y,
                                                  camera.transform.localPosition.z);
                 }
-                //if (currentCameraX >= 10.0f)
-                //{
-                //    Debug.Log("detect end");
-                //    MoveCamera2 = false;
-                //}
             }
 
             if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
@@ -69,7 +62,6 @@ namespace ObsidianPortal
 
             if (this.MoveCamera1)
             {
-                Debug.Log("Detect movecamera1");
                 Color current = this.background.GetComponent<Image>().color;
                 if (current.a < 1.0f)
                 {
@@ -77,7 +69,6 @@ namespace ObsidianPortal
                 }
                 if (currentCameraX > 0.0f)
                 {
-                    Debug.Log("detect decrease: " + currentCameraX.ToString());
                     currentCameraX -= 1.0f;
                     if (currentCameraX <= 0.0f) { currentCameraX = 0.0f; }
                     camera.transform.localPosition = new Vector3(currentCameraX,
@@ -86,7 +77,6 @@ namespace ObsidianPortal
                 }
                 if (currentCameraX <= 0.0f)
                 {
-                    Debug.Log("detect end");
                     groupCanvasObject.SetActive(true);
                     this.MoveCamera1 = false;
                 }
