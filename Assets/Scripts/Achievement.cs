@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ObsidianPortail
+namespace ObsidianPortal
 {
-    public class Achievement
+    public class Achievement : MonoBehaviour
     {
-        public int TotalPlay = 0;
+        public int TotalPlayed = 0;
         public int TotalWin = 0;
+
+        public int MostDamageDone = 0;
+        public int MostHealingDone = 0;
+        public int MostTacticsPoint = 0;
+        public int MostEliminations = 0;
 
         public int PlayHuman = 0;
         public int PlayMech = 0;

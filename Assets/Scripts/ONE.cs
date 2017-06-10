@@ -10,10 +10,13 @@ namespace ObsidianPortal
         private static GameObject objPlayer;
         private static GameObject objSQL = null;
         private static GameObject objWE2 = null;
-        public static TruthWorldEnvironment WE2 = null; // ゲームストーリー全体のワールド環境フラグ
+        private static GameObject objAchieve = null;
 
-        public static MainCharacter Player;
-        public static ControlSQL SQL = null;
+        public static MainCharacter Player; // プレイヤー情報
+        public static ControlSQL SQL = null; // SQLログ情報
+        public static TruthWorldEnvironment WE2 = null; // ゲームストーリー全体のワールド環境フラグ
+        public static Achievement ACV = null; // アチーヴ
+
         public static bool AlreadyInitialize = false; // 既に一度InitializeGroundOneを呼んだかどうか
         public static bool SupportLog = true;
 
@@ -34,12 +37,14 @@ namespace ObsidianPortal
             objPlayer = new GameObject("objPlayer");
             objWE2 = new GameObject("objWE2");
             objSQL = new GameObject("objSQL");
+            objAchieve = new GameObject("objAchieve");
 
             // オブジェクトに暮らすを付与
             Player = objPlayer.AddComponent<MainCharacter>();
             WE2 = objWE2.AddComponent<TruthWorldEnvironment>();
             SQL = objSQL.AddComponent<ControlSQL>();
             SQL.SetupSql();
+            ACV = objAchieve.AddComponent<Achievement>();
 
             // デバッグ用データ
             Player.FullName = "Altomo";
