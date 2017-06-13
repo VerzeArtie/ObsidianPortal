@@ -54,11 +54,11 @@ namespace ObsidianPortal
             }
             txtHeroName.GetComponent<TextMesh>().text = ONE.Player.FullName;
             txtLevel.GetComponent<TextMesh>().text = ONE.Player.Level.ToString();
-            txtTotalPlayed.GetComponent<TextMesh>().text = ONE.ACV.TotalPlayed.ToString();
-            txtMostDamageDone.GetComponent<TextMesh>().text = ONE.ACV.MostDamageDone.ToString();
-            txtMostHealingDone.GetComponent<TextMesh>().text = ONE.ACV.MostHealingDone.ToString();
-            txtMostTacticsPoints.GetComponent<TextMesh>().text = ONE.ACV.MostTacticsPoint.ToString();
-            txtMostEliminations.GetComponent<TextMesh>().text = ONE.ACV.MostEliminations.ToString();
+            txtTotalPlayed.GetComponent<TextMesh>().text = ONE.WE2.TotalPlayed.ToString();
+            txtMostDamageDone.GetComponent<TextMesh>().text = ONE.WE2.MostDamageDone.ToString();
+            txtMostHealingDone.GetComponent<TextMesh>().text = ONE.WE2.MostHealingDone.ToString();
+            txtMostTacticsPoints.GetComponent<TextMesh>().text = ONE.WE2.MostTacticsPoint.ToString();
+            txtMostEliminations.GetComponent<TextMesh>().text = ONE.WE2.MostEliminations.ToString();
         }
 
         float currentCameraX = 0.0f;

@@ -50,7 +50,7 @@ namespace ObsidianPortal
 
             string WIN = "WIN";
             string LOSE = "LOSE";
-            string Result = WIN;
+            string Result = string.Empty;
 
             // debug
             //Result = LOSE;
@@ -64,8 +64,17 @@ namespace ObsidianPortal
             //ONE.BattleGettingExp = 2500;
             //BonusValue = 400;
 
-            if (Result == LOSE)
+            ONE.WE2.TotalPlayed++;
+            if (ONE.BattleWin)              
             {
+                Result = WIN;
+                ONE.WE2.TotalWin++;
+                //BonusValue = 0;
+            }
+            else
+            {
+                Result = LOSE;
+                ONE.WE2.TotalLose++;
                 BonusValue = 0;
             }
             GettingExp = ONE.BattleGettingExp + BonusValue;
@@ -145,9 +154,9 @@ namespace ObsidianPortal
                         txtLevelUpMessage.GetComponent<TextMesh>().text = "REACHED LEVEL " + ONE.Player.Level.ToString() + "!";
                         back_LevelUpMessage.SetActive(true);
                         txtLevelUpMessage.SetActive(true);
-
-                        ONE.ResetBattleData();
-                    }                    
+                    }
+                    ONE.ResetBattleData();
+                    Method.AutoSaveTruthWorldEnvironment();
                 }
             }
 

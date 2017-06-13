@@ -20,6 +20,7 @@ namespace ObsidianPortal
         public static bool AlreadyInitialize = false; // 既に一度InitializeGroundOneを呼んだかどうか
         public static bool SupportLog = true;
 
+        public static bool BattleWin = false;
         public static int BattleElimination = 0;
         public static int BattleTacticsPoint = 0;
         public static int BattleTotalTurn = 0;
@@ -48,15 +49,17 @@ namespace ObsidianPortal
 
             // デバッグ用データ
             Player.FullName = "Altomo";
-            Player.ObsidianStone = 3;
-            Player.Level = 4;
-            Player.Exp = 65;
-            Player.Race = FIX.Race.Angel;
+            Player.ObsidianStone = 1;
+            //Player.Level = 4;
+            //Player.Exp = 65;
+            //Player.Race = FIX.Race.Angel;
+
             UnityEngine.Object.DontDestroyOnLoad(Player);
         }
 
         public static void ResetBattleData()
         {
+            BattleWin = false;
             BattleElimination = 0;
             BattleTacticsPoint = 0;
             BattleTotalTurn = 0;

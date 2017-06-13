@@ -40,12 +40,14 @@ namespace ObsidianPortal
         {
             if (DetectWin())
             {
+                ONE.BattleWin = true;
                 this.lblMessage.text = "VICTORY";
                 this.panelMessage.SetActive(true);
                 this.GameEnd = true;
             }
             else if (DetectLose())
             {
+                ONE.BattleWin = false;
                 this.lblMessage.text = "DEFEAT";
                 this.panelMessage.SetActive(true);
                 this.GameEnd = true;
