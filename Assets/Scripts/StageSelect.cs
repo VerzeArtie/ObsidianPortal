@@ -8,6 +8,10 @@ namespace ObsidianPortal
 {
     public class StageSelect : MotherForm
     {
+        private int MoveCamera = 0;
+        float currentCameraX = 0.0f;
+        public Camera camera;
+
         public GameObject groupCommand;
         public GameObject CommandCursor;
         public int StageNumber = 0;
@@ -70,8 +74,36 @@ namespace ObsidianPortal
         }
 
         // Update is called once per frame
-        void Update()
+        new void Update()
         {
+            base.Update();
+
+            // CarrierProfile : ON
+            if (this.MoveCamera > 0)
+            {
+                if (currentCameraX < 10.0f * this.MoveCamera)
+                {
+                    currentCameraX += 1.0f;
+                    if (currentCameraX >= 10.0f * this.MoveCamera) { currentCameraX = 10.0f * this.MoveCamera; }
+                    camera.transform.localPosition = new Vector3(currentCameraX,
+                                                 camera.transform.localPosition.y,
+                                                 camera.transform.localPosition.z);
+                }
+            }
+            else
+            {
+                if (currentCameraX > 0)
+                {
+                    currentCameraX -= 5.0f;
+                    if (currentCameraX <= 0.0f) { currentCameraX = 0.0f; }
+                    camera.transform.localPosition = new Vector3(currentCameraX,
+                                                 camera.transform.localPosition.y,
+                                                 camera.transform.localPosition.z);
+
+                }
+            }
+
+
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             // カーソル移動
@@ -93,15 +125,11 @@ namespace ObsidianPortal
 
         public void TapChange()
         {
-            StageNumber++;
-            if (StageNumber > 1)
+            this.MoveCamera++;
+            if (MoveCamera > 4)
             {
-                StageNumber = 0;
+                MoveCamera = 0;
             }
-
-            Camera.main.transform.localPosition = new Vector3(StageNumber * 10,
-                                                              Camera.main.transform.localPosition.y,
-                                                              Camera.main.transform.localPosition.z);
         }
     }
 }
