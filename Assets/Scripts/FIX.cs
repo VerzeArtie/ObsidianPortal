@@ -92,6 +92,21 @@ namespace ObsidianPortal
             Stage2_3,
             Stage2_4,
             Stage2_5,
+            Stage3_1,
+            Stage3_2,
+            Stage3_3,
+            Stage3_4,
+            Stage3_5,
+            Stage4_1,
+            Stage4_2,
+            Stage4_3,
+            Stage4_4,
+            Stage4_5,
+            Stage5_1,
+            Stage5_2,
+            Stage5_3,
+            Stage5_4,
+            Stage5_5,
         }
 
         public enum Race
