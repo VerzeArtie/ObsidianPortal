@@ -6,7 +6,6 @@ namespace ObsidianPortal
 {
     public static class ONE
     {
-        public static FIX.Stage CurrentStage = FIX.Stage.Stage2_4;
         private static GameObject objPlayer;
         private static GameObject objSQL = null;
         private static GameObject objWE2 = null;
@@ -20,6 +19,7 @@ namespace ObsidianPortal
         public static bool AlreadyInitialize = false; // 既に一度InitializeGroundOneを呼んだかどうか
         public static bool SupportLog = true;
 
+        public static FIX.Stage CurrentStage = FIX.Stage.Stage1_1;
         public static bool BattleWin = false;
         public static int BattleElimination = 0;
         public static int BattleTacticsPoint = 0;
@@ -55,6 +55,7 @@ namespace ObsidianPortal
             //Player.Race = FIX.Race.Angel;
 
             UnityEngine.Object.DontDestroyOnLoad(Player);
+            UnityEngine.Object.DontDestroyOnLoad(WE2);
         }
 
         public static void ResetBattleData()
