@@ -29,6 +29,9 @@ namespace ObsidianPortal
         private bool MoveCamera1 = false;
         private bool MoveCamera2 = false;
 
+        private bool MoveCameraOption1 = false;
+        private bool MoveCameraOption2 = false;
+
         // Use this for initialization
         new void Start()
         {
@@ -66,6 +69,8 @@ namespace ObsidianPortal
         new void Update()
         {
             base.Update();
+
+            // CarrierProfile : ON
             if (this.MoveCamera2)
             {
                 groupCanvasObject.SetActive(false);
@@ -93,6 +98,7 @@ namespace ObsidianPortal
                 }
             }
 
+            // CarrierProfile : OFF
             if (this.MoveCamera1)
             {
                 Color current = this.background.GetComponent<Image>().color;
@@ -114,6 +120,58 @@ namespace ObsidianPortal
                     this.MoveCamera1 = false;
                 }
             }
+
+            // Option : ON
+            if (this.MoveCameraOption2)
+            {
+                groupCanvasObject.SetActive(false);
+                Color current = this.background.GetComponent<Image>().color;
+                if (current.a > 0.0f)
+                {
+                    this.background.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, current.a - 0.1f);
+                }
+                if (currentCameraX > -10.0f)
+                {
+                    currentCameraX -= 1.0f;
+                    if (currentCameraX <= -10.0f) { currentCameraX = -10.0f; }
+                    camera.transform.localPosition = new Vector3(currentCameraX,
+                                                 camera.transform.localPosition.y,
+                                                 camera.transform.localPosition.z);
+                }
+            }
+
+            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            {
+                if (this.MoveCameraOption2)
+                {
+                    this.MoveCameraOption2 = false;
+                    this.MoveCameraOption1 = true;
+                }
+            }
+
+            // Option : OFF
+            if (this.MoveCameraOption1)
+            {
+                Color current = this.background.GetComponent<Image>().color;
+                if (current.a < 1.0f)
+                {
+                    this.background.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, current.a + 0.1f);
+                }
+                if (currentCameraX < 0.0f)
+                {
+                    currentCameraX += 1.0f;
+                    if (currentCameraX >= 0.0f) { currentCameraX = 0.0f; }
+                    camera.transform.localPosition = new Vector3(currentCameraX,
+                                                 camera.transform.localPosition.y,
+                                                 camera.transform.localPosition.z);
+                }
+                if (currentCameraX >= 0.0f)
+                {
+                    groupCanvasObject.SetActive(true);
+                    this.MoveCameraOption1 = false;
+                }
+            }
+
         }
 
         public void TapPlay()
@@ -133,7 +191,7 @@ namespace ObsidianPortal
 
         public void TapOption()
         {
-            SceneManager.LoadScene("Option");
+            this.MoveCameraOption2 = true;
         }
 
         public void TapExit()
