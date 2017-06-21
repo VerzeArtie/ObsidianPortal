@@ -11,11 +11,62 @@ namespace ObsidianPortal
         public GameObject groupCommand;
         public GameObject CommandCursor;
         public int StageNumber = 0;
+        public GameObject[] Complete1;
+        public GameObject[] Complete2;
+        public GameObject[] Complete3;
+        public GameObject[] Complete4;
+        public GameObject[] Complete5;
+
         // Use this for initialization
         public override void Start()
         {
             //base.Start();
             RenderSettings.skybox = (Material)Resources.Load("Skybox4");
+            for (int ii = 0; ii < Complete1.Length; ii++)
+            {
+                Complete1[ii].SetActive(false);
+            }
+            for (int ii = 0; ii < Complete2.Length; ii++)
+            {
+                Complete2[ii].SetActive(false);
+            }
+            for (int ii = 0; ii < Complete3.Length; ii++)
+            {
+                Complete3[ii].SetActive(false);
+            }
+            for (int ii = 0; ii < Complete4.Length; ii++)
+            {
+                Complete4[ii].SetActive(false);
+            }
+            for (int ii = 0; ii < Complete5.Length; ii++)
+            {
+                Complete5[ii].SetActive(false);
+            }
+            if (ONE.WE2.CompleteStage11) { Complete1[0].SetActive(true); }
+            if (ONE.WE2.CompleteStage12) { Complete1[1].SetActive(true); }
+            if (ONE.WE2.CompleteStage13) { Complete1[2].SetActive(true); }
+            if (ONE.WE2.CompleteStage14) { Complete1[3].SetActive(true); }
+            if (ONE.WE2.CompleteStage15) { Complete1[4].SetActive(true); }
+            if (ONE.WE2.CompleteStage21) { Complete2[0].SetActive(true); }
+            if (ONE.WE2.CompleteStage22) { Complete2[1].SetActive(true); }
+            if (ONE.WE2.CompleteStage23) { Complete2[2].SetActive(true); }
+            if (ONE.WE2.CompleteStage24) { Complete2[3].SetActive(true); }
+            if (ONE.WE2.CompleteStage25) { Complete2[4].SetActive(true); }
+            if (ONE.WE2.CompleteStage31) { Complete3[0].SetActive(true); }
+            if (ONE.WE2.CompleteStage32) { Complete3[1].SetActive(true); }
+            if (ONE.WE2.CompleteStage33) { Complete3[2].SetActive(true); }
+            if (ONE.WE2.CompleteStage34) { Complete3[3].SetActive(true); }
+            if (ONE.WE2.CompleteStage35) { Complete3[4].SetActive(true); }
+            if (ONE.WE2.CompleteStage41) { Complete4[0].SetActive(true); }
+            if (ONE.WE2.CompleteStage42) { Complete4[1].SetActive(true); }
+            if (ONE.WE2.CompleteStage43) { Complete4[2].SetActive(true); }
+            if (ONE.WE2.CompleteStage44) { Complete4[3].SetActive(true); }
+            if (ONE.WE2.CompleteStage45) { Complete4[4].SetActive(true); }
+            if (ONE.WE2.CompleteStage51) { Complete5[0].SetActive(true); }
+            if (ONE.WE2.CompleteStage52) { Complete5[1].SetActive(true); }
+            if (ONE.WE2.CompleteStage53) { Complete5[2].SetActive(true); }
+            if (ONE.WE2.CompleteStage54) { Complete5[3].SetActive(true); }
+            if (ONE.WE2.CompleteStage55) { Complete5[4].SetActive(true); }
         }
 
         // Update is called once per frame
