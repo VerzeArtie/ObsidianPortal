@@ -159,16 +159,16 @@ namespace ObsidianPortal
         public void TapGo()
         {
             this.MoveCamera++;
-            Debug.Log("movecamera: " + this.MoveCamera.ToString());
             if (MoveCamera > 5)
             {
-                Debug.Log("Greater than 5, then 1");
                 MoveCamera = 1;
             }
-            else
-            {
-                Debug.Log("Less than 5, then no action.");
-            }
+        }
+        public void TapEsc()
+        {
+            ONE.CurrentArea = FIX.PortalArea.Area_None;
+            ONE.CurrentStage = FIX.Stage.Stage_None;
+            this.MoveCamera = 0;
         }
     }
 }
