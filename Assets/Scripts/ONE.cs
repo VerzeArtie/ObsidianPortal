@@ -19,7 +19,8 @@ namespace ObsidianPortal
         public static bool AlreadyInitialize = false; // 既に一度InitializeGroundOneを呼んだかどうか
         public static bool SupportLog = true;
 
-        public static FIX.Stage CurrentStage = FIX.Stage.Stage1_1;
+        public static FIX.PortalArea CurrentArea = FIX.PortalArea.Area_None;
+        public static FIX.Stage CurrentStage = FIX.Stage.Stage_None;
         public static bool BattleWin = false;
         public static int BattleElimination = 0;
         public static int BattleTacticsPoint = 0;

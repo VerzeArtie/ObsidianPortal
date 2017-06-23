@@ -85,10 +85,15 @@ namespace ObsidianPortal
                 {
                     currentCameraX += 1.0f;
                     if (currentCameraX >= 10.0f * this.MoveCamera) { currentCameraX = 10.0f * this.MoveCamera; }
-                    camera.transform.localPosition = new Vector3(currentCameraX,
-                                                 camera.transform.localPosition.y,
-                                                 camera.transform.localPosition.z);
                 }
+                else
+                {
+                    currentCameraX -= 1.0f;
+                    if (currentCameraX <= 10.0f * this.MoveCamera) { currentCameraX = 10.0f * this.MoveCamera; }
+                }
+                camera.transform.localPosition = new Vector3(currentCameraX,
+                                             camera.transform.localPosition.y,
+                                             camera.transform.localPosition.z);
             }
             else
             {
@@ -106,29 +111,63 @@ namespace ObsidianPortal
 
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            // カーソル移動
-            int LayerNo = LayerMask.NameToLayer(FIX.LAYER_STAGEPANEL);
-            int layerMask = 1 << LayerNo;
-            if (Physics.Raycast(ray, out hit, 100, layerMask))
+            // エリア選択
+            if (ONE.CurrentArea == FIX.PortalArea.Area_None)
             {
-                GameObject obj = hit.collider.gameObject;
-                CommandCursor.transform.localPosition = new Vector3(obj.transform.localPosition.x,
-                                                                        obj.transform.localPosition.y - 0.01f,
-                                                                        obj.transform.localPosition.z);
-                if (Input.GetMouseButtonDown(0))
+                int LayerNoArea = LayerMask.NameToLayer(FIX.LAYER_AREAPANEL);
+                int LayerMaskArea = 1 << LayerNoArea;
+                if (Physics.Raycast(ray, out hit, 100, LayerMaskArea))
                 {
-                    ONE.CurrentStage = (FIX.Stage)(Enum.Parse(typeof(FIX.Stage), obj.name));
-                    SceneManager.LoadSceneAsync(FIX.SCENE_BATTLEFIELD);
+                    GameObject obj = hit.collider.gameObject;
+                    if (Input.GetMouseButton(0))
+                    {
+                        ONE.CurrentArea = (FIX.PortalArea)(Enum.Parse(typeof(FIX.PortalArea), obj.name));
+                        this.MoveCamera++;
+                        return;
+                    }
+                }
+            }
+
+            // ステージ選択
+            if (ONE.CurrentStage == FIX.Stage.Stage_None)
+            {
+                int LayerNo = LayerMask.NameToLayer(FIX.LAYER_STAGEPANEL);
+                int layerMask = 1 << LayerNo;
+                if (Physics.Raycast(ray, out hit, 100, layerMask))
+                {
+                    GameObject obj = hit.collider.gameObject;
+                    CommandCursor.transform.localPosition = new Vector3(obj.transform.localPosition.x,
+                                                                            obj.transform.localPosition.y - 0.01f,
+                                                                            obj.transform.localPosition.z);
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        ONE.CurrentStage = (FIX.Stage)(Enum.Parse(typeof(FIX.Stage), obj.name));
+                        SceneManager.LoadSceneAsync(FIX.SCENE_BATTLEFIELD);
+                    }
                 }
             }
         }
 
-        public void TapChange()
+        public void TapBack()
+        {
+            this.MoveCamera--;
+            if (MoveCamera < 1)
+            {
+                MoveCamera = 5;
+            }
+        }
+        public void TapGo()
         {
             this.MoveCamera++;
-            if (MoveCamera > 4)
+            Debug.Log("movecamera: " + this.MoveCamera.ToString());
+            if (MoveCamera > 5)
             {
-                MoveCamera = 0;
+                Debug.Log("Greater than 5, then 1");
+                MoveCamera = 1;
+            }
+            else
+            {
+                Debug.Log("Less than 5, then no action.");
             }
         }
     }

@@ -14,6 +14,7 @@ namespace ObsidianPortal
 
         public const string LAYER_UNITCOMMAND = "UnitCommand";
         public const string LAYER_STAGEPANEL = "StagePanel";
+        public const string LAYER_AREAPANEL = "AreaPanel";
 
         // 人間族
         public const string HUMAN_FIGHTER = "ファイター";
@@ -80,8 +81,21 @@ namespace ObsidianPortal
         public const string SCENE_STAGESELECT = "StageSelect";
         public const string SCENE_BATTLEFIELD = "BattleField";
         public const string SCENE_GAMERESULT = "GameResult";
+
+        public enum PortalArea
+        {
+            Area_None,
+            Area_Human,
+            Area_Mech,
+            Area_Angel,
+            Area_Demon,
+            Area_Fire,
+            Area_Ice,
+        }
+
         public enum Stage
         {
+            Stage_None,
             Stage1_1,
             Stage1_2,
             Stage1_3,
