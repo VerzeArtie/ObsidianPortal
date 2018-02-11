@@ -24,27 +24,6 @@ namespace ObsidianPortal
                 ONE.BattleDamageDone += value;
             }
             UpdateLife(target);
-            if (target.CurrentLife <= 0)
-            {
-                target.CurrentLife = 0;
-                target.Dead = true;
-                target.gameObject.SetActive(false);
-                if (target.IsAlly)
-                {
-                    AllyList.Remove(target);
-                }
-                else
-                {
-                    EnemyList.Remove(target);
-                }
-                if (player.IsAlly)
-                {
-                    ONE.BattleElimination++;
-                    ONE.BattleGettingExp += target.GetExp;
-                    ONE.Player.UpdateExp();
-                    txtExp.text = "( " + ONE.Player.Exp.ToString() + " / " + ONE.Player.NextLevelBorder.ToString() + " )";
-                }
-            }
         }
 
         private void GetTacticsPoint(Unit player)
@@ -71,7 +50,7 @@ namespace ObsidianPortal
 
         private void ExecHolyBullet(Unit player)
         {
-            FIX.Direction[] direction = { FIX.Direction.Top, FIX.Direction.TopRight, FIX.Direction.BottomRight, FIX.Direction.TopLeft, FIX.Direction.BottomLeft, FIX.Direction.Bottom };
+            FIX.Direction[] direction = { FIX.Direction.Top, FIX.Direction.Left, FIX.Direction.Right, FIX.Direction.Bottom };
             for (int ii = 0; ii < direction.Length; ii++)
             {
                 Unit target = ExistUnitFromLocation(player.GetNeighborhood(direction[ii]));
@@ -157,48 +136,38 @@ namespace ObsidianPortal
 
         private void ExecLavaWall(Unit player, FIX.Direction direction)
         {
-            List<Vector3> list = new List<Vector3>();
-            list.Add(player.GetNeighborhood(direction));
-            if (direction == FIX.Direction.Top)
-            {
-                list.Add(player.GetNeighborhood(FIX.Direction.TopRight));
-                list.Add(player.GetNeighborhood(FIX.Direction.TopLeft));
-            }
-            else if (direction == FIX.Direction.TopRight)
-            {
-                list.Add(player.GetNeighborhood(FIX.Direction.Top));
-                list.Add(player.GetNeighborhood(FIX.Direction.BottomRight));
-            }
-            else if (direction == FIX.Direction.BottomRight)
-            {
-                list.Add(player.GetNeighborhood(FIX.Direction.TopRight));
-                list.Add(player.GetNeighborhood(FIX.Direction.Bottom));
-            }
-            else if (direction == FIX.Direction.Bottom)
-            {
-                list.Add(player.GetNeighborhood(FIX.Direction.BottomRight));
-                list.Add(player.GetNeighborhood(FIX.Direction.BottomLeft));
-            }
-            else if (direction == FIX.Direction.BottomLeft)
-            {
-                list.Add(player.GetNeighborhood(FIX.Direction.Bottom));
-                list.Add(player.GetNeighborhood(FIX.Direction.TopLeft));
-            }
-            else if (direction == FIX.Direction.TopLeft)
-            {
-                list.Add(player.GetNeighborhood(FIX.Direction.Top));
-                list.Add(player.GetNeighborhood(FIX.Direction.BottomLeft));
-            }
+        //    List<Vector3> list = new List<Vector3>();
+        //    list.Add(player.GetNeighborhood(direction));
+        //    if (direction == FIX.Direction.Top)
+        //    {
+        //        list.Add(player.GetNeighborhood(FIX.Direction.Left));
+        //        list.Add(player.GetNeighborhood(FIX.Direction.Right));
+        //    }
+        //    else if (direction == FIX.Direction.Left)
+        //    {
+        //        list.Add(player.GetNeighborhood(FIX.Direction.Top));
+        //        list.Add(player.GetNeighborhood(FIX.Direction.Bottom));
+        //    }
+        //    else if (direction == FIX.Direction.Right)
+        //    {
+        //        list.Add(player.GetNeighborhood(FIX.Direction.Top));
+        //        list.Add(player.GetNeighborhood(FIX.Direction.Bottom));
+        //    }
+        //    else if (direction == FIX.Direction.Bottom)
+        //    {
+        //        list.Add(player.GetNeighborhood(FIX.Direction.Left));
+        //        list.Add(player.GetNeighborhood(FIX.Direction.Right));
+        //    }
 
-            for (int ii = 0; ii < list.Count; ii++)
-            {
-                if (ExistUnitFromLocation(list[ii]) == null &&
-                    ExistAreaFromLocation(list[ii]) != null)
-                {
-                    SetupUnit(ref this.AllList, 999, false, Unit.RaceType.Fire, Unit.UnitType.Wall, list[ii].x, list[ii].z, false);
-                }
-            }
-            GetTacticsPoint(player);
+        //    for (int ii = 0; ii < list.Count; ii++)
+        //    {
+        //        if (ExistUnitFromLocation(list[ii]) == null &&
+        //            ExistAreaFromLocation(list[ii]) != null)
+        //        {
+        //            SetupUnit(ref this.AllList, 999, false, Unit.RaceType.Fire, Unit.UnitType.Wall, list[ii].x, list[ii].z, false);
+        //        }
+        //    }
+        //    GetTacticsPoint(player);
         }
 
         private void ExecBlaze(Unit player, FIX.Direction direction)
@@ -206,17 +175,15 @@ namespace ObsidianPortal
             for (int ii = 0; ii < player.EffectRange; ii++)
             {
                 float x = 0;
-                float z = 0;
-                if (direction == FIX.Direction.Top) { x = -FIX.HEX_MOVE_X * (ii + 1); z = 0; }
-                else if (direction == FIX.Direction.TopRight) { x = -FIX.HEX_MOVE_X2 * (ii + 1); z = FIX.HEX_MOVE_Z * (ii + 1); }
-                else if (direction == FIX.Direction.BottomRight) { x = FIX.HEX_MOVE_X2 * (ii + 1); z = FIX.HEX_MOVE_Z * (ii + 1); }
-                else if (direction == FIX.Direction.TopLeft) { x = -FIX.HEX_MOVE_X2 * (ii + 1); z = -FIX.HEX_MOVE_Z * (ii + 1); }
-                else if (direction == FIX.Direction.BottomLeft) { x = FIX.HEX_MOVE_X2 * (ii + 1); z = -FIX.HEX_MOVE_Z * (ii + 1); }
-                else if (direction == FIX.Direction.Bottom) { x = FIX.HEX_MOVE_X * (ii + 1); z = 0; }
+                float y = 0;
+                if (direction == FIX.Direction.Top) { x = -FIX.HEX_MOVE_X * (ii + 1); y = 0; }
+                else if (direction == FIX.Direction.Right) { x = -FIX.HEX_MOVE_X * (ii + 1); y = FIX.HEX_MOVE_Z * (ii + 1); }
+                else if (direction == FIX.Direction.Left) { x = -FIX.HEX_MOVE_X * (ii + 1); y = -FIX.HEX_MOVE_Z * (ii + 1); }
+                else if (direction == FIX.Direction.Bottom) { x = FIX.HEX_MOVE_X * (ii + 1); y = 0; }
                 Unit target = ExistUnitFromLocation(new Vector3(player.transform.position.x + x,
-                                                                 player.transform.position.y,
-                                                                 player.transform.position.z + z));
-                if (target != null && target.Type != Unit.UnitType.Wall)
+                                                                 player.transform.position.y + y,
+                                                                 player.transform.position.z));
+                if (target != null)
                 {
                     Debug.Log("Blaze detect: " + target.transform.localPosition.ToString());
                     int value = ActionCommand.EffectValue(FIX.BLAZE) + target.CurrentReachabletargetValue - target.DefenseValue;
@@ -230,17 +197,6 @@ namespace ObsidianPortal
         {
             int value = ActionCommand.EffectValue(FIX.EXPLOSION) + target.CurrentReachabletargetValue - target.DefenseValue;
             ExecDamage(player, target, value);
-            player.CurrentLife = 0;
-            player.Dead = true;
-            player.gameObject.SetActive(false);
-            if (player.IsAlly)
-            {
-                AllyList.Remove(player);
-            }
-            else
-            {
-                EnemyList.Remove(player);
-            }
             GetTacticsPoint(player);
         }
     }

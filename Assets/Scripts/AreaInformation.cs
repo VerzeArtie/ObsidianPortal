@@ -10,18 +10,22 @@ namespace ObsidianPortal
         public enum Field
         {
             None = 0,
-            Normal,
+            Plain,
             Forest,
+            Sea,
+            Mountain,
             Wall,
         }
-        public Field field = Field.Normal;
+        public Field field = Field.Plain;
 
         public int MoveCost
         {
             get
             {
-                if (field == Field.Normal) { return 1; }
+                if (field == Field.Plain) { return 1; }
                 if (field == Field.Forest) { return 2; }
+                if (field == Field.Mountain) { return 999; }
+                if (field == Field.None) { return 999; }
                 if (field == Field.Wall) { return 999; }
                 return 999;
             }

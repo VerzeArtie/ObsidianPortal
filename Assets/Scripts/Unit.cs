@@ -19,20 +19,23 @@ namespace ObsidianPortal
             None,
             Fighter,
             Archer,
-            Sorcerer,
-            Enchanter,
-            Priest,
-            Wall,
+            Magician,
+            //Sorcerer,
+            //Enchanter,
+            //Priest,
+            //Wall,
         }
 
         public enum RaceType
         {
+            None,
             Human,
-            Angel,
-            Fire,
-            Demon,
-            Mech,
-            Ice,
+            Monster,
+            //Angel,
+            //Fire,
+            //Demon,
+            //Mech,
+            //Ice,
         }
 
         // ユニット属性値
@@ -93,6 +96,9 @@ namespace ObsidianPortal
         public int CurrentReachableTarget = 0; // DEF DOWN
         public int CurrentReachabletargetValue = 0;
 
+        // Gauge
+        public GameObject LifeGauge;
+
         /// <summary>
         /// 倒された時の経験値取得
         /// </summary>
@@ -113,27 +119,30 @@ namespace ObsidianPortal
                 this.ally = Ally.Ally;
             }
 
-            // 人間族                                                                                                   L,  A, D,  S,  M, MD,MV,AR, HR, ER, C, SKILL 
-            if (race == RaceType.Human && type == UnitType.Fighter)   { SetupProperty(race, type, FIX.HUMAN_FIGHTER,   20, 12, 3,  7,  1,  1, 4, 1,  0,  2, 10, FIX.DASH); }
-            if (race == RaceType.Human && type == UnitType.Archer)    { SetupProperty(race, type, FIX.HUMAN_ARCHER,    16,  8, 2, 11,  1,  2, 4, 2,  0,  3, 10, FIX.REACHABLETARGET); }
-            if (race == RaceType.Human && type == UnitType.Sorcerer)  { SetupProperty(race, type, FIX.HUMAN_SORCERER,  13,  3, 1,  9, 10,  3, 4, 2,  0,  2, 10, FIX.EARTHBIND); }
-            if (race == RaceType.Human && type == UnitType.Enchanter) { SetupProperty(race, type, FIX.HUMAN_ENCHANTER, 11,  5, 2,  6,  8,  2, 4, 1,  0,  1, 10, FIX.POWERWORD); }
-            if (race == RaceType.Human && type == UnitType.Priest)    { SetupProperty(race, type, FIX.HUMAN_PRIEST,    10,  1, 1,  5,  6,  2, 3, 1,  2,  2, 10, FIX.HEALINGWORD); }
-            // 天使族
-            if (race == RaceType.Angel && type == UnitType.Fighter)   { SetupProperty(race, type, FIX.ANGEL_DOMINION,  19, 11, 3,  7,  3,  2, 4, 1,  0,  1, 10, FIX.NEEDLESPEAR); }
-            if (race == RaceType.Angel && type == UnitType.Archer)    { SetupProperty(race, type, FIX.ANGEL_VALKYRIE,  16,  7, 2, 12,  7,  3, 4, 2,  0,  2, 10, FIX.SILVERARROW); }
-            if (race == RaceType.Angel && type == UnitType.Sorcerer)  { SetupProperty(race, type, FIX.ANGEL_HOLYEYE,   14,  4, 1, 10,  9,  4, 4, 2,  0,  2, 10, FIX.HOLYBULLET); }
-            if (race == RaceType.Angel && type == UnitType.Enchanter) { SetupProperty(race, type, FIX.ANGEL_QUPID,     10,  3, 1,  9,  6,  2, 3, 1,  0,  2, 10, FIX.PROTECTION); }
-            if (race == RaceType.Angel && type == UnitType.Priest)    { SetupProperty(race, type, FIX.ANGEL_ANGEL,     12,  2, 1,  6,  8,  3, 3, 1,  2,  0, 10, FIX.FRESHHEAL); }
-            // 炎霊族
-            if (race == RaceType.Fire && type == UnitType.Fighter)    { SetupProperty(race, type, FIX.FIRE_SALAMANDER, 22, 13, 2,  7,  1,  1, 4, 1,  0,  0, 10, FIX.FIREBLADE); } 
-            if (race == RaceType.Fire && type == UnitType.Archer)     { SetupProperty(race, type, FIX.FIRE_FLAMEBIRD,  18,  9, 1, 10,  1,  2, 3, 1,  0,  1, 10, FIX.LAVAWALL); }
-            if (race == RaceType.Fire && type == UnitType.Sorcerer)   { SetupProperty(race, type, FIX.FIRE_EFREET,     14,  5, 1, 12, 12,  2, 4, 2,  0,  3, 10, FIX.BLAZE); }
-            if (race == RaceType.Fire && type == UnitType.Enchanter)  { SetupProperty(race, type, FIX.FIRE_ELEMENTAL,  12,  8, 1,  8,  8,  1, 4, 2,  0,  1, 10, FIX.HEATBOOST); }
-            if (race == RaceType.Fire && type == UnitType.Priest)     { SetupProperty(race, type, FIX.FIRE_REDBOMB,     8,  4, 1,  5,  4,  5, 3, 1,  0,  1, 10, FIX.EXPLOSION); }
+            // 人間族                                                                                                     L,  A, D,  S,  M, MD,MV,AR, HR, ER, C, SKILL 
+            if (race == RaceType.Human && type == UnitType.Fighter)     { SetupProperty(race, type, FIX.HUMAN_FIGHTER,   20, 12, 3,  7,  1,  1, 4, 1,  0,  2, 10, FIX.DASH); }
+            if (race == RaceType.Human && type == UnitType.Archer)      { SetupProperty(race, type, FIX.HUMAN_ARCHER,    16,  8, 2, 11,  1,  2, 4, 2,  0,  3, 10, FIX.REACHABLETARGET); }
+            if (race == RaceType.Human && type == UnitType.Magician)    { SetupProperty(race, type, FIX.HUMAN_MAGICIAN,  13,  3, 1,  9,  8,  3, 4, 2,  0,  2, 10, FIX.EARTHBIND); }
+            //if (race == RaceType.Human && type == UnitType.Sorcerer)  { SetupProperty(race, type, FIX.HUMAN_SORCERER,  13,  3, 1,  9, 10,  3, 4, 2,  0,  2, 10, FIX.EARTHBIND); }
+            //if (race == RaceType.Human && type == UnitType.Enchanter) { SetupProperty(race, type, FIX.HUMAN_ENCHANTER, 11,  5, 2,  6,  8,  2, 4, 1,  0,  1, 10, FIX.POWERWORD); }
+            //if (race == RaceType.Human && type == UnitType.Priest)    { SetupProperty(race, type, FIX.HUMAN_PRIEST,    10,  1, 1,  5,  6,  2, 3, 1,  2,  2, 10, FIX.HEALINGWORD); }
+            //// 天使族
+            //if (race == RaceType.Angel && type == UnitType.Fighter)   { SetupProperty(race, type, FIX.ANGEL_DOMINION,  19, 11, 3,  7,  3,  2, 4, 1,  0,  1, 10, FIX.NEEDLESPEAR); }
+            //if (race == RaceType.Angel && type == UnitType.Archer)    { SetupProperty(race, type, FIX.ANGEL_VALKYRIE,  16,  7, 2, 12,  7,  3, 4, 2,  0,  2, 10, FIX.SILVERARROW); }
+            //if (race == RaceType.Angel && type == UnitType.Sorcerer)  { SetupProperty(race, type, FIX.ANGEL_HOLYEYE,   14,  4, 1, 10,  9,  4, 4, 2,  0,  2, 10, FIX.HOLYBULLET); }
+            //if (race == RaceType.Angel && type == UnitType.Enchanter) { SetupProperty(race, type, FIX.ANGEL_QUPID,     10,  3, 1,  9,  6,  2, 3, 1,  0,  2, 10, FIX.PROTECTION); }
+            //if (race == RaceType.Angel && type == UnitType.Priest)    { SetupProperty(race, type, FIX.ANGEL_ANGEL,     12,  2, 1,  6,  8,  3, 3, 1,  2,  0, 10, FIX.FRESHHEAL); }
+            //// 炎霊族
+            //if (race == RaceType.Fire && type == UnitType.Fighter)    { SetupProperty(race, type, FIX.FIRE_SALAMANDER, 22, 13, 2,  7,  1,  1, 4, 1,  0,  0, 10, FIX.FIREBLADE); } 
+            //if (race == RaceType.Fire && type == UnitType.Archer)     { SetupProperty(race, type, FIX.FIRE_FLAMEBIRD,  18,  9, 1, 10,  1,  2, 3, 1,  0,  1, 10, FIX.LAVAWALL); }
+            //if (race == RaceType.Fire && type == UnitType.Sorcerer)   { SetupProperty(race, type, FIX.FIRE_EFREET,     14,  5, 1, 12, 12,  2, 4, 2,  0,  3, 10, FIX.BLAZE); }
+            //if (race == RaceType.Fire && type == UnitType.Enchanter)  { SetupProperty(race, type, FIX.FIRE_ELEMENTAL,  12,  8, 1,  8,  8,  1, 4, 2,  0,  1, 10, FIX.HEATBOOST); }
+            //if (race == RaceType.Fire && type == UnitType.Priest)     { SetupProperty(race, type, FIX.FIRE_REDBOMB,     8,  4, 1,  5,  4,  5, 3, 1,  0,  1, 10, FIX.EXPLOSION); }
 
-            if (race == RaceType.Fire && type == UnitType.Wall)       { SetupProperty(race, type, FIX.OBJ_LAVAWALL,    99,  0, 0,  0,  0,  0, 0, 0,  0,  0,  0, FIX.NONE); }
+            //if (race == RaceType.Fire && type == UnitType.Wall)       { SetupProperty(race, type, FIX.OBJ_LAVAWALL,    99,  0, 0,  0,  0,  0, 0, 0,  0,  0,  0, FIX.NONE); }
 
+            // モンスター
+            if (race == RaceType.Monster && type == UnitType.Fighter)   { SetupProperty(race, type, FIX.HUMAN_FIGHTER,   36,  8, 2,  5,  1,  1, 4, 1,  0,  0, 10, FIX.NONE); }
         }
 
         private void SetupProperty(RaceType race, UnitType type, string unitName, int maxLife, int attack, int def, int spd, int mag, int mdf, int move, int range, int healRange, int effectRange, int cost, string skill)
@@ -157,21 +166,17 @@ namespace ObsidianPortal
             this.CurrentLife = this.MaxLife;
             this.CurrentTime = 100 - this.Speed;
             this.CurrentMovePoint = this.MovePoint;
-            this.ActionComplete = false;
             this.Dead = false;
         }
 
         public void Completed()
         {
-            this.ActionComplete = true;
             this.CurrentTime = 100 - this.Speed;
             Debug.Log("Completed: " + this.CurrentTime.ToString());
-            this.GetComponent<MeshRenderer>().material = Resources.Load("Complete") as Material;
         }
 
         public void CleanUp()
         {
-            this.ActionComplete = false;
             this.CurrentMovePoint = this.MovePoint;
             CountDown(ref this.CurrentPowerWord);
             CountDown(ref this.CurrentSilverArrow);
@@ -198,9 +203,17 @@ namespace ObsidianPortal
             if (value > 0) { value--; }
         }
 
-        public bool IsCompleted
+        public void DeadUnit()
         {
-            get { return this.ActionComplete; }
+            Debug.Log("DeadUnit: " + this.UnitName);
+            this.CurrentLife = 0;
+            this.Dead = true;
+            this.Completed();
+            this.GetComponent<MeshRenderer>().material = Resources.Load("Dead") as Material;
+            if (this.LifeGauge != null)
+            {
+                this.LifeGauge.SetActive(false);
+            }
         }
 
         public bool IsAlly
@@ -208,6 +221,17 @@ namespace ObsidianPortal
             get
             {
                 if (this.ally == Ally.Ally)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        public bool IsEnemy
+        {
+            get
+            {
+                if (this.ally == Ally.Enemy)
                 {
                     return true;
                 }
@@ -282,31 +306,23 @@ namespace ObsidianPortal
         {
             if (direction == FIX.Direction.Top)
             {
-                return new Vector3(this.transform.localPosition.x - FIX.HEX_MOVE_X, this.transform.localPosition.y, this.transform.localPosition.z);
+                return new Vector3(this.transform.localPosition.x, this.transform.localPosition.y + FIX.HEX_MOVE_X, this.transform.localPosition.z);
             }
-            else if (direction == FIX.Direction.TopRight)
-            {
-                return new Vector3(this.transform.localPosition.x - FIX.HEX_MOVE_X2, this.transform.localPosition.y, this.transform.localPosition.z + FIX.HEX_MOVE_Z);
-            }
-            else if (direction == FIX.Direction.BottomRight)
-            {
-                return new Vector3(this.transform.localPosition.x + FIX.HEX_MOVE_X2, this.transform.localPosition.y, this.transform.localPosition.z + FIX.HEX_MOVE_Z);
-            }
-            else if (direction == FIX.Direction.TopLeft)
-            {
-                return new Vector3(this.transform.localPosition.x - FIX.HEX_MOVE_X2, this.transform.localPosition.y, this.transform.localPosition.z - FIX.HEX_MOVE_Z);
-            }
-            else if (direction == FIX.Direction.BottomLeft)
-            {
-                return new Vector3(this.transform.localPosition.x + FIX.HEX_MOVE_X2, this.transform.localPosition.y, this.transform.localPosition.z - FIX.HEX_MOVE_Z);
-            }
-            else if (direction == FIX.Direction.Bottom)
+            else if (direction == FIX.Direction.Right)
             {
                 return new Vector3(this.transform.localPosition.x + FIX.HEX_MOVE_X, this.transform.localPosition.y, this.transform.localPosition.z);
             }
+            else if (direction == FIX.Direction.Left)
+            {
+                return new Vector3(this.transform.localPosition.x - FIX.HEX_MOVE_X, this.transform.localPosition.y, this.transform.localPosition.z);
+            }
+            else if (direction == FIX.Direction.Bottom)
+            {
+                return new Vector3(this.transform.localPosition.x, this.transform.localPosition.y - FIX.HEX_MOVE_X, this.transform.localPosition.z);
+            }
 
             // same as Top
-            return new Vector3(this.transform.localPosition.x - FIX.HEX_MOVE_X, this.transform.localPosition.y, this.transform.localPosition.z);
+            return new Vector3(this.transform.localPosition.x + FIX.HEX_MOVE_X, this.transform.localPosition.y, this.transform.localPosition.z);
         }
 
         /// <summary>
@@ -317,27 +333,19 @@ namespace ObsidianPortal
         {
             if (direction == (int)(FIX.Direction.Top))
             {
+                this.transform.localPosition = new Vector3(this.transform.localPosition.x, this.transform.localPosition.y + FIX.HEX_MOVE_X, this.transform.localPosition.z);
+            }
+            else if (direction == FIX.Direction.Right)
+            {
+                this.transform.localPosition = new Vector3(this.transform.localPosition.x + FIX.HEX_MOVE_X, this.transform.localPosition.y, this.transform.localPosition.z);
+            }
+            else if (direction == FIX.Direction.Left)
+            {
                 this.transform.localPosition = new Vector3(this.transform.localPosition.x - FIX.HEX_MOVE_X, this.transform.localPosition.y, this.transform.localPosition.z);
-            }
-            else if (direction == FIX.Direction.TopRight)
-            {
-                this.transform.localPosition = new Vector3(this.transform.localPosition.x - FIX.HEX_MOVE_X2, this.transform.localPosition.y, this.transform.localPosition.z + FIX.HEX_MOVE_Z);
-            }
-            else if (direction == FIX.Direction.BottomRight)
-            {
-                this.transform.localPosition = new Vector3(this.transform.localPosition.x + FIX.HEX_MOVE_X2, this.transform.localPosition.y, this.transform.localPosition.z + FIX.HEX_MOVE_Z);
-            }
-            else if (direction == FIX.Direction.TopLeft)
-            {
-                this.transform.localPosition = new Vector3(this.transform.localPosition.x - FIX.HEX_MOVE_X2, this.transform.localPosition.y, this.transform.localPosition.z - FIX.HEX_MOVE_Z);
-            }
-            else if (direction == FIX.Direction.BottomLeft)
-            {
-                this.transform.localPosition = new Vector3(this.transform.localPosition.x + FIX.HEX_MOVE_X2, this.transform.localPosition.y, this.transform.localPosition.z - FIX.HEX_MOVE_Z);
             }
             else if (direction == FIX.Direction.Bottom)
             {
-                this.transform.localPosition = new Vector3(this.transform.localPosition.x + FIX.HEX_MOVE_X, this.transform.localPosition.y, this.transform.localPosition.z);
+                this.transform.localPosition = new Vector3(this.transform.localPosition.x, this.transform.localPosition.y - FIX.HEX_MOVE_X, this.transform.localPosition.z);
             }
         }
 
@@ -346,6 +354,23 @@ namespace ObsidianPortal
             if (a.CurrentTime > b.CurrentTime) { return 1; }
             else if (a.CurrentTime == b.CurrentTime) { return 0; }
             else { return -1; }
+        }
+
+        public Vector3 Top
+        {
+            get { return new Vector3(this.transform.localPosition.x, this.transform.localPosition.y + 1, this.transform.localPosition.z); }
+        }
+        public Vector3 Left
+        {
+            get { return new Vector3(this.transform.localPosition.x - 1, this.transform.localPosition.y, this.transform.localPosition.z); }
+        }
+        public Vector3 Right
+        {
+            get { return new Vector3(this.transform.localPosition.x + 1, this.transform.localPosition.y, this.transform.localPosition.z); }
+        }
+        public Vector3 Botoom
+        {
+            get { return new Vector3(this.transform.localPosition.x, this.transform.localPosition.y - 1, this.transform.localPosition.z); }
         }
     }
 }

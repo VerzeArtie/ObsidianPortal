@@ -18,36 +18,36 @@ namespace ObsidianPortal
             float moveX = 0.0f;
             float moveY = 0.0f;
             float moveZ = 0.0f;
-            if (Input.GetKey(KeyCode.UpArrow))
+            if (Input.GetKey(KeyCode.W))
             {
                 moveX += 0.0f;
-                moveZ += 0.1f;
+                moveY += 0.1f;
             }
-            if (Input.GetKey(KeyCode.DownArrow))
+            if (Input.GetKey(KeyCode.S))
             {
                 moveX += 0.0f;
-                moveZ += -0.1f;
+                moveY += -0.1f;
             }
 
-            if (Input.GetKey(KeyCode.RightArrow))
+            if (Input.GetKey(KeyCode.D))
             {
                 moveX += +0.1f;
-                moveZ += 0.0f;
+                moveY += 0.0f;
             }
-            if (Input.GetKey(KeyCode.LeftArrow))
+            if (Input.GetKey(KeyCode.A))
             {
                 moveX += -0.1f;
-                moveZ += 0.0f;
+                moveY += 0.0f;
             }
             if (Input.GetKey(KeyCode.R))
             {
-                moveY += +0.1f;
+                moveZ += -0.1f;
             }
             if (Input.GetKey(KeyCode.F))
             {
-                if (this.transform.localPosition.y > 4.0f)
+                if (this.transform.localPosition.z < -10.0f)
                 {
-                    moveY += -0.1f;
+                    moveZ += +0.1f;
                 }
             }
 

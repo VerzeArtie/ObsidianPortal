@@ -84,9 +84,9 @@ namespace ObsidianPortal
             {
                 back_WinLose.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
             }
-            txtHeroName.GetComponent<TextMesh>().text = ONE.Player.FullName;
-            txtCurrentLevel.GetComponent<TextMesh>().text = ONE.Player.Level.ToString();
-            txtNextLevel.GetComponent<TextMesh>().text = (ONE.Player.Level + 1).ToString();
+            txtHeroName.GetComponent<TextMesh>().text = ONE.P1.FullName;
+            txtCurrentLevel.GetComponent<TextMesh>().text = ONE.P1.Level.ToString();
+            txtNextLevel.GetComponent<TextMesh>().text = (ONE.P1.Level + 1).ToString();
             txtElimination.GetComponent<TextMesh>().text = ONE.BattleElimination.ToString();
             txtTactics.GetComponent<TextMesh>().text = ONE.BattleTacticsPoint.ToString();
             txtTotalTurn.GetComponent<TextMesh>().text = ONE.BattleTotalTurn.ToString();
@@ -94,7 +94,7 @@ namespace ObsidianPortal
             txtHealingDone.GetComponent<TextMesh>().text = ONE.BattleHealingDone.ToString();
             txtBonusValue.GetComponent<TextMesh>().text = "+" + BonusValue.ToString();
             txtExp.GetComponent<TextMesh>().text = GettingExp.ToString() + " Exp";
-            txtTotalExp.GetComponent<TextMesh>().text = ONE.Player.Exp.ToString() + "/" + ONE.Player.NextLevelBorder.ToString();
+            txtTotalExp.GetComponent<TextMesh>().text = ONE.P1.Exp.ToString() + "/" + ONE.P1.NextLevelBorder.ToString();
 
             string GOLD = "MedalGold";
             string SILVER = "MedalSilver";
@@ -134,8 +134,8 @@ namespace ObsidianPortal
 
             Method.AutoSaveTruthWorldEnvironment();
 
-            float percent = (float)(((float)ONE.Player.Exp * 100) / (float)ONE.Player.NextLevelBorder);
-            GettingGauge = (float)((float)(GettingExp * 100) / (float)ONE.Player.NextLevelBorder);
+            float percent = (float)(((float)ONE.P1.Exp * 100) / (float)ONE.P1.NextLevelBorder);
+            GettingGauge = (float)((float)(GettingExp * 100) / (float)ONE.P1.NextLevelBorder);
             GettingExpPercent = (float)((float)GettingExp / (float)GettingGauge);
             for (int ii = 0; ii < percent; ii++)
             {
@@ -158,20 +158,20 @@ namespace ObsidianPortal
                 System.Threading.Thread.Sleep(10);
                 GettingGauge--;
                 txtExp.GetComponent<TextMesh>().text = (GettingExp - counter * GettingExpPercent).ToString("N0") + " Exp";
-                txtTotalExp.GetComponent<TextMesh>().text = (ONE.Player.Exp + counter * GettingExpPercent).ToString("N0") + "/" + ONE.Player.NextLevelBorder.ToString();
+                txtTotalExp.GetComponent<TextMesh>().text = (ONE.P1.Exp + counter * GettingExpPercent).ToString("N0") + "/" + ONE.P1.NextLevelBorder.ToString();
                 counter++;
                 IncreaseExpGauge();
 
                 if (GettingGauge <= 0)
                 {
-                    ONE.Player.Exp += GettingExp;
+                    ONE.P1.Exp += GettingExp;
                     txtExp.GetComponent<TextMesh>().text = "0";
-                    txtTotalExp.GetComponent<TextMesh>().text = (ONE.Player.Exp).ToString("N0") + "/" + ONE.Player.NextLevelBorder.ToString();
+                    txtTotalExp.GetComponent<TextMesh>().text = (ONE.P1.Exp).ToString("N0") + "/" + ONE.P1.NextLevelBorder.ToString();
 
-                    if (ONE.Player.Exp >= ONE.Player.NextLevelBorder)
+                    if (ONE.P1.Exp >= ONE.P1.NextLevelBorder)
                     {
-                        ONE.Player.Exp -= ONE.Player.NextLevelBorder;
-                        ONE.Player.Level++;
+                        ONE.P1.Exp -= ONE.P1.NextLevelBorder;
+                        ONE.P1.Level++;
                         for (int ii = 0; ii < ExpGauge.Length; ii++)
                         {
                             ExpGauge[ii].SetActive(false);
@@ -179,7 +179,7 @@ namespace ObsidianPortal
                         txtTotalExp.SetActive(false);
                         txtExp.SetActive(false);
 
-                        txtLevelUpMessage.GetComponent<TextMesh>().text = "REACHED LEVEL " + ONE.Player.Level.ToString() + "!";
+                        txtLevelUpMessage.GetComponent<TextMesh>().text = "REACHED LEVEL " + ONE.P1.Level.ToString() + "!";
                         back_LevelUpMessage.SetActive(true);
                         txtLevelUpMessage.SetActive(true);
                     }

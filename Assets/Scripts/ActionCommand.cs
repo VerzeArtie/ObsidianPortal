@@ -162,6 +162,7 @@ namespace ObsidianPortal
             if (command == FIX.FRESHHEAL) { return 6; }
             if (command == FIX.PROTECTION) { return 2; }
 
+            Debug.Log("EffectValue is else???");
             return 0;
         }            
     }

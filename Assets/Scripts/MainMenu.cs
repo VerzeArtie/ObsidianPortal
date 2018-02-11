@@ -43,20 +43,20 @@ namespace ObsidianPortal
             // GroundOne.WE2はゲーム全体のセーブデータであり、ここで読み込んでおく。
             Method.ReloadTruthWorldEnvironment();
 
-            if (ONE.WE2.Account != null && ONE.WE2.Account != String.Empty)
-            {
-                groupAccount.SetActive(false);
-                supportMessage.gameObject.SetActive(false);
-                GroupMenu.SetActive(true);
-            }
-            else
-            {
-                groupAccount.SetActive(true);
-                supportMessage.gameObject.SetActive(true);
-                GroupMenu.SetActive(false);
-            }
-            txtHeroName.GetComponent<TextMesh>().text = ONE.Player.FullName;
-            txtLevel.GetComponent<TextMesh>().text = ONE.Player.Level.ToString();
+            //if (ONE.WE2.Account != null && ONE.WE2.Account != String.Empty)
+            //{
+            //    groupAccount.SetActive(false);
+            //    supportMessage.gameObject.SetActive(false);
+            //    GroupMenu.SetActive(true);
+            //}
+            //else
+            //{
+            //    groupAccount.SetActive(true);
+            //    supportMessage.gameObject.SetActive(true);
+            //    GroupMenu.SetActive(false);
+            //}
+            txtHeroName.GetComponent<TextMesh>().text = ONE.P1.FullName;
+            txtLevel.GetComponent<TextMesh>().text = ONE.P1.Level.ToString();
             txtTotalPlayed.GetComponent<TextMesh>().text = ONE.WE2.TotalPlayed.ToString();
             txtMostDamageDone.GetComponent<TextMesh>().text = ONE.WE2.MostDamageDone.ToString();
             txtMostHealingDone.GetComponent<TextMesh>().text = ONE.WE2.MostHealingDone.ToString();

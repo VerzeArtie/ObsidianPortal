@@ -16,6 +16,7 @@ namespace ObsidianPortal
             Weapon_Heavy,
             Weapon_TwoHand,
             Weapon_Rod,
+            Weapon_Bow,
             Armor_Light,
             Armor_Middle,
             Armor_Heavy,
@@ -7519,6 +7520,16 @@ namespace ObsidianPortal
                     break;
                 #endregion
                 #endregion
+
+                case FIX.COMMON_FINE_BOW:
+                    description = "標準的な弓。バランス良く矢が当たる。物理攻撃４～６";
+                    PhysicalAttackMinValue = 4;
+                    PhysicalAttackMaxValue = 6;
+                    cost = 600;
+                    AdditionalDescription(ItemType.Weapon_Bow);
+                    rareLevel = RareLevel.Common;
+                    limitValue = USING_ITEM_STACK_SIZE;
+                    break;
             }
         }
 

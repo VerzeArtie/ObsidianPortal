@@ -11,7 +11,7 @@ namespace ObsidianPortal
         private static GameObject objWE2 = null;
         private static GameObject objAchieve = null;
 
-        public static MainCharacter Player; // プレイヤー情報
+        public static MainCharacter P1; // プレイヤー情報
         public static ControlSQL SQL = null; // SQLログ情報
         public static TruthWorldEnvironment WE2 = null; // ゲームストーリー全体のワールド環境フラグ
         public static Achievement ACV = null; // アチーヴ
@@ -19,8 +19,8 @@ namespace ObsidianPortal
         public static bool AlreadyInitialize = false; // 既に一度InitializeGroundOneを呼んだかどうか
         public static bool SupportLog = true;
 
-        public static FIX.PortalArea CurrentArea = FIX.PortalArea.Area_None;
-        public static FIX.Stage CurrentStage = FIX.Stage.Stage_None;
+        public static FIX.PortalArea CurrentArea = FIX.PortalArea.Area_Human;
+        public static FIX.Stage CurrentStage = FIX.Stage.Stage1_1;
         public static bool BattleWin = false;
         public static int BattleElimination = 0;
         public static int BattleTacticsPoint = 0;
@@ -42,20 +42,20 @@ namespace ObsidianPortal
             objAchieve = new GameObject("objAchieve");
 
             // オブジェクトに暮らすを付与
-            Player = objPlayer.AddComponent<MainCharacter>();
+            P1 = objPlayer.AddComponent<MainCharacter>();
             WE2 = objWE2.AddComponent<TruthWorldEnvironment>();
             SQL = objSQL.AddComponent<ControlSQL>();
             SQL.SetupSql();
             ACV = objAchieve.AddComponent<Achievement>();
 
             // デバッグ用データ
-            Player.FullName = "Altomo";
-            Player.ObsidianStone = 1;
+            P1.FullName = "Altomo";
+            P1.ObsidianStone = 1;
             //Player.Level = 4;
             //Player.Exp = 65;
             //Player.Race = FIX.Race.Angel;
 
-            UnityEngine.Object.DontDestroyOnLoad(Player);
+            UnityEngine.Object.DontDestroyOnLoad(P1);
             UnityEngine.Object.DontDestroyOnLoad(WE2);
         }
 

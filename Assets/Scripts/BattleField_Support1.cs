@@ -35,6 +35,32 @@ namespace ObsidianPortal
             }
         }
 
+        // 各キャラクターが死亡をチェックし、ユニットリスト操作を行います。
+        private void JudgeUnitDead()
+        {
+            for (int ii = 0; ii < AllyList.Count; ii++)
+            {
+                if (AllyList[ii].CurrentLife <= 0)
+                {
+                    AllyList[ii].DeadUnit();
+                }
+            }
+            for (int ii = 0; ii < EnemyList.Count; ii++)
+            {
+                if (EnemyList[ii].CurrentLife <= 0)
+                {
+                    EnemyList[ii].DeadUnit();
+                }
+            }
+            //if (player.IsAlly)
+            //{
+            //    ONE.BattleElimination++;
+            //    ONE.BattleGettingExp += target.GetExp;
+            //    ONE.Player.UpdateExp();
+            //    txtExp.text = "( " + ONE.Player.Exp.ToString() + " / " + ONE.Player.NextLevelBorder.ToString() + " )";
+            //}
+        }
+
         // ゲームが終了したかどうかを判定し、画面に表示します。
         private void JudgeGameEnd()
         {
@@ -57,19 +83,16 @@ namespace ObsidianPortal
         /// <summary>
         /// 選択／行動／指定などのコマンドをすべてをキャンセルします。
         /// </summary>
-        private void ExecCancel()
+        private void ExecCancel(Unit unit)
         {
-            if (this.CurrentUnit.IsCompleted == false)
-            {
-                this.Phase = ActionPhase.SelectFirst;
-                this.groupCommand.SetActive(false);
-                ClearQuadTile();
-                ClearAttackTile();
-                ClearHealTile();
-                ClearAllyEffectTile();
-                this.CurrentUnit.transform.localPosition = this.shadowPosition;
-                //this.shadowPosition = new Vector3();
-            }
+            this.Phase = ActionPhase.SelectFirst;
+            this.groupCommand.SetActive(false);
+            ClearQuadTile();
+            ClearAttackTile();
+            ClearHealTile();
+            ClearAllyEffectTile();
+            unit.transform.localPosition = this.shadowPosition;
+            //this.shadowPosition = new Vector3();
         }
 
         /// <summary>
@@ -85,6 +108,7 @@ namespace ObsidianPortal
                     return false;
                 }
             }
+            Debug.Log("DetectWin true");
             return true;
         }
 
@@ -101,6 +125,7 @@ namespace ObsidianPortal
                     return false;
                 }
             }
+            Debug.Log("DetectLose true");
             return true;
         }
 
@@ -166,7 +191,7 @@ namespace ObsidianPortal
             for (int ii = 0; ii < areaList.Count; ii++)
             {
                 if (ContainPositionX(areaList[ii].transform.localPosition.x, src.x) &&
-                    src.z == areaList[ii].transform.localPosition.z)
+                    src.y == areaList[ii].transform.localPosition.y)
                 {
                     return true;
                 }
@@ -187,52 +212,34 @@ namespace ObsidianPortal
             {
                 x = -FIX.HEX_MOVE_X * (ii + 1);
                 z = 0;
-                if (ContainPositionX(src.x + x, target.x) && (src.z + z == target.z))
+                if (ContainPositionX(src.x + x, target.x) && (src.y + z == target.y))
                 {
                     direction = FIX.Direction.Top;
                     move = ii;
                     return true;
                 }
 
-                x = -FIX.HEX_MOVE_X2 * (ii + 1);
+                x = -FIX.HEX_MOVE_X * (ii + 1);
                 z = FIX.HEX_MOVE_Z * (ii + 1);
-                if (ContainPositionX(src.x + x, target.x) && (src.z + z == target.z))
+                if (ContainPositionX(src.x + x, target.x) && (src.y + z == target.y))
                 {
-                    direction = FIX.Direction.TopRight;
+                    direction = FIX.Direction.Right;
                     move = ii;
                     return true;
                 }
 
-                x = FIX.HEX_MOVE_X2 * (ii + 1);
-                z = FIX.HEX_MOVE_Z * (ii + 1);
-                if (ContainPositionX(src.x + x, target.x) && (src.z + z == target.z))
-                {
-                    direction = FIX.Direction.BottomRight;
-                    move = ii;
-                    return true;
-                }
-
-                x = -FIX.HEX_MOVE_X2 * (ii + 1);
+                x = -FIX.HEX_MOVE_X * (ii + 1);
                 z = -FIX.HEX_MOVE_Z * (ii + 1);
-                if (ContainPositionX(src.x + x, target.x) && (src.z + z == target.z))
+                if (ContainPositionX(src.x + x, target.x) && (src.y + z == target.y))
                 {
-                    direction = FIX.Direction.TopLeft;
-                    move = ii;
-                    return true;
-                }
-
-                x = FIX.HEX_MOVE_X2 * (ii + 1);
-                z = -FIX.HEX_MOVE_Z * (ii + 1);
-                if (ContainPositionX(src.x + x, target.x) && (src.z + z == target.z))
-                {
-                    direction = FIX.Direction.BottomLeft;
+                    direction = FIX.Direction.Left;
                     move = ii;
                     return true;
                 }
 
                 x = FIX.HEX_MOVE_X * (ii + 1);
                 z = 0;
-                if (ContainPositionX(src.x + x, target.x) && (src.z + z == target.z))
+                if (ContainPositionX(src.x + x, target.x) && (src.y + z == target.y))
                 {
                     direction = FIX.Direction.Bottom;
                     move = ii;
@@ -257,8 +264,8 @@ namespace ObsidianPortal
             SearchMoveablePoint(ref result, src.transform.localPosition, src.HealRange, -1, src.ally, false);
             for (int ii = 0; ii < result.Count; ii++)
             {
-                GameObject current = Instantiate(prefab_HealTile, new Vector3(result[ii].x, 0.01f, result[ii].z), Quaternion.identity) as GameObject;
-                current.transform.Rotate(new Vector3(0, 90, 0));
+                GameObject current = Instantiate(prefab_HealTile, new Vector3(result[ii].x, result[ii].y, -0.01f), Quaternion.identity) as GameObject;
+                current.transform.Rotate(new Vector3(0, 0, 0));
                 current.gameObject.SetActive(true);
                 HealTile.Add(current);
             }
@@ -289,8 +296,8 @@ namespace ObsidianPortal
 
             for (int ii = 0; ii < result.Count; ii++)
             {
-                GameObject current = Instantiate(prefab_AttackTile, new Vector3(result[ii].x, 0.01f, result[ii].z), Quaternion.identity) as GameObject;
-                current.transform.Rotate(new Vector3(0, 90, 0));
+                GameObject current = Instantiate(prefab_AttackTile, new Vector3(result[ii].x, result[ii].y, -0.01f), Quaternion.identity) as GameObject;
+                current.transform.Rotate(new Vector3(0, 0, 0));
                 current.gameObject.SetActive(true);
                 AttackTile.Add(current);
             }
@@ -308,8 +315,8 @@ namespace ObsidianPortal
             SearchMoveablePoint(ref result, src.transform.localPosition, src.EffectRange, -1, src.ally, false);
             for (int ii = 0; ii < result.Count; ii++)
             {
-                GameObject current = Instantiate(prefab_AllyEffectTile, new Vector3(result[ii].x, 0.01f, result[ii].z), Quaternion.identity) as GameObject;
-                current.transform.Rotate(new Vector3(0, 90, 0));
+                GameObject current = Instantiate(prefab_AllyEffectTile, new Vector3(result[ii].x, result[ii].y, -0.01f), Quaternion.identity) as GameObject;
+                current.transform.Rotate(new Vector3(0, 0, 0));
                 current.gameObject.SetActive(true);
                 AllyEffectTile.Add(current);
             }
@@ -327,8 +334,8 @@ namespace ObsidianPortal
             SearchMoveablePoint(ref result, src.transform.localPosition, src.MoveValue, -1, src.ally, true);
             for (int ii = 0; ii < result.Count; ii++)
             {
-                GameObject current = Instantiate(prefab_Quad, new Vector3(result[ii].x, 0.01f, result[ii].z), Quaternion.identity) as GameObject;
-                current.transform.Rotate(new Vector3(0, 90, 0));
+                GameObject current = Instantiate(prefab_Quad, new Vector3(result[ii].x, result[ii].y, -0.01f), Quaternion.identity) as GameObject;
+                current.transform.Rotate(new Vector3(0, 0, 0));
                 current.gameObject.SetActive(true);
                 MoveTile.Add(current);
             }
@@ -344,7 +351,7 @@ namespace ObsidianPortal
             for (int ii = 0; ii < AllyList.Count; ii++)
             {
                 if (ContainPositionX(AllyList[ii].transform.localPosition.x, src.x) &&
-                    AllyList[ii].transform.localPosition.z == src.z)
+                    AllyList[ii].transform.localPosition.y == src.y)
                 {
                     return AllyList[ii];
                 }
@@ -352,7 +359,7 @@ namespace ObsidianPortal
             for (int ii = 0; ii < EnemyList.Count; ii++)
             {
                 if (ContainPositionX(EnemyList[ii].transform.localPosition.x, src.x) &&
-                    EnemyList[ii].transform.localPosition.z == src.z)
+                    EnemyList[ii].transform.localPosition.y == src.y)
                 {
                     return EnemyList[ii];
                 }
@@ -370,9 +377,52 @@ namespace ObsidianPortal
             for (int ii = 0; ii < fieldTile.Count; ii++)
             {
                 if (ContainPositionX(fieldTile[ii].transform.localPosition.x, src.x) &&
-                    fieldTile[ii].transform.localPosition.z == src.z)
+                    fieldTile[ii].transform.localPosition.y == src.y)
                 {
                     return fieldTile[ii];
+                }
+            }
+            return null;
+        }
+
+        private Unit SearchAttackableUnitInArea(Unit src, int range)
+        {
+            Unit target = null;
+            int[,] array = null;
+
+            if (src.AttackRange == 1)
+            {
+                array = new int[,] { { 0, 1 },
+                                     { -1, 0 }, /*{ 0, 0 },*/ { 1, 0 }, 
+                                     { 0, -1 } };
+            }
+            else if (src.AttackRange == 2)
+            {
+                array = new int[,] { { 0, 2 },
+                                     { -1, 1 }, { 0, 1 }, { 1, 1 },
+                                     { -2, 0 }, { -1, 0 }, /*{0, 0},*/ { 1, 0 }, { 2, 0 },
+                                     { -1, -1}, {0, -1}, {1, -1},
+                                     { 0, -2 } };
+            }
+            else if (src.AttackRange == 3)
+            {
+                array = new int[,] { { 0, 3 },
+                                     { -1, 2 }, { 0, 2 }, { 1, 2 },
+                                     { -2, 1 }, { -1, 1}, { 0, 1 }, { 1, 1 }, { 2, 1 },
+                                     { -3, 0}, { -2, 0 }, { -1, 0 }, /*{0, 0},*/ { 1, 0 }, { 2, 0 }, { 3, 0 },
+                                     { -2, -1 }, { -1, -1}, { 0, -1 }, { 1, -1 }, { 2, -1 },                                
+                                     { -1, -2}, {0, -2}, {1, -2},
+                                     { 0, -3 } };
+            }
+
+            Debug.Log("SearchAttackableUnitInArea: " + src.AttackRange.ToString() + " " + array.Length.ToString());
+            for (int ii = 0; ii < array.Length/2; ii++)
+            {
+                Vector3 search = new Vector3(src.transform.localPosition.x + array[ii, 0], src.transform.localPosition.y + array[ii, 1], src.transform.localPosition.z);
+                target = ExistUnitFromLocation(search);
+                if (target != null && target.Dead == false && ((src.IsAlly && target.IsEnemy) || (src.IsEnemy && target.IsAlly)))
+                {
+                    return target;
                 }
             }
             return null;
@@ -394,12 +444,12 @@ namespace ObsidianPortal
             {
                 Debug.Log("ally type: " + AllList[ii].Type.ToString());
                 if (AllyList[ii].Dead) { continue; }
-                if (AllyList[ii].Type == Unit.UnitType.Wall) { continue; }
+                //if (AllyList[ii].Type == Unit.UnitType.Wall) { continue; }
 
                 for (int jj = 0; jj < target.Count; jj++)
                 {
                     if (ContainPositionX(AllyList[ii].transform.localPosition.x, target[jj].x) &&
-                        AllyList[ii].transform.localPosition.z == target[jj].z)
+                        AllyList[ii].transform.localPosition.y == target[jj].y)
                     {
                         result.Add(AllyList[ii]);
                     }
@@ -425,7 +475,7 @@ namespace ObsidianPortal
                 }
             }
             temp.Clear();
-            temp = SearchAttackableUnitLinear(src, max, FIX.Direction.TopRight);
+            temp = SearchAttackableUnitLinear(src, max, FIX.Direction.Left);
             if (temp.Count > 0)
             {
                 for (int ii = 0; ii < temp.Count; ii++)
@@ -434,25 +484,7 @@ namespace ObsidianPortal
                 }
             }
             temp.Clear();
-            temp = SearchAttackableUnitLinear(src, max, FIX.Direction.BottomRight);
-            if (temp.Count > 0)
-            {
-                for (int ii = 0; ii < temp.Count; ii++)
-                {
-                    result.Add(temp[ii]);
-                }
-            }
-            temp.Clear();
-            temp = SearchAttackableUnitLinear(src, max, FIX.Direction.TopLeft);
-            if (temp.Count > 0)
-            {
-                for (int ii = 0; ii < temp.Count; ii++)
-                {
-                    result.Add(temp[ii]);
-                }
-            }
-            temp.Clear();
-            temp = SearchAttackableUnitLinear(src, max, FIX.Direction.BottomLeft);
+            temp = SearchAttackableUnitLinear(src, max, FIX.Direction.Right);
             if (temp.Count > 0)
             {
                 for (int ii = 0; ii < temp.Count; ii++)
@@ -492,25 +524,15 @@ namespace ObsidianPortal
                     x = -FIX.HEX_MOVE_X * (ii + 1);
                     z = 0;
                 }
-                else if (direction == FIX.Direction.TopRight)
+                else if (direction == FIX.Direction.Right)
                 {
-                    x = -FIX.HEX_MOVE_X2 * (ii + 1);
+                    x = -FIX.HEX_MOVE_X * (ii + 1);
                     z = FIX.HEX_MOVE_Z * (ii + 1);
                 }
-                else if (direction == FIX.Direction.BottomRight)
+                else if (direction == FIX.Direction.Left)
                 {
-                    x = FIX.HEX_MOVE_X2 * (ii + 1);
+                    x = FIX.HEX_MOVE_X * (ii + 1);
                     z = FIX.HEX_MOVE_Z * (ii + 1);
-                }
-                else if (direction == FIX.Direction.TopLeft)
-                {
-                    x = -FIX.HEX_MOVE_X2 * (ii + 1);
-                    z = -FIX.HEX_MOVE_Z * (ii + 1);
-                }
-                else if (direction == FIX.Direction.BottomLeft)
-                {
-                    x = FIX.HEX_MOVE_X2 * (ii + 1);
-                    z = -FIX.HEX_MOVE_Z * (ii + 1);
                 }
                 else if (direction == FIX.Direction.Bottom)
                 {
@@ -520,8 +542,8 @@ namespace ObsidianPortal
                 for (int jj = 0; jj < AllyList.Count; jj++)
                 {
                     if (ContainPositionX(src.transform.position.x + x, AllyList[jj].transform.position.x) &&
-                        (src.transform.position.z + z == AllyList[jj].transform.position.z) &&
-                        (AllyList[jj].Type != Unit.UnitType.Wall))
+                        (src.transform.position.y + z == AllyList[jj].transform.position.y))// &&
+                        //(AllyList[jj].Type != Unit.UnitType.Wall))
                     {
                         Debug.Log("SearchAttackableUnitLinear(E) " + jj.ToString());
                         result.Add(AllyList[jj]);
@@ -537,23 +559,19 @@ namespace ObsidianPortal
             {
                 return FIX.Direction.Top;
             }
-            else if (ExistAttackableUnitLinear(ref move, this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.EffectRange, FIX.Direction.TopRight))
+            else if (ExistAttackableUnitLinear(ref move, src, this.CurrentTarget, src.EffectRange, FIX.Direction.Top))
             {
-                return FIX.Direction.TopRight;
+                return FIX.Direction.Top;
             }
-            else if (ExistAttackableUnitLinear(ref move, this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.EffectRange, FIX.Direction.BottomRight))
+            else if (ExistAttackableUnitLinear(ref move, src, this.CurrentTarget, src.EffectRange, FIX.Direction.Left))
             {
-                return FIX.Direction.BottomRight;
+                return FIX.Direction.Left;
             }
-            else if (ExistAttackableUnitLinear(ref move, this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.EffectRange, FIX.Direction.TopLeft))
+            else if (ExistAttackableUnitLinear(ref move, src, this.CurrentTarget, src.EffectRange, FIX.Direction.Right))
             {
-                return FIX.Direction.TopLeft;
+                return FIX.Direction.Right;
             }
-            else if (ExistAttackableUnitLinear(ref move, this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.EffectRange, FIX.Direction.BottomLeft))
-            {
-                return FIX.Direction.BottomLeft;
-            }
-            else if (ExistAttackableUnitLinear(ref move, this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.EffectRange, FIX.Direction.Bottom))
+            else if (ExistAttackableUnitLinear(ref move, src, this.CurrentTarget, src.EffectRange, FIX.Direction.Bottom))
             {
                 return FIX.Direction.Bottom;
             }
@@ -575,24 +593,14 @@ namespace ObsidianPortal
                     x = -FIX.HEX_MOVE_X * (ii + 1);
                     z = 0;
                 }
-                else if (direction == FIX.Direction.TopRight)
+                else if (direction == FIX.Direction.Right)
                 {
-                    x = -FIX.HEX_MOVE_X2 * (ii + 1);
+                    x = -FIX.HEX_MOVE_X * (ii + 1);
                     z = FIX.HEX_MOVE_Z * (ii + 1);
                 }
-                else if (direction == FIX.Direction.BottomRight)
+                else if (direction == FIX.Direction.Left)
                 {
-                    x = FIX.HEX_MOVE_X2 * (ii + 1);
-                    z = FIX.HEX_MOVE_Z * (ii + 1);
-                }
-                else if (direction == FIX.Direction.TopLeft)
-                {
-                    x = -FIX.HEX_MOVE_X2 * (ii + 1);
-                    z = -FIX.HEX_MOVE_Z * (ii + 1);
-                }
-                else if (direction == FIX.Direction.BottomLeft)
-                {
-                    x = FIX.HEX_MOVE_X2 * (ii + 1);
+                    x = -FIX.HEX_MOVE_X * (ii + 1);
                     z = -FIX.HEX_MOVE_Z * (ii + 1);
                 }
                 else if (direction == FIX.Direction.Bottom)
@@ -601,8 +609,8 @@ namespace ObsidianPortal
                     z = 0;
                 }
                 if (ContainPositionX(src.transform.position.x + x, target.transform.position.x) &&
-                    (src.transform.position.z + z == target.transform.position.z) &&
-                    (target.Type != Unit.UnitType.Wall))
+                    (src.transform.position.y + z == target.transform.position.y))// &&
+                    //(target.Type != Unit.UnitType.Wall))
                 {
                     Debug.Log("ExistAttackableUnitLinear(E) " + ii.ToString());
                     move = ii;
@@ -613,6 +621,18 @@ namespace ObsidianPortal
             return false;
         }
 
+        private void SetupItem(ref List<GameObject> list, int number, float x, float y)
+        {
+            GameObject unit = null;
+            
+            x = x * FIX.HEX_MOVE_X;
+            y = y * FIX.HEX_MOVE_Z;
+            unit = Instantiate(prefab_Treasure, new Vector3(x, y, -0.2f), Quaternion.identity) as GameObject;
+
+            unit.SetActive(true);
+            TreasureList.Add(unit);
+            unit.name = "Treasure_" + number.ToString();
+        }
         /// <summary>
         /// ユニットを生成します。
         /// </summary>
@@ -620,28 +640,36 @@ namespace ObsidianPortal
         /// <param name="type"></param>
         /// <param name="x"></param>
         /// <param name="z"></param>
-        private void SetupUnit(ref List<Unit> list, int number, bool enemy, Unit.RaceType race, Unit.UnitType type, float x, float z, bool exchange)
+        private void SetupUnit(ref List<Unit> list, int number, bool enemy, Unit.RaceType race, Unit.UnitType type, float x, float y)
         {
             Unit prefab = null;
             Unit unit = null;
             if (type == Unit.UnitType.Fighter) { prefab = prefab_Fighter; }
             else if (type == Unit.UnitType.Archer) { prefab = prefab_Archer; }
-            else if (type == Unit.UnitType.Sorcerer) { prefab = prefab_Sorcerer; }
-            else if (type == Unit.UnitType.Priest) { prefab = prefab_Priest; }
-            else if (type == Unit.UnitType.Enchanter) { prefab = prefab_Enchanter; }
-            else if (type == Unit.UnitType.Wall) { prefab = prefab_Wall; }
+            else if (type == Unit.UnitType.Magician) { prefab = prefab_Magician; }
+            //else if (type == Unit.UnitType.Sorcerer) { prefab = prefab_Sorcerer; }
+            //else if (type == Unit.UnitType.Priest) { prefab = prefab_Priest; }
+            //else if (type == Unit.UnitType.Enchanter) { prefab = prefab_Enchanter; }
+            //else if (type == Unit.UnitType.Wall) { prefab = prefab_Wall; }
+            if (race == Unit.RaceType.Monster) { prefab = prefab_Monster; }
 
-            if (exchange)
-            {
-                x = x * FIX.HEX_MOVE_X;
-                if (z % 2 != 0) { x -= FIX.HEX_MOVE_X2; }
-                z = z * FIX.HEX_MOVE_Z;
-            }
-            unit = Instantiate(prefab, new Vector3(x, 0.5f, z), Quaternion.identity) as Unit;
+            x = x * FIX.HEX_MOVE_X;
+            y = y * FIX.HEX_MOVE_Z;
+
+            unit = Instantiate(prefab, new Vector3(x, y, 0.1f), Quaternion.identity) as Unit;
 
             unit.Initialize(race, type, enemy);
             unit.name = type.ToString() + "_" + number.ToString();
             unit.gameObject.SetActive(true);
+
+            GameObject obj = Instantiate(prefab_LifeGauge, new Vector3(unit.transform.localPosition.x, unit.transform.localPosition.y, unit.transform.localPosition.z - 1), Quaternion.identity) as GameObject;
+            if (obj != null)
+            {
+                unit.LifeGauge = obj;
+                this.LifeGaugeList.Add(obj);
+            }
+
+
             if (enemy)
             {
                 EnemyList.Add(unit);
@@ -766,24 +794,12 @@ namespace ObsidianPortal
 
             if (direction == 1)
             {
-                AddCheckPointLinear(ref result, p, max, -HEX_MOVE_X2, HEX_MOVE_Z, direction, ally, ristriction);
+                AddCheckPointLinear(ref result, p, max, -HEX_MOVE_X, HEX_MOVE_Z, direction, ally, ristriction);
                 return;
             }
             if (direction == 2)
             {
-                AddCheckPointLinear(ref result, p, max, HEX_MOVE_X2, HEX_MOVE_Z, direction, ally, ristriction);
-                return;
-
-            }
-            if (direction == 3)
-            {
-                AddCheckPointLinear(ref result, p, max, -HEX_MOVE_X2, -HEX_MOVE_Z, direction, ally, ristriction);
-                return;
-
-            }
-            if (direction == 4)
-            {
-                AddCheckPointLinear(ref result, p, max, HEX_MOVE_X2, -HEX_MOVE_Z, direction, ally, ristriction);
+                AddCheckPointLinear(ref result, p, max, HEX_MOVE_X, HEX_MOVE_Z, direction, ally, ristriction);
                 return;
 
             }
@@ -795,9 +811,9 @@ namespace ObsidianPortal
             }
         }
 
-        private void AddCheckPointLinear(ref List<Vector3> result, Vector3 p, int max, float x, float z, int next, Unit.Ally ally, bool ristriction)
+        private void AddCheckPointLinear(ref List<Vector3> result, Vector3 p, int max, float x, float y, int next, Unit.Ally ally, bool ristriction)
         {
-            Vector3 checkPoint = new Vector3(p.x + x, p.y, p.z + z);
+            Vector3 checkPoint = new Vector3(p.x + x, p.y + y, p.z);
             int moveWeight = CheckMoveWeight(checkPoint, ally, ristriction);
 
             // 999は移動不可領域。移動可能量が移動コストより小さい場合チェックする。
@@ -819,38 +835,28 @@ namespace ObsidianPortal
             // 上を検索
             if (direction != 5)
             {
-                AddCheckPointRoutine(ref result, p, max, -HEX_MOVE_X, 0, 0, ally, ristriction);
+                AddCheckPointRoutine(ref result, p, max, 0, HEX_MOVE_X, 0, ally, ristriction);
             }
             // 下を検索
             if (direction != 0)
             {
-                AddCheckPointRoutine(ref result, p, max, HEX_MOVE_X, 0, 5, ally, ristriction);
+                AddCheckPointRoutine(ref result, p, max, 0, -HEX_MOVE_X, 5, ally, ristriction);
             }
-            // 右上を検索
+            // 右を検索
             if (direction != 4)
             {
-                AddCheckPointRoutine(ref result, p, max, -HEX_MOVE_X2, HEX_MOVE_Z, 1, ally, ristriction);
+                AddCheckPointRoutine(ref result, p, max, HEX_MOVE_X, 0, 1, ally, ristriction);
             }
-            // 左下を検索
+            // 左を検索
             if (direction != 1)
             {
-                AddCheckPointRoutine(ref result, p, max, HEX_MOVE_X2, -HEX_MOVE_Z, 4, ally, ristriction);
-            }
-            // 右下を検索
-            if (direction != 3)
-            {
-                AddCheckPointRoutine(ref result, p, max, HEX_MOVE_X2, HEX_MOVE_Z, 2, ally, ristriction);
-            }
-            // 左上を検索
-            if (direction != 2)
-            {
-                AddCheckPointRoutine(ref result, p, max, -HEX_MOVE_X2, -HEX_MOVE_Z, 3, ally, ristriction);
+                AddCheckPointRoutine(ref result, p, max, -HEX_MOVE_X, 0, 4, ally, ristriction);
             }
         }
 
-        private void AddCheckPointRoutine(ref List<Vector3> result, Vector3 p, int max, float x, float z, int next, Unit.Ally ally, bool ristriction)
+        private void AddCheckPointRoutine(ref List<Vector3> result, Vector3 p, int max, float x, float y, int next, Unit.Ally ally, bool ristriction)
         {
-            Vector3 checkPoint = new Vector3(p.x + x, p.y, p.z + z);
+            Vector3 checkPoint = new Vector3(p.x + x, p.y + y, p.z);
             int moveWeight = CheckMoveWeight(checkPoint, ally, ristriction);
 
             // 999は移動不可領域。移動可能量が移動コストより小さい場合チェックする。
@@ -871,7 +877,7 @@ namespace ObsidianPortal
             for (int ii = 0; ii < fieldTile.Count; ii++)
             {
                 if (ContainPositionX(fieldTile[ii].transform.localPosition.x, p.x) &&
-                    p.z == fieldTile[ii].transform.localPosition.z &&
+                    p.y == fieldTile[ii].transform.localPosition.y &&
                     fieldTile[ii].gameObject.activeInHierarchy)
                 {
                     if (ristriction)
@@ -910,7 +916,7 @@ namespace ObsidianPortal
             for (int ii = 0; ii < result.Count; ii++)
             {
                 if (ContainPositionX(result[ii].x, dst.x) &&
-                    result[ii].z == dst.z)
+                    result[ii].y == dst.y)
                 {
                     // 含めない
                     return;

@@ -8,9 +8,9 @@ namespace ObsidianPortal
     {
 
 
-        private bool CanMove(FIX.Direction direction)
+        private bool CanMove(Unit unit, FIX.Direction direction)
         {
-            AreaInformation nextArea = ExistAreaFromLocation(this.CurrentUnit.GetNeighborhood(direction));
+            AreaInformation nextArea = ExistAreaFromLocation(unit.GetNeighborhood(direction));
             if (nextArea == null)
             {
                 return false;
@@ -25,17 +25,17 @@ namespace ObsidianPortal
             return true;
         }
 
-        private void JudgeMove(FIX.Direction first, FIX.Direction second, FIX.Direction third, out FIX.Direction result)
+        private void JudgeMove(Unit unit, FIX.Direction first, FIX.Direction second, FIX.Direction third, out FIX.Direction result)
         {
-            if (CanMove(first))
+            if (CanMove(unit, first))
             {
                 result = first;
             }
-            else if (CanMove(FIX.Direction.TopLeft))
+            else if (CanMove(unit, second))
             {
                 result = second;
             }
-            else if (CanMove(FIX.Direction.TopRight))
+            else if (CanMove(unit, third))
             {
                 result = third;
             }

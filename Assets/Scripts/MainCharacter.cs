@@ -15,13 +15,37 @@ namespace ObsidianPortal
         public int Gold = 0;
 
         // core parameter
-        public string FullName = string.Empty;
-        public int BaseStrength = 1;
-        public int BaseAgility = 1;
-        public int BaseIntelligence = 1;
-        public int BaseStamina = 1;
-        public int BaseMind = 1;
+        public int BaseStrength = 10;
+        public int BaseAgility = 10;
+        public int BaseIntelligence = 10;
+        public int BaseStamina = 10;
+        public int BaseMind = 10;
         
+        // appearance
+        public string FullName = string.Empty;
+        public string Gender = String.Empty;
+        public string Personality = String.Empty;
+        public string MainColor = String.Empty;
+
+        // ability
+        public int Ability_01 = 0; // weapon-1
+        public int Ability_02 = 0; // weapon-2
+        public int Ability_03 = 0; // weapon-3
+        public int Ability_04 = 0; // weapon-4
+        public int Ability_05 = 0; // weapon-5
+        public int Ability_06 = 0; // skill-1
+        public int Ability_07 = 0; // skill-2
+        public int Ability_08 = 0; // skill-3
+        public int Ability_09 = 0; // skill-4
+        public int Ability_10 = 0; // skill-5
+        public int Ability_11 = 0; // skill-6
+        public int Ability_12 = 0; // skill-7
+        public int Ability_13 = 0; // skill-8
+        public int Ability_14 = 0; // skill-9
+        public int Ability_15 = 0; // skill-10
+        public int Ability_16 = 0; // skill-11
+        public int Ability_17 = 0; // skill-12
+
         // equipment
         public Item mainWeapon = null;
         public Item subWeapon = null;
@@ -32,6 +56,7 @@ namespace ObsidianPortal
         // Obsidian parameter
         public int ObsidianStone = 1;
         public FIX.Race Race = FIX.Race.Human;
+        public FIX.JobClass job = FIX.JobClass.None;
 
         public int MaxLife
         {

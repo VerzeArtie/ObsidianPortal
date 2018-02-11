@@ -8,17 +8,27 @@ namespace ObsidianPortal
     public static class FIX
     {
         // 定数
-        public const float HEX_MOVE_X = 1.732f;
-        public const float HEX_MOVE_Z = 1.500f;
-        public const float HEX_MOVE_X2 = 0.866f;
+        public const float HEX_MOVE_X = 1.0f;
+        public const float HEX_MOVE_Z = 1.0f;
 
         public const string LAYER_UNITCOMMAND = "UnitCommand";
         public const string LAYER_STAGEPANEL = "StagePanel";
         public const string LAYER_AREAPANEL = "AreaPanel";
 
+        public enum JobClass
+        {
+            None,
+            Fighter,
+            Archer,
+            Magician,
+            Armorer,
+            Apprentice,
+        }
+
         // 人間族
         public const string HUMAN_FIGHTER = "ファイター";
         public const string HUMAN_ARCHER = "アーチャー";
+        public const string HUMAN_MAGICIAN = "マジシャン";
         public const string HUMAN_SORCERER = "ソーサラー";
         public const string HUMAN_ENCHANTER = "エンチャンター";
         public const string HUMAN_PRIEST = "プリースト";
@@ -137,11 +147,9 @@ namespace ObsidianPortal
         {
             None = -1,
             Top = 0,
-            TopRight = 1,
-            TopLeft = 2,
-            BottomLeft = 3,
-            BottomRight = 4,
-            Bottom = 5,
+            Left = 1,
+            Right = 2,
+            Bottom = 3,
         }
 
         #region "DungeonPlayerからインポート"
@@ -1009,6 +1017,11 @@ namespace ObsidianPortal
         public const string RARE_PERFECT_BLUE_POTION = @"青ポーション【完全版】";
         public const string RARE_PERFECT_GREEN_POTION = @"緑ポーション【完全版】";
         #endregion
+
+        public const string COMMON_FINE_BOW = @"ファイン・ボウ";
+        public const string COMMON_ELVISH_BOW = @"エルヴィッシュ・ボウ";
+        public const string RARE_WINGED_LONG_BOW = @"ウィングド・ロング・ボウ";
+
         #endregion
         #endregion
     }
