@@ -47,11 +47,7 @@ namespace ObsidianPortal
         private List<GameObject> AllyEffectTile = new List<GameObject>();
         private List<GameObject> HealTile = new List<GameObject>();
         public GameObject Cursor;
-        public GameObject groupCommand;
-        public GameObject lblCommand1;
-        public GameObject lblCommand2;
-        public GameObject lblCommand3;
-        public GameObject CommandCursor;
+        public GameObject groupAction;
         public GameObject groupUnitStatus;
         public GameObject[] LifeBox;
         public GameObject txtUnitName;
@@ -76,6 +72,9 @@ namespace ObsidianPortal
         public Text txtOrder;
         public Text txtTime;
         public List<GameObject> orbList = new List<GameObject>();
+        public GameObject FocusCursor;
+        public GameObject groupAP;
+        public List<Image> ActionPoint = new List<Image>();
         // 定数
         const float HEX_MOVE_X = 1.0f;
         const float HEX_MOVE_Z = 1.0f;
@@ -117,7 +116,6 @@ namespace ObsidianPortal
         public Unit OwnerUnit;
         public Unit CurrentUnit;
         public Unit CurrentTarget;
-        private Vector3 shadowPosition = new Vector3();
         private string currentCommand = string.Empty;
         private FIX.Direction currentDirection = FIX.Direction.None;
         private int currentDistance = 0;
@@ -224,8 +222,8 @@ namespace ObsidianPortal
                 SetupUnit(ref AllList, counter, false, Unit.RaceType.Human, Unit.UnitType.Fighter, 2, 2); counter++;
                 // ユニット配置(敵)
                 SetupUnit(ref EnemyList, counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 11, 7); counter++;
-                SetupUnit(ref EnemyList, counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 21, 7); counter++;
-                SetupUnit(ref EnemyList, counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 25, 15); counter++;
+                //SetupUnit(ref EnemyList, counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 21, 7); counter++;
+                //SetupUnit(ref EnemyList, counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 25, 15); counter++;
                 // 宝箱配置
                 SetupItem(ref TreasureList, counter, 11, 10); counter++;
             }
@@ -335,6 +333,12 @@ namespace ObsidianPortal
             //    SetupUnit(ref AllList, 2, true, Unit.RaceType.Human, Unit.UnitType.Fighter, 5, 0, true);
             //}
             #endregion
+
+            // カメラをプレイヤー１にセット
+            CameraView.transform.localPosition = new Vector3(AllList[0].transform.localPosition.x,
+                                                 AllList[0].transform.localPosition.y,
+                                                 CameraView.transform.localPosition.z);
+
             // 通常移動モードでは、常にプレイヤ－１を選択する。
             for (int ii = 0; ii < AllyList.Count; ii++)
             {
@@ -342,7 +346,6 @@ namespace ObsidianPortal
             }
             this.CurrentUnit = AllyList[0];
             this.OwnerUnit = AllyList[0];
-            this.shadowPosition = this.CurrentUnit.transform.localPosition;
         }
 
         private int AutoClose = 300;
@@ -364,33 +367,32 @@ namespace ObsidianPortal
                     //    this.AllyList[ii].CleanUp();
                     //}
 
-                    //SceneManager.LoadSceneAsync(FIX.SCENE_GAMERESULT);
+                    SceneManager.LoadSceneAsync(FIX.SCENE_GAMERESULT);
                 }
                 return;
             }
             #endregion
 
+            // カーソル移動
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, 100))
+            {
+                GameObject obj = hit.collider.gameObject;
+                // フィールド操作
+                Cursor.transform.localPosition = new Vector3(obj.transform.localPosition.x,
+                                                             obj.transform.localPosition.y,
+                                                             Cursor.transform.localPosition.z);
+                Unit loc = ExistUnitFromLocation(Cursor.transform.localPosition);
+                if (loc != null)
+                {
+                    UpdateUnitStatus(loc);
+                }
+            }
+
             #region "カーソルとキー操作"
             if (MoveMode == FieldMode.Move)
             {
-                // カーソル移動
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray, out hit, 100))
-                {
-                    GameObject obj = hit.collider.gameObject;
-                    // フィールド操作
-                    Cursor.transform.localPosition = new Vector3(obj.transform.localPosition.x,
-                                                                 obj.transform.localPosition.y,
-                                                                 Cursor.transform.localPosition.z);
-                    Unit loc = ExistUnitFromLocation(Cursor.transform.localPosition);
-                    if (loc != null)
-                    {
-                        UpdateUnitStatus(loc);
-                    }
-                }
-
-
                 if (Input.GetKey(KeyCode.Keypad8) || Input.GetKey(KeyCode.UpArrow) || this.arrowUp)
                 {
                     this.keyUp = true;
@@ -499,40 +501,35 @@ namespace ObsidianPortal
 
                 if (activePlayer != null)
                 {
-                    Unit target = SearchAttackableUnitInArea(activePlayer, activePlayer.AttackRange);
-
-                    if (target != null && target.Dead == false && ((activePlayer.IsAlly && target.IsEnemy) || (activePlayer.IsEnemy && target.IsAlly)))
-                    {
-                        this.currentCommand = FIX.NORMAL_ATTACK;
-                        int damage = 0;
-                        if (activePlayer.Type == Unit.UnitType.Magician)
-                        {
-                            damage = activePlayer.MagicAttackValue + target.CurrentReachabletargetValue - target.MagicDefenseValue;
-                        }
-                        else
-                        {
-                            damage = activePlayer.AttackValue + target.CurrentReachabletargetValue - target.DefenseValue;
-                        }
-                        this.CurrentUnit = activePlayer; // アクティブユニット記憶
-                        this.CurrentTarget = target; // ターゲットユニット記憶
-                        StartAnimation(target, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
-                        BeginEffect(ActionCommand.GetSkillNumbering(this.currentCommand));
-                        this.Phase = ActionPhase.ExecAnimation;
-                    }
-                    else
-                    {
-                        this.currentCommand = String.Empty;
-                        this.currentDirection = FIX.Direction.None;
-                        this.currentDistance = 0;
-                        activePlayer.currentTime = 100 - activePlayer.SpeedValue;
-                        Debug.Log("detect isn't null and Unit doesn't exist");
-                    }
+                    Debug.Log("ActivePlayer is " + activePlayer.UnitName);
+                    FocusCursor.transform.localPosition = new Vector3(activePlayer.transform.localPosition.x,
+                                                                 activePlayer.transform.localPosition.y,
+                                                                 FocusCursor.transform.localPosition.z);
+                    CameraView.transform.localPosition = new Vector3(activePlayer.transform.localPosition.x,
+                                                                     activePlayer.transform.localPosition.y,
+                                                                     CameraView.transform.localPosition.z);
+                    activePlayer.CurrentAP+=3;
+                    UpdateUnitStatus(activePlayer);
+                    UpdateUnitAP(activePlayer);
+                    this.groupAP.SetActive(true);
+                    this.CurrentUnit = activePlayer;
+                    this.Phase = ActionPhase.SelectFirst;
+                    MoveMode = FieldMode.Battle;
                 }
             }
             #endregion
 
             #region "コマンド実行"
-            //#region "敵フェーズ"
+            #region "敵フェーズ"
+            if (this.CurrentUnit != null && this.CurrentUnit.IsAlly == false)
+            {
+                if (this.Phase == ActionPhase.End)
+                {
+                    Debug.Log("EnemyUnit End");
+                    UnitEnd();
+                }
+                return;
+            }
             //if (this.CurrentUnit.IsAlly == false)
             //{
             //    if (Phase == ActionPhase.SelectFirst)
@@ -621,19 +618,19 @@ namespace ObsidianPortal
             //        bool canMove = true;
             //        if (direction == FIX.Direction.Top)
             //        {
-            //            JudgeMove(FIX.Direction.Top, FIX.Direction.Left, FIX.Direction.Right, out direction);
+            //            JudgeMove(targetUnit, FIX.Direction.Top, FIX.Direction.Left, FIX.Direction.Right, out direction);
             //        }
             //        else if (direction == FIX.Direction.Left)
             //        {
-            //            JudgeMove(FIX.Direction.Left, FIX.Direction.Top, FIX.Direction.Bottom, out direction);
+            //            JudgeMove(targetUnit, FIX.Direction.Left, FIX.Direction.Top, FIX.Direction.Bottom, out direction);
             //        }
             //        else if (direction == FIX.Direction.Right)
             //        {
-            //            JudgeMove(FIX.Direction.Right, FIX.Direction.Top, FIX.Direction.Bottom, out direction);
+            //            JudgeMove(targetUnit, FIX.Direction.Right, FIX.Direction.Top, FIX.Direction.Bottom, out direction);
             //        }
             //        else if (direction == FIX.Direction.Bottom)
             //        {
-            //            JudgeMove(FIX.Direction.Bottom, FIX.Direction.Left, FIX.Direction.Right, out direction);
+            //            JudgeMove(targetUnit, FIX.Direction.Bottom, FIX.Direction.Left, FIX.Direction.Right, out direction);
             //        }
             //        // 行き先がない場合、移動完了します。
             //        if (direction == FIX.Direction.None)
@@ -788,26 +785,12 @@ namespace ObsidianPortal
             //            }
             //        }
             //    }
-            //    else if (this.Phase == ActionPhase.End)
-            //    {
-            //        Debug.Log("ActionPhase.End");
-            //        System.Threading.Thread.Sleep(500);
-            //        CurrentUnit.Completed();
-            //        AdjustTime(this.CurrentUnit);
-            //        JudgeGameEnd();
-            //        this.currentCommand = String.Empty;
-            //        this.currentDirection = FIX.Direction.None;
-            //        this.currentDistance = 0;
-            //        this.CurrentUnit = null;
-            //        this.CurrentTarget = null;
-            //        this.Phase = ActionPhase.WaitActive;
-            //    }
             //    return;
             //}
-            //#endregion
+            #endregion
 
-            //#region "味方フェーズ"
-            // 最初のフェーズ
+            #region "味方フェーズ"
+            //// 最初のフェーズ
             //if (this.Phase == ActionPhase.SelectFirst)
             //{
             //    UpdateUnitStatus(this.CurrentUnit);
@@ -846,44 +829,42 @@ namespace ObsidianPortal
             //    }
             //    this.Phase = ActionPhase.SelectMove;
             //}
-            //// 移動先を選択
-            //else if (this.Phase == ActionPhase.SelectMove)
-            //{
-            //    if (this.CurrentUnit.CurrentEarthBind > 0)
-            //    {
-            //        this.Phase = ActionPhase.SelectCommand;
-            //        return;
-            //    }
+            // 移動先を選択
+            if (this.Phase == ActionPhase.SelectMove)
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    Debug.Log("mousedown, now CheckMoveableArea: " + Cursor.transform.localPosition.ToString());
+                    if (CheckMoveableArea(Cursor.transform.localPosition))
+                    {
+                        Debug.Log("CheckMoveArea ok.");
+                        Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
+                        if (target != null && target.Equals(this.CurrentUnit) == false)
+                        {
+                            Debug.Log("already exist unit, then no action.");
+                            return;
+                        }
 
-            //    if (CheckMoveableArea(Cursor.transform.localPosition) && Input.GetMouseButtonDown(0))
-            //    {
-            //        Debug.Log("mousedown, nowselectmoveale");
-            //        Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
-            //        if (target != null && target.Equals(this.CurrentUnit) == false)
-            //        {
-            //            Debug.Log("already exist unit, then no action.");
-            //            return;
-            //        }
-            //        CurrentUnit.transform.localPosition = new Vector3(Cursor.transform.localPosition.x,
-            //                                                            Cursor.transform.localPosition.y,
-            //                                                            CurrentUnit.transform.localPosition.z);
-            //        ClearQuadTile();
+                        JumpToLocation(CurrentUnit, (int)Cursor.transform.localPosition.x, (int)Cursor.transform.localPosition.y);
+                        ClearQuadTile();
 
-            //        lblCommand1.GetComponent<TextMesh>().text = FIX.NORMAL_ATTACK;
-            //        lblCommand2.GetComponent<TextMesh>().text = CurrentUnit.SkillName;
-            //        lblCommand3.GetComponent<TextMesh>().text = FIX.NORMAL_END;
-            //        groupCommand.transform.localPosition = new Vector3(CurrentUnit.transform.localPosition.x + 2,
-            //                                                            CurrentUnit.transform.localPosition.y,
-            //                                                            CurrentUnit.transform.localPosition.z);
-            //        groupCommand.SetActive(true);
-            //        this.Phase = ActionPhase.SelectCommand;
-            //    }
-            //}
+                        CurrentUnit.CurrentAP--;
+                        UpdateUnitAP(CurrentUnit);
+                        this.Phase = ActionPhase.SelectFirst;
+                    }
+                    else
+                    {
+                        Debug.Log("CheckMoveArea: No exist.");
+                    }
+                }
+            }
             //// コマンド選択時
             //else if (this.Phase == ActionPhase.SelectCommand)
             //{
             //    int LayerNo = LayerMask.NameToLayer(FIX.LAYER_UNITCOMMAND);
             //    int layerMask = 1 << LayerNo;
+            //    RaycastHit hit;
+            //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             //    if (Physics.Raycast(ray, out hit, 100, layerMask) && Input.GetMouseButtonDown(0))
             //    {
             //        GameObject obj = hit.collider.gameObject;
@@ -960,187 +941,194 @@ namespace ObsidianPortal
             //        }
             //    }
             //}
-            //// コマンド実行対象の選択
-            //else if (this.Phase == ActionPhase.SelectTarget)
-            //{
-            //    bool detectAction = false;
-            //    if (ActionCommand.GetTargetType(this.currentCommand) == ActionCommand.TargetType.Own)
-            //    {
-            //        // 自分自身が対象なので即座に次へ
-            //        detectAction = true;
-            //        if (this.currentCommand == FIX.FIREBLADE)
-            //        {
-            //            this.CurrentTarget = this.CurrentUnit;
-            //            StartAnimation(this.CurrentUnit, "STR + " + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
-            //        }
-            //        else if (this.currentCommand == FIX.HOLYBULLET)
-            //        {
-            //            this.CurrentTarget = null;
-            //            StartAnimation(this.CurrentUnit, "HOLY", new Color(1.0f, 0.3f, 0.3f));
-            //        }
-            //    }
-            //    else if (Input.GetMouseButtonDown(0))
-            //    {
-            //        // 単一の敵対象
-            //        if (ActionCommand.GetTargetType(this.currentCommand) == ActionCommand.TargetType.Enemy &&
-            //            CheckAttackableArea(Cursor.transform.localPosition))
-            //        {
-            //            detectAction = true;
-            //            Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
-            //            if (target == null)
-            //            {
-            //                Debug.Log("unit is not exist, then no action.");
-            //                return;
-            //            }
-            //            if (target.IsAlly)
-            //            {
-            //                Debug.Log("unit is ally, then no action");
-            //                return;
-            //            }
-            //            this.CurrentTarget = target;
+            // コマンド実行対象の選択
+            else if (this.Phase == ActionPhase.SelectTarget)
+            {
+                bool detectAction = false;
+                if (ActionCommand.GetTargetType(this.currentCommand) == ActionCommand.TargetType.Own)
+                {
+                    // 自分自身が対象なので即座に次へ
+                    detectAction = true;
+                    if (this.currentCommand == FIX.FIREBLADE)
+                    {
+                        this.CurrentTarget = this.CurrentUnit;
+                        StartAnimation(this.CurrentUnit, "STR + " + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
+                    }
+                    else if (this.currentCommand == FIX.HOLYBULLET)
+                    {
+                        this.CurrentTarget = null;
+                        StartAnimation(this.CurrentUnit, "HOLY", new Color(1.0f, 0.3f, 0.3f));
+                    }
+                }
+                else if (Input.GetMouseButtonDown(0))
+                {
+                    // 単一の敵対象
+                    if (ActionCommand.GetTargetType(this.currentCommand) == ActionCommand.TargetType.Enemy &&
+                        CheckAttackableArea(Cursor.transform.localPosition))
+                    {
+                        detectAction = true;
+                        Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
+                        if (target == null)
+                        {
+                            Debug.Log("unit is not exist, then no action.");
+                            return;
+                        }
+                        if (target.IsAlly)
+                        {
+                            Debug.Log("unit is ally, then no action");
+                            return;
+                        }
+                        if (CurrentUnit.CurrentAP < 2)
+                        {
+                            Debug.Log("Not enough AP, then no action");
+                            return;
+                        }
+                        this.CurrentTarget = target;
 
-            //            if (this.currentCommand == FIX.DASH)
-            //            {
-            //                int move = 0;
-            //                FIX.Direction direction = ExistAttackableUnitLinerGroup(ref move, this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.EffectRange);
-            //                for (int ii = 0; ii < move; ii++)
-            //                {
-            //                    //if (this.CurrentUnit.CurrentEarthBind > 0) // アースバインドでダッシュの移動を防ぐことはできない。
-            //                    this.CurrentUnit.Move(direction);
-            //                }
-            //                int damage = 0;
-            //                damage = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.MagicDefenseValue;
-                                
-            //                StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
-            //            }
-            //            else if (this.currentCommand == FIX.NEEDLESPEAR || this.currentCommand == FIX.SILVERARROW)
-            //            {
-            //                int damage = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
-            //                StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
-            //            }
-            //            else if (this.currentCommand == FIX.EARTHBIND)
-            //            {
-            //                StartAnimation(this.CurrentTarget, "BIND", new Color(1.0f, 0.3f, 0.3f));
-            //            }
-            //            else if (this.currentCommand == FIX.EXPLOSION)
-            //            {
-            //                int damage = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
-            //                StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
-            //            }
-            //            else if (this.currentCommand == FIX.REACHABLETARGET)
-            //            {
-            //                StartAnimation(this.CurrentTarget, "TARGET", new Color(1.0f, 0.3f, 0.3f));
-            //            }
-            //            else
-            //            {
-            //                int damage = 0;
-            //                if (this.CurrentUnit.Type == Unit.UnitType.Magician)
-            //                {
-            //                    damage = this.CurrentUnit.MagicAttackValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.MagicDefenseValue;
-            //                }
-            //                else
-            //                {
-            //                    damage = this.CurrentUnit.AttackValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
-            //                }
-            //                StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
-            //            }
-            //        }
-            //        // 単一の味方対象(効果/回復)
-            //        else if (ActionCommand.GetTargetType(this.currentCommand) == ActionCommand.TargetType.Ally)
-            //        {
-            //            // 回復
-            //            if (ActionCommand.IsHeal(this.currentCommand) && CheckHealableArea(Cursor.transform.localPosition))
-            //            {
-            //                detectAction = true;
-            //                Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
-            //                if (target == null)
-            //                {
-            //                    Debug.Log("unit is not exist, then no action.");
-            //                    return;
-            //                }
-            //                if (target.IsAlly == false)
-            //                {
-            //                    Debug.Log("unit is enemy, then no action");
-            //                    return;
-            //                }
+                        if (this.currentCommand == FIX.DASH)
+                        {
+                            int move = 0;
+                            FIX.Direction direction = ExistAttackableUnitLinerGroup(ref move, this.CurrentUnit, this.CurrentTarget, this.CurrentUnit.EffectRange);
+                            for (int ii = 0; ii < move; ii++)
+                            {
+                                //if (this.CurrentUnit.CurrentEarthBind > 0) // アースバインドでダッシュの移動を防ぐことはできない。
+                                this.CurrentUnit.Move(direction);
+                            }
+                            int damage = 0;
+                            damage = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.MagicDefenseValue;
 
-            //                this.CurrentTarget = target;
-            //                StartAnimation(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
-            //            }
-            //            // 効果
-            //            else if (CheckAllyEffectArea(Cursor.transform.localPosition))
-            //            {
-            //                detectAction = true;
-            //                Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
-            //                if (target == null)
-            //                {
-            //                    Debug.Log("unit is not exist, then no action.");
-            //                    return;
-            //                }
-            //                if (target.IsAlly == false)
-            //                {
-            //                    Debug.Log("unit is enemy, then no action");
-            //                    return;
-            //                }
-            //                this.CurrentTarget = target;
-            //                if (this.currentCommand == FIX.POWERWORD)
-            //                {
-            //                    StartAnimation(this.CurrentTarget, "STR +" + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
-            //                }
-            //                else if (this.currentCommand == FIX.PROTECTION)
-            //                {
-            //                    StartAnimation(this.CurrentTarget, "DEF +" + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
-            //                }
-            //                else if (this.currentCommand == FIX.HEATBOOST)
-            //                {
-            //                    StartAnimation(this.CurrentUnit, "SPD +" + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
-            //                }
-            //            }
-            //        }
-            //        else if (this.currentCommand == FIX.BLAZE && CheckAttackableArea(Cursor.transform.localPosition))
-            //        {
-            //            FIX.Direction direction = FIX.Direction.None;
-            //            int move = 0;
-            //            if (IsLinear(ref direction, ref move, this.CurrentUnit.transform.position, Cursor.transform.position))
-            //            {
-            //                detectAction = true;
-            //                this.currentDirection = direction;
-            //                this.currentDistance = move;
-            //                StartAnimation(this.CurrentUnit, "Blaze", Color.yellow);
-            //            }
-            //        }
-            //        else if (this.currentCommand == FIX.LAVAWALL && CheckAttackableArea(Cursor.transform.localPosition))
-            //        {
-            //            FIX.Direction direction = FIX.Direction.None;
-            //            int move = 0;
-            //            if (IsLinear(ref direction, ref move, this.CurrentUnit.transform.position, Cursor.transform.position))
-            //            {
-            //                detectAction = true;
-            //                this.currentDirection = direction;
-            //                this.currentDistance = move;
-            //                StartAnimation(this.CurrentUnit, "LAVAWALL", Color.yellow);
-            //            }
-            //        }
-            //    }
-            //    if (detectAction)
-            //    {
-            //        ClearAttackTile();
-            //        ClearHealTile();
-            //        ClearAllyEffectTile();
-            //        JudgeGameEnd();
-            //        int number = ActionCommand.GetSkillNumbering(this.currentCommand);
-            //        if (number <= -1)
-            //        {
-            //            this.Phase = ActionPhase.End;
-            //            return;
-            //        }
+                            StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
+                        }
+                        else if (this.currentCommand == FIX.NEEDLESPEAR || this.currentCommand == FIX.SILVERARROW)
+                        {
+                            int damage = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
+                            StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
+                        }
+                        else if (this.currentCommand == FIX.EARTHBIND)
+                        {
+                            StartAnimation(this.CurrentTarget, "BIND", new Color(1.0f, 0.3f, 0.3f));
+                        }
+                        else if (this.currentCommand == FIX.EXPLOSION)
+                        {
+                            int damage = ActionCommand.EffectValue(this.currentCommand) + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
+                            StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
+                        }
+                        else if (this.currentCommand == FIX.REACHABLETARGET)
+                        {
+                            StartAnimation(this.CurrentTarget, "TARGET", new Color(1.0f, 0.3f, 0.3f));
+                        }
+                        else
+                        {
+                            int damage = 0;
+                            if (this.CurrentUnit.Type == Unit.UnitType.Magician)
+                            {
+                                damage = this.CurrentUnit.MagicAttackValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.MagicDefenseValue;
+                            }
+                            else
+                            {
+                                damage = this.CurrentUnit.AttackValue + this.CurrentTarget.CurrentReachabletargetValue - this.CurrentTarget.DefenseValue;
+                            }
+                            StartAnimation(this.CurrentTarget, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
+                        }
+                    }
+                    // 単一の味方対象(効果/回復)
+                    else if (ActionCommand.GetTargetType(this.currentCommand) == ActionCommand.TargetType.Ally)
+                    {
+                        // 回復
+                        if (ActionCommand.IsHeal(this.currentCommand) && CheckHealableArea(Cursor.transform.localPosition))
+                        {
+                            detectAction = true;
+                            Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
+                            if (target == null)
+                            {
+                                Debug.Log("unit is not exist, then no action.");
+                                return;
+                            }
+                            if (target.IsAlly == false)
+                            {
+                                Debug.Log("unit is enemy, then no action");
+                                return;
+                            }
 
-            //        BeginEffect(ActionCommand.GetSkillNumbering(this.currentCommand));
-            //        this.Phase = ActionPhase.ExecAnimation;
-            //    }
-            //}
+                            this.CurrentTarget = target;
+                            StartAnimation(this.CurrentTarget, ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
+                        }
+                        // 効果
+                        else if (CheckAllyEffectArea(Cursor.transform.localPosition))
+                        {
+                            detectAction = true;
+                            Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
+                            if (target == null)
+                            {
+                                Debug.Log("unit is not exist, then no action.");
+                                return;
+                            }
+                            if (target.IsAlly == false)
+                            {
+                                Debug.Log("unit is enemy, then no action");
+                                return;
+                            }
+                            this.CurrentTarget = target;
+                            if (this.currentCommand == FIX.POWERWORD)
+                            {
+                                StartAnimation(this.CurrentTarget, "STR +" + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
+                            }
+                            else if (this.currentCommand == FIX.PROTECTION)
+                            {
+                                StartAnimation(this.CurrentTarget, "DEF +" + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
+                            }
+                            else if (this.currentCommand == FIX.HEATBOOST)
+                            {
+                                StartAnimation(this.CurrentUnit, "SPD +" + ActionCommand.EffectValue(this.currentCommand).ToString(), Color.yellow);
+                            }
+                        }
+                    }
+                    else if (this.currentCommand == FIX.BLAZE && CheckAttackableArea(Cursor.transform.localPosition))
+                    {
+                        FIX.Direction direction = FIX.Direction.None;
+                        int move = 0;
+                        if (IsLinear(ref direction, ref move, this.CurrentUnit.transform.position, Cursor.transform.position))
+                        {
+                            detectAction = true;
+                            this.currentDirection = direction;
+                            this.currentDistance = move;
+                            StartAnimation(this.CurrentUnit, "Blaze", Color.yellow);
+                        }
+                    }
+                    else if (this.currentCommand == FIX.LAVAWALL && CheckAttackableArea(Cursor.transform.localPosition))
+                    {
+                        FIX.Direction direction = FIX.Direction.None;
+                        int move = 0;
+                        if (IsLinear(ref direction, ref move, this.CurrentUnit.transform.position, Cursor.transform.position))
+                        {
+                            detectAction = true;
+                            this.currentDirection = direction;
+                            this.currentDistance = move;
+                            StartAnimation(this.CurrentUnit, "LAVAWALL", Color.yellow);
+                        }
+                    }
+                }
+                if (detectAction)
+                {
+                    CurrentUnit.CurrentAP -= 2;
+                    UpdateUnitAP(CurrentUnit);
+                    ClearAttackTile();
+                    ClearHealTile();
+                    ClearAllyEffectTile();
+                    JudgeGameEnd();
+                    int number = ActionCommand.GetSkillNumbering(this.currentCommand);
+                    if (number <= -1)
+                    {
+                        this.Phase = ActionPhase.End;
+                        return;
+                    }
+
+                    BeginEffect(ActionCommand.GetSkillNumbering(this.currentCommand));
+                    this.Phase = ActionPhase.ExecAnimation;
+                }
+            }
             // アニメーション実行
-            if (this.Phase == ActionPhase.ExecAnimation)
+            else if (this.Phase == ActionPhase.ExecAnimation)
             {
                 ExecAnimationDamage();
                 if (this.currentPrefabObject != null)
@@ -1229,75 +1217,73 @@ namespace ObsidianPortal
                     ExecExplosion(this.CurrentUnit, this.CurrentTarget);
                 }
                 JudgeUnitDead();
-                this.Phase = ActionPhase.End;
+                this.Phase = ActionPhase.SelectFirst;
             }
             // 終了
             else if (this.Phase == ActionPhase.End)
             {
-                CurrentUnit.Completed();
-                AdjustTime(this.CurrentUnit);
-                JudgeGameEnd();
-                this.currentCommand = String.Empty;
-                this.currentDirection = FIX.Direction.None;
-                this.currentDistance = 0;
-                this.CurrentUnit = null;
-                this.CurrentTarget = null;
-                this.shadowPosition = this.OwnerUnit.transform.localPosition;
-                this.Phase = ActionPhase.WaitActive;
+                UnitEnd();
             }
+            #endregion
             #endregion
         }
 
+        private void UnitEnd()
+        {
+            if (CurrentUnit != null)
+            {
+                CurrentUnit.Completed();
+                AdjustTime(this.CurrentUnit);
+            }
+            JudgeGameEnd();
+            this.groupAP.SetActive(false);
+            this.currentCommand = String.Empty;
+            this.currentDirection = FIX.Direction.None;
+            this.currentDistance = 0;
+            this.CurrentUnit = null;
+            this.CurrentTarget = null;
+            this.Phase = ActionPhase.WaitActive;
+        }
+
         #region "Canvasイベント"
-        public void tapCommand1()
+        public void TapAction()
         {
-            groupCommand.SetActive(false);
+            groupAction.SetActive(true);
         }
-        public void tapCommand2()
+        public void TapMove()
         {
-            groupCommand.SetActive(false);
+            OpenMoveable(this.CurrentUnit);
+            this.Phase = ActionPhase.SelectMove;
         }
-        public void tapCommand3()
+        public void TapCancel()
         {
-            groupCommand.SetActive(false);
+            ExecCancel(CurrentUnit);
         }
+        public void TapEnd()
+        {
+            this.Phase = ActionPhase.End;
+        }
+
         public void tapCommand(int number)
         {
             Debug.Log("tapCommand: " + number.ToString());
-        }
-
-        public void tapMoveTop()
-        {
-        }
-        public void tapMoveLeftUp()
-        {
-        }
-        public void tapMoveLeftDown()
-        {
-        }
-        public void tapMoveRightUp()
-        {
-        }
-        public void tapMoveRightDown()
-        {
-        }
-        public void tapMoveBottom()
-        {
-        }
-        public void tapSelect()
-        {
-        }
-        public void tapCancel()
-        {
-        }
-        public void tapActionCommand()
-        {
-        }
-        public void tapAttack()
-        {
-        }
-        public void tapBattleStart()
-        {
+            if (number == 0)
+            {
+                OpenMoveable(this.CurrentUnit);
+                this.Phase = ActionPhase.SelectMove;
+            }
+            else if (number == 1)
+            {
+                currentCommand = FIX.NORMAL_ATTACK;
+                OpenAttackable(this.CurrentUnit, CurrentUnit.AttackRange, false);
+                this.Phase = ActionPhase.SelectTarget;
+            }
+            else if (number == 2)
+            {
+                currentCommand = FIX.DASH;
+                OpenAttackable(this.CurrentUnit, ActionCommand.EffectValue(FIX.DASH), true);
+                this.Phase = ActionPhase.SelectTarget;
+            }
         }
         #endregion
 
@@ -1371,8 +1357,7 @@ namespace ObsidianPortal
         {
             UnitImage.sprite = Resources.Load<Sprite>("Unit_" + unit.Type.ToString());
         }
-
-
+        
         private string nowAnimationString = String.Empty;
         private GameObject currentDamageObject = null;
         private int nowAnimationCounter = 0;
@@ -1491,9 +1476,6 @@ namespace ObsidianPortal
 
             // イベント発生
             //SearchSomeEvents();
-
-            // ターゲットの位置を記憶
-            this.shadowPosition = this.OwnerUnit.transform.position;
 
             this.MovementInterval = MOVE_INTERVAL;
         }

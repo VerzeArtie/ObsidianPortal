@@ -192,6 +192,13 @@ namespace ObsidianPortal
             groupCreateCharacter.SetActive(false);
             groupStage.SetActive(true);
         }
+        public void TapTavern()
+        {
+            groupMainMenu.SetActive(true);
+            groupCreateCharacter.SetActive(false);
+            groupStage.SetActive(false);
+
+        }
 
         public void TapArea(int number)
         {

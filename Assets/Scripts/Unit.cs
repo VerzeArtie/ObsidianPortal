@@ -57,6 +57,18 @@ namespace ObsidianPortal
         public RaceType Race = RaceType.Human; // ユニット属性
         public UnitType Type = UnitType.None; // ユニットタイプ
         public Ally ally = Ally.Ally; // 陣営タイプ
+        public int MaxAP = 10;
+        private int currentAP = 3; // 現在のアクションポイント
+        public int CurrentAP
+        {
+            get { return currentAP; }
+            set
+            {
+                if (value > this.MaxAP) { value = this.MaxAP; }
+                if (value <= 0) { value = 0; }
+                currentAP = value;
+            }
+        }
         private int currentLife;
         public int CurrentLife // 現在ライフ
         {
@@ -98,6 +110,7 @@ namespace ObsidianPortal
 
         // Gauge
         public GameObject LifeGauge;
+        public List<GameObject> objAP = new List<GameObject>(10);
 
         /// <summary>
         /// 倒された時の経験値取得

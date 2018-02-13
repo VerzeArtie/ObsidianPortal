@@ -35,6 +35,34 @@ namespace ObsidianPortal
             }
         }
 
+        /// <summary>
+        /// 対象ユニットのAPを表示します。
+        /// </summary>
+        /// <param name="unit"></param>
+        private void UpdateUnitAP(Unit unit)
+        {
+            if (unit == null)
+            {
+                for (int ii = 0; ii < ActionPoint.Count; ii++)
+                {
+                    ActionPoint[ii].sprite = Resources.Load<Sprite>("ActionPoint_use");
+                }
+                return;
+            }
+
+            for (int ii = 0; ii < ActionPoint.Count; ii++)
+            {
+                if (ii < unit.CurrentAP)
+                {
+                    ActionPoint[ii].sprite = Resources.Load<Sprite>("ActionPoint");
+                }
+                else
+                {
+                    ActionPoint[ii].sprite = Resources.Load<Sprite>("ActionPoint_use");
+                }
+            }
+        }
+
         // 各キャラクターが死亡をチェックし、ユニットリスト操作を行います。
         private void JudgeUnitDead()
         {
@@ -86,13 +114,10 @@ namespace ObsidianPortal
         private void ExecCancel(Unit unit)
         {
             this.Phase = ActionPhase.SelectFirst;
-            this.groupCommand.SetActive(false);
             ClearQuadTile();
             ClearAttackTile();
             ClearHealTile();
             ClearAllyEffectTile();
-            unit.transform.localPosition = this.shadowPosition;
-            //this.shadowPosition = new Vector3();
         }
 
         /// <summary>
@@ -286,8 +311,6 @@ namespace ObsidianPortal
                 SearchMoveableLinear(ref result, src.transform.localPosition, range, 1, src.ally, false);
                 SearchMoveableLinear(ref result, src.transform.localPosition, range, 2, src.ally, false);
                 SearchMoveableLinear(ref result, src.transform.localPosition, range, 3, src.ally, false);
-                SearchMoveableLinear(ref result, src.transform.localPosition, range, 4, src.ally, false);
-                SearchMoveableLinear(ref result, src.transform.localPosition, range, 5, src.ally, false);
             }
             else
             {
@@ -338,6 +361,10 @@ namespace ObsidianPortal
                 current.transform.Rotate(new Vector3(0, 0, 0));
                 current.gameObject.SetActive(true);
                 MoveTile.Add(current);
+            }
+            for (int ii = 0; ii < MoveTile.Count; ii++)
+            {
+                Debug.Log(MoveTile[ii].transform.localPosition.ToString());
             }
         }
 
@@ -791,19 +818,18 @@ namespace ObsidianPortal
                 AddCheckPointLinear(ref result, p, max, -HEX_MOVE_X, 0, direction, ally, ristriction);
                 return;
             }
-
             if (direction == 1)
             {
-                AddCheckPointLinear(ref result, p, max, -HEX_MOVE_X, HEX_MOVE_Z, direction, ally, ristriction);
+                AddCheckPointLinear(ref result, p, max, 0, -HEX_MOVE_Z, direction, ally, ristriction);
                 return;
             }
             if (direction == 2)
             {
-                AddCheckPointLinear(ref result, p, max, HEX_MOVE_X, HEX_MOVE_Z, direction, ally, ristriction);
+                AddCheckPointLinear(ref result, p, max, 0, HEX_MOVE_Z, direction, ally, ristriction);
                 return;
 
             }
-            if (direction == 5)
+            if (direction == 3)
             {
                 AddCheckPointLinear(ref result, p, max, HEX_MOVE_X, 0, direction, ally, ristriction);
                 return;

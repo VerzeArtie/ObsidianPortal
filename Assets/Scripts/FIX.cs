@@ -87,10 +87,18 @@ namespace ObsidianPortal
         public const string EXPLOSION = "エクスプロージョン";
         public const string NONE = "";
 
+        // コマンド名称
+        public const string SHADOWINJURY = "Shadow Injury";
+        public const string FIREBOLT = "File Bolt";
+        public const string GALE_WIND = "ゲイル・ウィンド";
+
+
+        // シーン名
         public const string SCENE_MAINMENU = "MainMenu";
         public const string SCENE_STAGESELECT = "StageSelect";
         public const string SCENE_BATTLEFIELD = "BattleField";
         public const string SCENE_GAMERESULT = "GameResult";
+        public const string SCENE_SINGLEPLAYMENU = "SinglePlayMenu";
 
         public enum PortalArea
         {
