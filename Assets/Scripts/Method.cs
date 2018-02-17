@@ -192,5 +192,120 @@ namespace ObsidianPortal
             }
         }
 
+
+        public static void UpdateItemImage(Item item, Image src)
+        {
+            Texture2D current = Resources.Load<Texture2D>("ItemIcon");
+            int BASE_SIZE = 49;
+            int locX = 0;
+            int locY = 0;
+            if ((item.Type == Item.ItemType.Weapon_Heavy) ||
+                (item.Type == Item.ItemType.Weapon_Middle))
+            {
+                locX = 0; locY = 2;
+            }
+            else if (item.Type == Item.ItemType.Weapon_TwoHand)
+            {
+                locX = 1; locY = 2;
+            }
+            else if (item.Type == Item.ItemType.Weapon_Light)
+            {
+                locX = 2; locY = 2;
+            }
+            else if (item.Type == Item.ItemType.Weapon_Rod)
+            {
+                locX = 3; locY = 2;
+            }
+            else if (item.Type == Item.ItemType.Shield)
+            {
+                locX = 0; locY = 1;
+            }
+            else if ((item.Type == Item.ItemType.Armor_Heavy) ||
+                        (item.Type == Item.ItemType.Armor_Middle))
+            {
+                locX = 1; locY = 1;
+            }
+            else if ((item.Type == Item.ItemType.Armor_Light))
+            {
+                locX = 2; locY = 1;
+            }
+            //else if ((backpackData[currentNumber].Type == Item.ItemType.Robe))
+            //{
+            //    locX = 3; locY = 1;
+            //}
+            else if ((item.Type == Item.ItemType.Material_Equip) ||
+                        (item.Type == Item.ItemType.Material_Food) ||
+                        (item.Type == Item.ItemType.Material_Potion))
+            {
+                locX = 0; locY = 0;
+            }
+            else if (item.Type == Item.ItemType.Use_Potion)
+            {
+                locX = 1; locY = 0;
+            }
+            else if (item.Type == Item.ItemType.Useless)
+            {
+                locX = 2; locY = 0;
+            }
+            else if (item.Type == Item.ItemType.Accessory)
+            {
+                locX = 0; locY = 3;
+            }
+            else if (item.Type == Item.ItemType.Use_BlueOrb)
+            {
+                locX = 1; locY = 3;
+            }
+            else if (item.Type == Item.ItemType.Use_Item)
+            {
+                locX = 2; locY = 3;
+            }
+            else
+            {
+                locX = 2; locY = 0; // same Useless
+            }
+            Debug.Log("Item Type: " + item.Type.ToString() + " " + locX.ToString() + " " + locY.ToString());
+            src.sprite = Sprite.Create(current, new Rect(BASE_SIZE * locX, BASE_SIZE * locY, BASE_SIZE, BASE_SIZE), new Vector2(0, 0));
+        }
+
+
+        // panel(gameobject)の色をレアに応じて変更
+        public static void UpdateRareColor(Item item, Text target1, GameObject target2, Text target3)
+        {
+            if (item == null)
+            {
+                if (target1 != null) { target1.color = Color.white; }
+                if (target2 != null) { target2.gameObject.GetComponent<Image>().color = Color.white; }
+                return;
+            }
+
+            switch (item.Rare)
+            {
+                case Item.RareLevel.Poor:
+                    target1.color = Color.white;
+                    target2.gameObject.GetComponent<Image>().color = Color.gray;
+                    if (target3 != null) { target3.color = Color.white; }
+                    break;
+                case Item.RareLevel.Common:
+                    target1.color = Color.black;
+                    target2.gameObject.GetComponent<Image>().color = UnityColor.CommonGreen;
+                    if (target3 != null) { target3.color = Color.black; }
+                    break;
+                case Item.RareLevel.Rare:
+                    target1.color = Color.white;
+                    target2.gameObject.GetComponent<Image>().color = UnityColor.DarkBlue;
+                    if (target3 != null) { target3.color = Color.white; }
+                    break;
+                case Item.RareLevel.Epic:
+                    target1.color = Color.white;
+                    target2.gameObject.GetComponent<Image>().color = UnityColor.EpicPurple;
+                    if (target3 != null) { target3.color = Color.white; }
+                    break;
+                case Item.RareLevel.Legendary: // 後編追加
+                    target1.color = Color.white;
+                    target2.gameObject.GetComponent<Image>().color = UnityColor.OrangeRed;
+                    if (target3 != null) { target3.color = Color.white; }
+                    break;
+            }
+        }
     }
 }

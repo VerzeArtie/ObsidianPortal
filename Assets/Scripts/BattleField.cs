@@ -349,6 +349,15 @@ namespace ObsidianPortal
         }
 
         private int AutoClose = 300;
+        private Vector3 dstView = new Vector3();
+        private int CameraMove = 0;
+        private int MAX_CAMERAMOVE = 10;
+
+        private bool isDoubleTapStart; //タップ認識中のフラグ
+        private bool isDoubleTapChatter; // ダブルタップ認識フェーズ中間フラグ
+        private float doubleTapTime; //タップ開始からの累積時間
+        private float dragTime; // タップ開始からドラッグしているまでの判定タイム
+            
         new void Update()
         {
             base.Update();
@@ -373,6 +382,26 @@ namespace ObsidianPortal
             }
             #endregion
 
+            if (CameraMove > 0)
+            {
+                float speed = 0.0f;
+                if (CameraMove >= MAX_CAMERAMOVE-2)
+                {
+                    speed = 2.0f / 10.0f;
+                }
+                else if (CameraMove >= MAX_CAMERAMOVE - 5)
+                {
+                    speed = 1.0f / 10.0f;
+                }
+                else
+                {
+                    speed = 0.25f / 10.0f;
+                }
+                CameraView.transform.localPosition = new Vector3(CameraView.transform.localPosition.x + dstView.x * speed,
+                                                                CameraView.transform.localPosition.y + dstView.y * speed,
+                                                                CameraView.transform.localPosition.z);
+                CameraMove--;
+            }
             // カーソル移動
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -383,11 +412,78 @@ namespace ObsidianPortal
                 Cursor.transform.localPosition = new Vector3(obj.transform.localPosition.x,
                                                              obj.transform.localPosition.y,
                                                              Cursor.transform.localPosition.z);
-                Unit loc = ExistUnitFromLocation(Cursor.transform.localPosition);
-                if (loc != null)
+
+                // double tap
+                if (isDoubleTapStart == false)
                 {
-                    UpdateUnitStatus(loc);
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        isDoubleTapStart = true;
+                        Unit loc = ExistUnitFromLocation(Cursor.transform.localPosition);
+                        if (loc != null)
+                        {
+                            UpdateUnitStatus(loc);
+                        }
+
+                        Vector3 diff = Cursor.transform.localPosition - CameraView.transform.localPosition;
+                        Debug.Log("diff: " + diff.ToString());
+                        this.dstView = diff;
+                    }
                 }
+                else
+                {
+                    Debug.Log("GetMouseButton(0) " + Input.GetMouseButton(0).ToString());
+                    Debug.Log("GetMouseButtonUp(0) " + Input.GetMouseButtonUp(0).ToString());
+                    Debug.Log("isDoubleTapChatter " + isDoubleTapChatter.ToString());
+
+                    if (Input.GetMouseButton(0) == true && Input.GetMouseButtonUp(0) == false && isDoubleTapChatter == false)
+                    {
+                    }
+                    else
+                    {
+                        Debug.Log("isDoubleTapChatter ON");
+                        isDoubleTapChatter = true;
+                        doubleTapTime += Time.deltaTime;
+                        if (doubleTapTime < 0.2f)
+                        {
+                            if (Input.GetMouseButtonDown(0))
+                            {
+                                Debug.Log("Detect doubletap ON");
+                                isDoubleTapStart = false;
+                                CameraMove = MAX_CAMERAMOVE;
+                                doubleTapTime = 0.0f;
+                                dragTime = 0.0f;
+                                isDoubleTapChatter = false;
+                            }
+                        }
+                        else
+                        {
+                            Debug.Log("Detect reset");
+                            // reset
+                            isDoubleTapStart = false;
+                            doubleTapTime = 0.0f;
+                            dragTime = 0.0f;
+                            this.dstView = new Vector3();
+                            CameraMove = 0;
+                            isDoubleTapChatter = false;
+                        }
+                    }
+                }
+            }
+
+            if (Input.GetMouseButton(0) == true && Input.GetMouseButtonUp(0) == false && isDoubleTapChatter == false)
+            {
+                dragTime += Time.deltaTime;
+                if (dragTime > 0.2f)
+                {
+                    Debug.Log("Drag mode enter");
+                    // drag mode
+                    CameraView.transform.localPosition = new Vector3(CameraView.transform.localPosition.x + dstView.x * 0.05f,
+                                            CameraView.transform.localPosition.y + dstView.y * 0.05f,
+                                            CameraView.transform.localPosition.z);
+                    dstView = Cursor.transform.localPosition - CameraView.transform.localPosition;
+                }
+
             }
 
             #region "カーソルとキー操作"

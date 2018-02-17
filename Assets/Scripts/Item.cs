@@ -1190,6 +1190,7 @@ namespace ObsidianPortal
 
                 // 武器：Common
                 case FIX.COMMON_FINE_SWORD: // １階：エリア１：ランダムドロップ
+                    Debug.Log("Detect Item: FIne_Sword");
                     description = "そつなく使える剣。物理攻撃５～８";
                     PhysicalAttackMinValue = 5;
                     PhysicalAttackMaxValue = 8;
@@ -7876,7 +7877,7 @@ namespace ObsidianPortal
 
         protected void AdditionalDescription(ItemType s_type)
         {
-            //this.type = s_type;
+            this.type = s_type;
             //if (s_type == ItemType.Material_Equip)
             //{
             //    this.description = this.description.Insert(0, FIX.DESCRIPTION_EQUIP_MATERIAL);

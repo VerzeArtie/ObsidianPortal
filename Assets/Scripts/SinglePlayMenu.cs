@@ -19,6 +19,7 @@ namespace ObsidianPortal
         public Text txtPlayerName;
         public Text txtPlayerLevel;
         public Text txtCoin;
+        public Text txtSoul;
         public Text txtExp;
 
         // Character View
@@ -36,6 +37,16 @@ namespace ObsidianPortal
         public Text C1Armor;
         public Text C1Accessory1;
         public Text C1Accessory2;
+        public Image C1ImgMainWeapon;
+        public Image C1ImgSubWeapon;
+        public Image C1ImgArmor;
+        public Image C1ImgAccessory1;
+        public Image C1ImgAccessory2;
+        public GameObject C1BackMainWeapon;
+        public GameObject C1BackSubWeapon;
+        public GameObject C1BackArmor;
+        public GameObject C1BackAccessory1;
+        public GameObject C1BackAccessory2;            
 
         public Text C2Name;
         public Text C2Level;
@@ -140,9 +151,12 @@ namespace ObsidianPortal
         {
             base.Start();
 
-            //SetupCharacter(GroundOne.MC, C1Name, C1Level, C1Life, C1Strength, C1Agility, C1Intelligence, C1Stamina, C1Mind, C1MainWeapon, C1SubWeapon, C1Armor, C1Accessory1, C1Accessory2);
-            //SetupCharacter(GroundOne.SC, C2Name, C2Level, C2Life, C2Strength, C2Agility, C2Intelligence, C2Stamina, C2Mind, C2MainWeapon, C2SubWeapon, C2Armor, C2Accessory1, C2Accessory2);
-            //SetupCharacter(GroundOne.TC, C3Name, C3Level, C3Life, C3Strength, C3Agility, C3Intelligence, C3Stamina, C3Mind, C3MainWeapon, C3SubWeapon, C3Armor, C3Accessory1, C3Accessory2);
+            SetupCharacter(ONE.P1, C1Name, C1Level, C1Life, C1Strength, C1Agility, C1Intelligence, C1Stamina, C1Mind, C1MainWeapon, C1SubWeapon, C1Armor, C1Accessory1, C1Accessory2);
+            //SetupCharacter(ONE.P2, C2Name, C2Level, C2Life, C2Strength, C2Agility, C2Intelligence, C2Stamina, C2Mind, C2MainWeapon, C2SubWeapon, C2Armor, C2Accessory1, C2Accessory2);
+            //SetupCharacter(ONE.P3, C3Name, C3Level, C3Life, C3Strength, C3Agility, C3Intelligence, C3Stamina, C3Mind, C3MainWeapon, C3SubWeapon, C3Armor, C3Accessory1, C3Accessory2);
+
+            txtCoin.text = ONE.P1.Gold.ToString();
+            txtSoul.text = ONE.P1.ObsidianStone.ToString();
 
             CurrentAttributePoint[0] = ONE.P1.BaseStrength;
             CurrentAttributePoint[1] = ONE.P1.BaseAgility;
@@ -172,17 +186,42 @@ namespace ObsidianPortal
             txtLevel.text = "LEVEL  " + Player.Level.ToString();
             txtLife.text = Player.MaxLife.ToString();
 
-            //txtStrength.text = Player.Strength.ToString();
-            //txtAgility.text = Player.Agility.ToString();
-            //txtIntelligence.text = Player.Intelligence.ToString();
-            //txtStamina.text = Player.Stamina.ToString();
-            //txtMind.text = Player.Mind.ToString();
+            txtStrength.text = Player.TotalStrength.ToString();
+            txtAgility.text = Player.TotalAgility.ToString();
+            txtIntelligence.text = Player.TotalIntelligence.ToString();
+            txtStamina.text = Player.TotalStamina.ToString();
+            txtMind.text = Player.TotalMind.ToString();
 
-            if (Player.MainWeapon != null) { txtMainWeapon.text = Player.MainWeapon.Name; }
-            if (Player.SubWeapon != null) { txtSubWeapon.text = Player.SubWeapon.Name; }
-            if (Player.MainArmor != null) { txtArmor.text = Player.MainArmor.Name; }
-            if (Player.Accessory != null) { txtAccessory1.text = Player.Accessory.Name; }
-            if (Player.Accessory2 != null) { txtAccessory2.text = Player.Accessory2.Name; }
+            if (Player.MainWeapon != null) 
+            {
+                txtMainWeapon.text = Player.MainWeapon.Name;
+                Method.UpdateItemImage(Player.MainWeapon, C1ImgMainWeapon);
+                Method.UpdateRareColor(Player.MainWeapon, txtMainWeapon, C1BackMainWeapon, null);
+            }
+            if (Player.SubWeapon != null) 
+            {
+                txtSubWeapon.text = Player.SubWeapon.Name;
+                Method.UpdateItemImage(Player.SubWeapon, C1ImgSubWeapon);
+                Method.UpdateRareColor(Player.SubWeapon, txtSubWeapon, C1BackSubWeapon, null);
+            }
+            if (Player.MainArmor != null)
+            {
+                txtArmor.text = Player.MainArmor.Name;
+                Method.UpdateItemImage(Player.MainArmor, C1ImgArmor);
+                Method.UpdateRareColor(Player.MainArmor, txtArmor, C1BackArmor, null);
+            }
+            if (Player.Accessory != null)
+            {
+                txtAccessory1.text = Player.Accessory.Name;
+                Method.UpdateItemImage(Player.Accessory, C1ImgAccessory1);
+                Method.UpdateRareColor(Player.Accessory, txtAccessory1, C1BackAccessory1, null);
+            }
+            if (Player.Accessory2 != null)
+            {
+                txtAccessory2.text = Player.Accessory2.Name;
+                Method.UpdateItemImage(Player.Accessory2, C1ImgAccessory2);
+                Method.UpdateRareColor(Player.Accessory2, txtAccessory2, C1BackAccessory2, null);
+            }
         }
 
         public void TapStage()
@@ -664,6 +703,10 @@ namespace ObsidianPortal
             ONE.P1.Ability_17 = CurrentSkillPoint[11];
             groupCreateCharacter.SetActive(false);
             groupMainMenu.SetActive(true);
+        }
+
+        public void TapCharacterDetail()
+        {
         }
 
         private void UpdateTotalPoint(Text txtCurrent, Text txtTotal, int[] current, int number)

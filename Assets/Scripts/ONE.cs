@@ -51,6 +51,12 @@ namespace ObsidianPortal
             // デバッグ用データ
             P1.FullName = "Altomo";
             P1.ObsidianStone = 1;
+            P1.Gold = 1000;
+            P1.MainWeapon = new Item(FIX.COMMON_FINE_SWORD);
+            P1.subWeapon = new Item(FIX.COMMON_FINE_SHIELD);
+            P1.MainArmor = new Item(FIX.COMMON_FINE_ARMOR);
+            P1.Accessory = new Item(FIX.COMMON_RED_AMULET);
+            P1.Accessory2 = new Item(FIX.COMMON_BLUE_AMULET);
             //Player.Level = 4;
             //Player.Exp = 65;
             //Player.Race = FIX.Race.Angel;

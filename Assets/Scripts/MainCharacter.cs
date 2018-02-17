@@ -52,6 +52,8 @@ namespace ObsidianPortal
         public Item mainArmor = null;
         public Item accessory = null;
         public Item accessory2 = null;
+        public Item accessory3 = null;
+        public Item stone1 = null;
 
         // Obsidian parameter
         public int ObsidianStone = 1;
@@ -115,6 +117,18 @@ namespace ObsidianPortal
         protected int buffIntelligence_Accessory2 = 0;
         protected int buffStamina_Accessory2 = 0;
         protected int buffMind_Accessory2 = 0;
+
+        protected int buffStrength_Accessory3 = 0;
+        protected int buffAgility_Accessory3 = 0;
+        protected int buffIntelligence_Accessory3 = 0;
+        protected int buffStamina_Accessory3 = 0;
+        protected int buffMind_Accessory3 = 0;
+
+        protected int buffStrength_Stone1 = 0;
+        protected int buffAgility_Stone1 = 0;
+        protected int buffIntelligence_Stone1 = 0;
+        protected int buffStamina_Stone1 = 0;
+        protected int buffMind_Stone1 = 0;      
 
         protected bool dead = false;
         public bool Dead
@@ -248,6 +262,56 @@ namespace ObsidianPortal
                 if (this.CurrentLife > this.MaxLife) this.CurrentLife = this.MaxLife;
             }
         }
+        public Item Accessory3
+        {
+            get { return accessory3; }
+            set
+            {
+                accessory3 = value;
+                if (accessory3 != null)
+                {
+                    this.buffStrength_Accessory3 = accessory3.BuffUpStrength;
+                    this.buffAgility_Accessory3 = accessory3.BuffUpAgility;
+                    this.buffIntelligence_Accessory3 = accessory3.BuffUpIntelligence;
+                    this.buffStamina_Accessory3 = accessory3.BuffUpStamina;
+                    this.buffMind_Accessory3 = accessory3.BuffUpMind;
+                }
+                else
+                {
+                    this.buffStrength_Accessory3 = 0;
+                    this.buffAgility_Accessory3 = 0;
+                    this.buffIntelligence_Accessory3 = 0;
+                    this.buffStamina_Accessory3 = 0;
+                    this.buffMind_Accessory3 = 0;
+                }
+                if (this.CurrentLife > this.MaxLife) this.CurrentLife = this.MaxLife;
+            }
+        }
+
+        public Item Stone
+        {
+            get { return stone1; }
+            set
+            {
+                stone1 = value;
+                if (stone1 != null)
+                {
+                    this.buffStrength_Stone1 = stone1.BuffUpStrength;
+                    this.buffAgility_Stone1 = stone1.BuffUpAgility;
+                    this.buffIntelligence_Stone1 = stone1.BuffUpIntelligence;
+                    this.buffStamina_Stone1 = stone1.BuffUpStamina;
+                    this.buffMind_Stone1 = stone1.BuffUpMind;
+                }
+                else
+                {
+                    this.buffStrength_Stone1 = 0;
+                    this.buffAgility_Stone1 = 0;
+                    this.buffIntelligence_Stone1 = 0;
+                    this.buffStamina_Stone1 = 0;
+                    this.buffMind_Stone1 = 0;
+                }
+            }
+        }
 
         // GUI
         public Text labelFullName = null;
@@ -264,7 +328,9 @@ namespace ObsidianPortal
                     this.buffStrength_SubWeapon +
                     this.buffStrength_Armor + 
                     this.buffStrength_Accessory +
-                    this.buffStrength_Accessory2;
+                    this.buffStrength_Accessory2 +
+                    this.buffStrength_Accessory3 +
+                    this.buffStrength_Stone1;
             }
         }
         public int TotalAgility
@@ -276,7 +342,9 @@ namespace ObsidianPortal
                     this.buffAgility_SubWeapon +
                     this.buffAgility_Armor +
                     this.buffAgility_Accessory +
-                    this.buffAgility_Accessory2;
+                    this.buffAgility_Accessory2 +
+                    this.buffAgility_Accessory3 +
+                    this.buffAgility_Stone1;
             }
         }
         public int TotalIntelligence
@@ -288,7 +356,9 @@ namespace ObsidianPortal
                   this.buffIntelligence_SubWeapon +
                   this.buffIntelligence_Armor +
                   this.buffIntelligence_Accessory +
-                  this.buffIntelligence_Accessory2;
+                  this.buffIntelligence_Accessory2 +
+                  this.buffIntelligence_Accessory3 +
+                  this.buffIntelligence_Stone1;
             }
         }
         public int TotalStamina
@@ -300,7 +370,9 @@ namespace ObsidianPortal
                    this.buffStamina_SubWeapon +
                    this.buffStamina_Armor +
                    this.buffStamina_Accessory +
-                   this.buffStamina_Accessory2;
+                   this.buffStamina_Accessory2 +
+                   this.buffStamina_Accessory3 +
+                   this.buffStamina_Stone1;
             }
         }
         public int TotalMind
@@ -312,7 +384,9 @@ namespace ObsidianPortal
                     this.buffMind_SubWeapon +
                     this.buffMind_Armor +
                     this.buffMind_Accessory +
-                    this.buffMind_Accessory2;
+                    this.buffMind_Accessory2 +
+                    this.buffMind_Accessory3 +
+                    this.buffMind_Stone1;
             }
         }
 
