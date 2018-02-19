@@ -289,7 +289,7 @@ namespace ObsidianPortal
             SearchMoveablePoint(ref result, src.transform.localPosition, src.HealRange, -1, src.ally, false);
             for (int ii = 0; ii < result.Count; ii++)
             {
-                GameObject current = Instantiate(prefab_HealTile, new Vector3(result[ii].x, result[ii].y, -0.01f), Quaternion.identity) as GameObject;
+                GameObject current = Instantiate(prefab_HealTile, new Vector3(result[ii].x, result[ii].y, ExistAreaFromLocation(result[ii]).transform.localPosition.z - 0.51f), Quaternion.identity) as GameObject;
                 current.transform.Rotate(new Vector3(0, 0, 0));
                 current.gameObject.SetActive(true);
                 HealTile.Add(current);
@@ -319,7 +319,7 @@ namespace ObsidianPortal
 
             for (int ii = 0; ii < result.Count; ii++)
             {
-                GameObject current = Instantiate(prefab_AttackTile, new Vector3(result[ii].x, result[ii].y, -0.01f), Quaternion.identity) as GameObject;
+                GameObject current = Instantiate(prefab_AttackTile, new Vector3(result[ii].x, result[ii].y, ExistAreaFromLocation(result[ii]).transform.localPosition.z - 0.51f), Quaternion.identity) as GameObject;
                 current.transform.Rotate(new Vector3(0, 0, 0));
                 current.gameObject.SetActive(true);
                 AttackTile.Add(current);
@@ -338,7 +338,7 @@ namespace ObsidianPortal
             SearchMoveablePoint(ref result, src.transform.localPosition, src.EffectRange, -1, src.ally, false);
             for (int ii = 0; ii < result.Count; ii++)
             {
-                GameObject current = Instantiate(prefab_AllyEffectTile, new Vector3(result[ii].x, result[ii].y, -0.01f), Quaternion.identity) as GameObject;
+                GameObject current = Instantiate(prefab_AllyEffectTile, new Vector3(result[ii].x, result[ii].y, ExistAreaFromLocation(result[ii]).transform.localPosition.z - 0.51f), Quaternion.identity) as GameObject;
                 current.transform.Rotate(new Vector3(0, 0, 0));
                 current.gameObject.SetActive(true);
                 AllyEffectTile.Add(current);
@@ -357,7 +357,7 @@ namespace ObsidianPortal
             SearchMoveablePoint(ref result, src.transform.localPosition, src.MoveValue, -1, src.ally, true);
             for (int ii = 0; ii < result.Count; ii++)
             {
-                GameObject current = Instantiate(prefab_Quad, new Vector3(result[ii].x, result[ii].y, -0.01f), Quaternion.identity) as GameObject;
+                GameObject current = Instantiate(prefab_Quad, new Vector3(result[ii].x, result[ii].y, ExistAreaFromLocation(result[ii]).transform.localPosition.z - 0.51f), Quaternion.identity) as GameObject;
                 current.transform.Rotate(new Vector3(0, 0, 0));
                 current.gameObject.SetActive(true);
                 MoveTile.Add(current);
@@ -683,19 +683,11 @@ namespace ObsidianPortal
             x = x * FIX.HEX_MOVE_X;
             y = y * FIX.HEX_MOVE_Z;
 
-            unit = Instantiate(prefab, new Vector3(x, y, 0.1f), Quaternion.identity) as Unit;
+            unit = Instantiate(prefab, new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f), Quaternion.identity) as Unit;
 
             unit.Initialize(race, type, enemy);
             unit.name = type.ToString() + "_" + number.ToString();
             unit.gameObject.SetActive(true);
-
-            GameObject obj = Instantiate(prefab_LifeGauge, new Vector3(unit.transform.localPosition.x, unit.transform.localPosition.y, unit.transform.localPosition.z - 1), Quaternion.identity) as GameObject;
-            if (obj != null)
-            {
-                unit.LifeGauge = obj;
-                this.LifeGaugeList.Add(obj);
-            }
-
 
             if (enemy)
             {

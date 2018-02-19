@@ -109,7 +109,6 @@ namespace ObsidianPortal
         public int CurrentReachabletargetValue = 0;
 
         // Gauge
-        public GameObject LifeGauge;
         public List<GameObject> objAP = new List<GameObject>(10);
 
         /// <summary>
@@ -223,10 +222,6 @@ namespace ObsidianPortal
             this.Dead = true;
             this.Completed();
             this.GetComponent<MeshRenderer>().material = Resources.Load("Dead") as Material;
-            if (this.LifeGauge != null)
-            {
-                this.LifeGauge.SetActive(false);
-            }
         }
 
         public bool IsAlly

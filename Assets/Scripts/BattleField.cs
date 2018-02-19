@@ -33,14 +33,12 @@ namespace ObsidianPortal
         public GameObject prefab_Treasure;
         public Unit prefab_TreasureOpen;
         public GameObject prefab_Damage;
-        public GameObject prefab_LifeGauge;
         // オブジェクト
         public Camera CameraView;
         private List<Unit> AllList = new List<Unit>();
         private List<Unit> AllyList = new List<Unit>();
         private List<Unit> EnemyList = new List<Unit>();
         private List<GameObject> TreasureList = new List<GameObject>();
-        private List<GameObject> LifeGaugeList = new List<GameObject>();
         private List<AreaInformation> fieldTile = new List<AreaInformation>();
         private List<GameObject> MoveTile = new List<GameObject>();
         private List<GameObject> AttackTile = new List<GameObject>();
@@ -167,7 +165,8 @@ namespace ObsidianPortal
             #region "ステージのセットアップ"
             int column = DAT.COLUMN_1_1;
             int[] tileData = DAT.Tile1_1;
-            if (ONE.CurrentStage == FIX.Stage.Stage1_1) { column = DAT.COLUMN_1_1; tileData = DAT.Tile1_1; }
+            int[] tileH = DAT.TileH1_1;
+            if (ONE.CurrentStage == FIX.Stage.Stage1_1) { column = DAT.COLUMN_1_1; tileData = DAT.Tile1_1; tileH = DAT.TileH1_1; }
             if (ONE.CurrentStage == FIX.Stage.Stage1_2) { column = DAT.COLUMN_1_2; tileData = DAT.Tile1_2; }
             if (ONE.CurrentStage == FIX.Stage.Stage1_3) { column = DAT.COLUMN_1_3; tileData = DAT.Tile1_3; }
             if (ONE.CurrentStage == FIX.Stage.Stage1_4) { column = DAT.COLUMN_1_4; tileData = DAT.Tile1_4; }
@@ -182,6 +181,7 @@ namespace ObsidianPortal
             {
                 AreaInformation current = this.prefab_Tile;
                 current.field = AreaInformation.Field.Plain;
+                float z = 0;
                 if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.None))
                 {
                     current = this.prefab_NoneTile;
@@ -204,7 +204,7 @@ namespace ObsidianPortal
                 }
 
                 AreaInformation tile;
-                tile = Instantiate(current, new Vector3(HEX_MOVE_X * (ii % column), HEX_MOVE_Z * (ii / column), 0), Quaternion.identity) as AreaInformation;
+                tile = Instantiate(current, new Vector3(HEX_MOVE_X * (ii % column), HEX_MOVE_Z * (ii / column), -0.5f * tileH[ii]), Quaternion.identity) as AreaInformation;
                 tile.transform.Rotate(new Vector3(0, 0, 0));
                 tile.gameObject.SetActive(true);
                 if (tileData[ii] == 0)
@@ -409,9 +409,18 @@ namespace ObsidianPortal
             {
                 GameObject obj = hit.collider.gameObject;
                 // フィールド操作
-                Cursor.transform.localPosition = new Vector3(obj.transform.localPosition.x,
-                                                             obj.transform.localPosition.y,
-                                                             Cursor.transform.localPosition.z);
+                if (obj.layer == 11)
+                {
+                    Cursor.transform.localPosition = new Vector3(obj.transform.localPosition.x,
+                                                                 obj.transform.localPosition.y,
+                                                                 Cursor.transform.localPosition.z);
+                }
+                else
+                {
+                    Cursor.transform.localPosition = new Vector3(obj.transform.localPosition.x,
+                                                                 obj.transform.localPosition.y,
+                                                                 obj.transform.localPosition.z - 0.6f);
+                }
 
                 // double tap
                 if (isDoubleTapStart == false)
@@ -1443,10 +1452,6 @@ namespace ObsidianPortal
             {
                 this.UniteLifeMeter.rectTransform.localScale = new Vector2(dx, 1.0f);
             }
-            if (unit.LifeGauge != null)
-            {
-                unit.LifeGauge.transform.localScale = new Vector3(dx, unit.LifeGauge.transform.localScale.y, unit.LifeGauge.transform.localScale.z);
-            }
         }
 
         private void UpdateUnitImage(Unit unit)
@@ -1580,8 +1585,7 @@ namespace ObsidianPortal
         {
             if (player != null)
             {
-                player.transform.localPosition = new Vector3(x, y, 0.0f);
-                player.LifeGauge.transform.localPosition = new Vector3(x, y - 0.2f, player.LifeGauge.transform.localPosition.z);
+                player.transform.localPosition = new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f);
             }
         }
     }
