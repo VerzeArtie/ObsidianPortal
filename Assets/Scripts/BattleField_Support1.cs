@@ -667,7 +667,7 @@ namespace ObsidianPortal
         /// <param name="type"></param>
         /// <param name="x"></param>
         /// <param name="z"></param>
-        private void SetupUnit(ref List<Unit> list, int number, bool enemy, Unit.RaceType race, Unit.UnitType type, float x, float y)
+        private Unit SetupUnit(int number, bool enemy, Unit.RaceType race, Unit.UnitType type, float x, float y)
         {
             Unit prefab = null;
             Unit unit = null;
@@ -689,15 +689,8 @@ namespace ObsidianPortal
             unit.name = type.ToString() + "_" + number.ToString();
             unit.gameObject.SetActive(true);
 
-            if (enemy)
-            {
-                EnemyList.Add(unit);
-            }
-            else
-            {
-                AllyList.Add(unit);
-            }
             AddUnitWithAdjustTime(unit);
+            return unit;
         }
 
         /// <summary>
@@ -745,8 +738,6 @@ namespace ObsidianPortal
                     break;
                 }
             }
-
-            AllList.Add(unit);
         }
 
         /// <summary>

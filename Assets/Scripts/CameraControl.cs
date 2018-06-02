@@ -51,7 +51,17 @@ namespace ObsidianPortal
                 }
             }
 
+            float rotateR = 0.0f;
+            if (Input.GetKey(KeyCode.E))
+            {
+                rotateR += 1.0f;
+            }
+            if (Input.GetKey(KeyCode.Q))
+            {
+                rotateR -= 1.0f;
+            }
 
+            this.transform.localEulerAngles = new Vector3(this.transform.localEulerAngles.x, this.transform.localEulerAngles.y, this.transform.localEulerAngles.z + rotateR);
             this.transform.localPosition = new Vector3(this.transform.localPosition.x + moveX,
                                                        this.transform.localPosition.y + moveY,
                                                        this.transform.localPosition.z + moveZ);

@@ -111,6 +111,8 @@ namespace ObsidianPortal
         // Gauge
         public List<GameObject> objAP = new List<GameObject>(10);
 
+        public Sprite UnitImage = null;
+
         /// <summary>
         /// “|‚³‚ê‚½Žž‚ÌŒoŒ±’lŽæ“¾
         /// </summary>

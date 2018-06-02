@@ -73,6 +73,7 @@ namespace ObsidianPortal
         public GameObject FocusCursor;
         public GameObject groupAP;
         public List<Image> ActionPoint = new List<Image>();
+        public List<GameObject> OrderList = new List<GameObject>();
         // 定数
         const float HEX_MOVE_X = 1.0f;
         const float HEX_MOVE_Z = 1.0f;
@@ -218,11 +219,24 @@ namespace ObsidianPortal
             {
                 Debug.Log("stage Stage1_1");
                 int counter = 0;
+                Unit current = null;
                 // ユニット配置(味方)
-                SetupUnit(ref AllList, counter, false, Unit.RaceType.Human, Unit.UnitType.Fighter, 2, 2); counter++;
+                current = SetupUnit(counter, false, Unit.RaceType.Human, Unit.UnitType.Fighter, 2, 2); counter++;
+                current.UnitImage = Resources.Load<Sprite>("UnitMark_001");
+                AllyList.Add(current);
+                AllList.Add(current);
+
                 // ユニット配置(敵)
-                SetupUnit(ref EnemyList, counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 11, 7); counter++;
-                //SetupUnit(ref EnemyList, counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 21, 7); counter++;
+                current = SetupUnit(counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 11, 7); counter++;
+                current.UnitImage = Resources.Load<Sprite>("UnitMark_002");
+                EnemyList.Add(current);
+                AllList.Add(current);
+
+                current = SetupUnit(counter, true, Unit.RaceType.Monster, Unit.UnitType.Magician, 21, 7); counter++;
+                current.UnitImage = Resources.Load<Sprite>("UnitMark_003");
+                EnemyList.Add(current);
+                AllList.Add(current);
+
                 //SetupUnit(ref EnemyList, counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 25, 15); counter++;
                 // 宝箱配置
                 SetupItem(ref TreasureList, counter, 11, 10); counter++;
@@ -607,6 +621,18 @@ namespace ObsidianPortal
                 if (activePlayer != null)
                 {
                     Debug.Log("ActivePlayer is " + activePlayer.UnitName);
+                    //AllList.Sort()
+                    //for (int )
+                    TimeComparer comp = new TimeComparer();
+                    AllList.Sort(comp);
+                    Debug.Log("AllList count: " + AllList.Count.ToString());
+                    for (int ii = 0; ii < 12; ii++)
+                    {
+                        int num = ii % AllList.Count;
+                        Debug.Log("num: " + num.ToString());
+                        OrderList[ii].GetComponent<Image>().sprite = AllList[num].UnitImage;
+                    }
+
                     FocusCursor.transform.localPosition = new Vector3(activePlayer.transform.localPosition.x,
                                                                  activePlayer.transform.localPosition.y,
                                                                  FocusCursor.transform.localPosition.z);
@@ -1587,6 +1613,31 @@ namespace ObsidianPortal
             {
                 player.transform.localPosition = new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f);
             }
+        }
+    }
+
+    //並び替える方法を定義するクラス
+    //IComparerインターフェイスを実装する
+    public class TimeComparer : System.Collections.Generic.IComparer<Unit>
+    {
+        //xがyより小さいときはマイナスの数、大きいときはプラスの数、同じときは0を返す
+        public int Compare(Unit x, Unit y)
+        {
+            //nullが最も小さいとする
+            if (x == null && y == null)
+            {
+                return 0;
+            }
+            if (x == null)
+            {
+                return -1;
+            }
+            if (y == null)
+            {
+                return 1;
+            }
+
+            return ((Unit)x).currentTime.CompareTo(((Unit)y).currentTime);
         }
     }
 }
