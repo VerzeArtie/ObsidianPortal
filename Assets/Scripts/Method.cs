@@ -307,5 +307,30 @@ namespace ObsidianPortal
                     break;
             }
         }
+
+        public static void UpdateJobClassImage(FIX.JobClass job, GameObject target)
+        {
+            switch (job)
+            {
+                case FIX.JobClass.Fighter:
+                    target.GetComponent<Image>().sprite = Resources.Load<Sprite>("Unit_Fighter");
+                    break;
+                case FIX.JobClass.Archer:
+                    target.GetComponent<Image>().sprite = Resources.Load<Sprite>("Unit_Archer");
+                    break;
+                case FIX.JobClass.Magician:
+                    target.GetComponent<Image>().sprite = Resources.Load<Sprite>("Unit_Magician");
+                    break;
+                case FIX.JobClass.Armorer:
+                    target.GetComponent<Image>().sprite = Resources.Load<Sprite>("Unit_Shield");
+                    break;
+                case FIX.JobClass.Apprentice:
+                    target.GetComponent<Image>().sprite = Resources.Load<Sprite>("Unit_Enchanter");
+                    break;
+                default:
+                    target.GetComponent<Image>().sprite = null;
+                    break;
+            }
+        }
     }
 }

@@ -23,61 +23,19 @@ namespace ObsidianPortal
         public Text txtExp;
 
         // Character View
-        public Text C1Name;
-        public Text C1Level;
-        public Image C1ClassImage;
-        public Text C1Life;
-        public Text C1Strength;
-        public Text C1Agility;
-        public Text C1Intelligence;
-        public Text C1Stamina;
-        public Text C1Mind;
-        public Text C1MainWeapon;
-        public Text C1SubWeapon;
-        public Text C1Armor;
-        public Text C1Accessory1;
-        public Text C1Accessory2;
-        public Image C1ImgMainWeapon;
-        public Image C1ImgSubWeapon;
-        public Image C1ImgArmor;
-        public Image C1ImgAccessory1;
-        public Image C1ImgAccessory2;
-        public GameObject C1BackMainWeapon;
-        public GameObject C1BackSubWeapon;
-        public GameObject C1BackArmor;
-        public GameObject C1BackAccessory1;
-        public GameObject C1BackAccessory2;            
-
-        public Text C2Name;
-        public Text C2Level;
-        public Image C2ClassImage;
-        public Text C2Life;
-        public Text C2Strength;
-        public Text C2Agility;
-        public Text C2Intelligence;
-        public Text C2Stamina;
-        public Text C2Mind;
-        public Text C2MainWeapon;
-        public Text C2SubWeapon;
-        public Text C2Armor;
-        public Text C2Accessory1;
-        public Text C2Accessory2;
-
-        public Text C3Name;
-        public Text C3Level;
-        public Image C3ClassImage;
-        public Text C3Life;
-        public Text C3Strength;
-        public Text C3Agility;
-        public Text C3Intelligence;
-        public Text C3Stamina;
-        public Text C3Mind;
-        public Text C3MainWeapon;
-        public Text C3SubWeapon;
-        public Text C3Armor;
-        public Text C3Accessory1;
-        public Text C3Accessory2;
-
+        public List<Text> CharaName;
+        public List<Image> CharaClassImage;
+        public List<Text> CharaLevel;
+        public List<Text> CharaLife;
+        public List<Text> CharaStrength;
+        public List<Text> CharaAgility;
+        public List<Text> CharaIntelligence;
+        public List<Text> CharaStamina;
+        public List<Text> CharaMind;
+        public List<Text> CharaMainWeapon;
+        public List<Image> CharaImgMainWeapon;
+        public List<GameObject> CharaBackMainWeapon;
+        
         // Battle-Stage View
         public List<Text> txtEnemyName;
         public List<Text> txtEnemyStrength;
@@ -147,26 +105,83 @@ namespace ObsidianPortal
         private int MaxWeaponPoint = 99;
         private int MaxSkillPoint = 99;
 
+        public GameObject node;
+        public GameObject content;
+
         public override void Start()
         {
             base.Start();
 
-            SetupCharacter(ONE.P1, C1Name, C1Level, C1Life, C1Strength, C1Agility, C1Intelligence, C1Stamina, C1Mind, C1MainWeapon, C1SubWeapon, C1Armor, C1Accessory1, C1Accessory2);
-            //SetupCharacter(ONE.P2, C2Name, C2Level, C2Life, C2Strength, C2Agility, C2Intelligence, C2Stamina, C2Mind, C2MainWeapon, C2SubWeapon, C2Armor, C2Accessory1, C2Accessory2);
-            //SetupCharacter(ONE.P3, C3Name, C3Level, C3Life, C3Strength, C3Agility, C3Intelligence, C3Stamina, C3Mind, C3MainWeapon, C3SubWeapon, C3Armor, C3Accessory1, C3Accessory2);
-
-            txtCoin.text = ONE.P1.Gold.ToString();
-            txtSoul.text = ONE.P1.ObsidianStone.ToString();
-
-            CurrentAttributePoint[0] = ONE.P1.BaseStrength;
-            CurrentAttributePoint[1] = ONE.P1.BaseAgility;
-            CurrentAttributePoint[2] = ONE.P1.BaseIntelligence;
-            CurrentAttributePoint[3] = ONE.P1.BaseStamina;
-            CurrentAttributePoint[4] = ONE.P1.BaseMind;
-            for (int ii = 0; ii < CurrentAttributePoint.Length; ii++)
+            const int HEIGHT = 200;
+            const int MARGIN = 10;
+            RectTransform rect = content.GetComponent<RectTransform>();
+            for (int ii = 0; ii < ONE.Chara.Count; ii++)
             {
-                txtAttributeValue[ii].text = CurrentAttributePoint[ii].ToString();
+                GameObject item = GameObject.Instantiate(node);
+                item.transform.SetParent(content.transform, false);
+                item.transform.localPosition = new Vector3(item.transform.localPosition.x, item.transform.localPosition.y - HEIGHT * ii, item.transform.localPosition.z);
+                item.SetActive(true);
+
+                // 個数に応じて、コンテンツ長さを延長する。
+                rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + HEIGHT);
+                item.GetComponentInChildren<Text>().text = ONE.Chara[ii].FullName;
+                Text[] txtField = item.GetComponentsInChildren<Text>();
+                for (int jj = 0; jj < txtField.Length; jj++)
+                {
+                    Debug.Log("txtfield: " + txtField[jj].name);
+                    if (txtField[jj].name == "CharaName") { txtField[jj].text = ONE.Chara[ii].FullName; }
+                    if (txtField[jj].name == "txtLevel") { txtField[jj].text = ONE.Chara[ii].Level.ToString(); }
+                    if (txtField[jj].name == "txtLife") { txtField[jj].text = ONE.Chara[ii].MaxLife.ToString(); }
+                    if (txtField[jj].name == "txtStrength") { txtField[jj].text = ONE.Chara[ii].TotalStrength.ToString(); }
+                    if (txtField[jj].name == "txtAgility") { txtField[jj].text = ONE.Chara[ii].TotalAgility.ToString(); }
+                    if (txtField[jj].name == "txtIntelligence") { txtField[jj].text = ONE.Chara[ii].TotalIntelligence.ToString(); }
+                    if (txtField[jj].name == "txtStamina") { txtField[jj].text = ONE.Chara[ii].TotalStamina.ToString(); }
+                    if (txtField[jj].name == "txtMind") { txtField[jj].text = ONE.Chara[ii].TotalMind.ToString(); }
+                    if (txtField[jj].name == "txtMainWeapon")
+                    {
+                        if (ONE.Chara[ii].MainWeapon != null)
+                        {
+                            txtField[jj].text = ONE.Chara[ii].MainWeapon.Name;
+                            GameObject parent = txtField[jj].GetComponentInParent<Image>().gameObject;
+                            Image[] imgIcon = parent.GetComponentsInChildren<Image>();
+                            for (int kk = 0; kk < imgIcon.Length; kk++)
+                            {
+                                if (imgIcon[kk].name == "imgMainWeapon")
+                                {
+                                    Method.UpdateItemImage(ONE.Chara[ii].MainWeapon, imgIcon[kk]);
+                                    break;
+                                }
+                            }
+                            Method.UpdateRareColor(ONE.Chara[ii].MainWeapon, txtField[jj], parent, null);
+                        }
+                    }
+                }
+                Image[] imgField = item.GetComponentsInChildren<Image>();
+                for (int jj = 0; jj < imgField.Length; jj++)
+                {
+                    if (imgField[jj].name == "CharaClass")
+                    {
+                        Method.UpdateJobClassImage(ONE.Chara[ii].Job, imgField[jj].gameObject);
+                        break;
+                    }
+                }
             }
+            // 最後に余白を追加しておく。
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + MARGIN);
+
+
+            txtCoin.text = ONE.Chara[0].Gold.ToString();
+            txtSoul.text = ONE.Chara[0].ObsidianStone.ToString();
+
+            //CurrentAttributePoint[0] = ONE.P1.BaseStrength;
+            //CurrentAttributePoint[1] = ONE.P1.BaseAgility;
+            //CurrentAttributePoint[2] = ONE.P1.BaseIntelligence;
+            //CurrentAttributePoint[3] = ONE.P1.BaseStamina;
+            //CurrentAttributePoint[4] = ONE.P1.BaseMind;
+            //for (int ii = 0; ii < CurrentAttributePoint.Length; ii++)
+            //{
+            //    txtAttributeValue[ii].text = CurrentAttributePoint[ii].ToString();
+            //}
 
             CurrentAbility = MaxAbility;
             txtAvailableAbility.text = "Available Ability Points: " + CurrentAbility.ToString();
@@ -177,53 +192,7 @@ namespace ObsidianPortal
 
             TapArea(1);
         }
-
-        private void SetupCharacter(MainCharacter Player, Text txtName, Text txtLevel, Text txtLife, 
-            Text txtStrength, Text txtAgility, Text txtIntelligence, Text txtStamina, Text txtMind,
-            Text txtMainWeapon, Text txtSubWeapon, Text txtArmor, Text txtAccessory1, Text txtAccessory2)
-        {
-            txtName.text = Player.FullName;
-            txtLevel.text = "LEVEL  " + Player.Level.ToString();
-            txtLife.text = Player.MaxLife.ToString();
-
-            txtStrength.text = Player.TotalStrength.ToString();
-            txtAgility.text = Player.TotalAgility.ToString();
-            txtIntelligence.text = Player.TotalIntelligence.ToString();
-            txtStamina.text = Player.TotalStamina.ToString();
-            txtMind.text = Player.TotalMind.ToString();
-
-            if (Player.MainWeapon != null) 
-            {
-                txtMainWeapon.text = Player.MainWeapon.Name;
-                Method.UpdateItemImage(Player.MainWeapon, C1ImgMainWeapon);
-                Method.UpdateRareColor(Player.MainWeapon, txtMainWeapon, C1BackMainWeapon, null);
-            }
-            if (Player.SubWeapon != null) 
-            {
-                txtSubWeapon.text = Player.SubWeapon.Name;
-                Method.UpdateItemImage(Player.SubWeapon, C1ImgSubWeapon);
-                Method.UpdateRareColor(Player.SubWeapon, txtSubWeapon, C1BackSubWeapon, null);
-            }
-            if (Player.MainArmor != null)
-            {
-                txtArmor.text = Player.MainArmor.Name;
-                Method.UpdateItemImage(Player.MainArmor, C1ImgArmor);
-                Method.UpdateRareColor(Player.MainArmor, txtArmor, C1BackArmor, null);
-            }
-            if (Player.Accessory != null)
-            {
-                txtAccessory1.text = Player.Accessory.Name;
-                Method.UpdateItemImage(Player.Accessory, C1ImgAccessory1);
-                Method.UpdateRareColor(Player.Accessory, txtAccessory1, C1BackAccessory1, null);
-            }
-            if (Player.Accessory2 != null)
-            {
-                txtAccessory2.text = Player.Accessory2.Name;
-                Method.UpdateItemImage(Player.Accessory2, C1ImgAccessory2);
-                Method.UpdateRareColor(Player.Accessory2, txtAccessory2, C1BackAccessory2, null);
-            }
-        }
-
+        
         public void TapStage()
         {
             Debug.Log("TapStage");
@@ -675,32 +644,32 @@ namespace ObsidianPortal
 
         public void TapAccept()
         {
-            ONE.P1.FullName = txtName.text;
-            ONE.P1.Gender = txtGender.text;
-            ONE.P1.Personality = txtPersonality.text;
-            ONE.P1.MainColor = txtMainColor.text;
-            ONE.P1.BaseStrength = CurrentAttributePoint[0];
-            ONE.P1.BaseAgility = CurrentAttributePoint[1];
-            ONE.P1.BaseIntelligence = CurrentAttributePoint[2];
-            ONE.P1.BaseStamina = CurrentAttributePoint[3];
-            ONE.P1.BaseMind = CurrentAttributePoint[4];
-            ONE.P1.Ability_01 = CurrentWeaponPoint[0];
-            ONE.P1.Ability_02 = CurrentWeaponPoint[1];
-            ONE.P1.Ability_03 = CurrentWeaponPoint[2];
-            ONE.P1.Ability_04 = CurrentWeaponPoint[3];
-            ONE.P1.Ability_05 = CurrentWeaponPoint[4];
-            ONE.P1.Ability_06 = CurrentSkillPoint[0];
-            ONE.P1.Ability_07 = CurrentSkillPoint[1];
-            ONE.P1.Ability_08 = CurrentSkillPoint[2];
-            ONE.P1.Ability_09 = CurrentSkillPoint[3];
-            ONE.P1.Ability_10 = CurrentSkillPoint[4];
-            ONE.P1.Ability_11 = CurrentSkillPoint[5];
-            ONE.P1.Ability_12 = CurrentSkillPoint[6];
-            ONE.P1.Ability_13 = CurrentSkillPoint[7];
-            ONE.P1.Ability_14 = CurrentSkillPoint[8];
-            ONE.P1.Ability_15 = CurrentSkillPoint[9];
-            ONE.P1.Ability_16 = CurrentSkillPoint[10];
-            ONE.P1.Ability_17 = CurrentSkillPoint[11];
+            ONE.Chara[0].FullName = txtName.text;
+            ONE.Chara[0].Gender = txtGender.text;
+            ONE.Chara[0].Personality = txtPersonality.text;
+            ONE.Chara[0].MainColor = txtMainColor.text;
+            ONE.Chara[0].BaseStrength = CurrentAttributePoint[0];
+            ONE.Chara[0].BaseAgility = CurrentAttributePoint[1];
+            ONE.Chara[0].BaseIntelligence = CurrentAttributePoint[2];
+            ONE.Chara[0].BaseStamina = CurrentAttributePoint[3];
+            ONE.Chara[0].BaseMind = CurrentAttributePoint[4];
+            ONE.Chara[0].Ability_01 = CurrentWeaponPoint[0];
+            ONE.Chara[0].Ability_02 = CurrentWeaponPoint[1];
+            ONE.Chara[0].Ability_03 = CurrentWeaponPoint[2];
+            ONE.Chara[0].Ability_04 = CurrentWeaponPoint[3];
+            ONE.Chara[0].Ability_05 = CurrentWeaponPoint[4];
+            ONE.Chara[0].Ability_06 = CurrentSkillPoint[0];
+            ONE.Chara[0].Ability_07 = CurrentSkillPoint[1];
+            ONE.Chara[0].Ability_08 = CurrentSkillPoint[2];
+            ONE.Chara[0].Ability_09 = CurrentSkillPoint[3];
+            ONE.Chara[0].Ability_10 = CurrentSkillPoint[4];
+            ONE.Chara[0].Ability_11 = CurrentSkillPoint[5];
+            ONE.Chara[0].Ability_12 = CurrentSkillPoint[6];
+            ONE.Chara[0].Ability_13 = CurrentSkillPoint[7];
+            ONE.Chara[0].Ability_14 = CurrentSkillPoint[8];
+            ONE.Chara[0].Ability_15 = CurrentSkillPoint[9];
+            ONE.Chara[0].Ability_16 = CurrentSkillPoint[10];
+            ONE.Chara[0].Ability_17 = CurrentSkillPoint[11];
             groupCreateCharacter.SetActive(false);
             groupMainMenu.SetActive(true);
         }

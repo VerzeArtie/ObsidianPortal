@@ -1025,12 +1025,67 @@ namespace ObsidianPortal
         public const string RARE_PERFECT_BLUE_POTION = @"青ポーション【完全版】";
         public const string RARE_PERFECT_GREEN_POTION = @"緑ポーション【完全版】";
         #endregion
+        #endregion
+        #endregion
+
+        #region "Obsidian Portal"
+
+        public const int MAGI_ZELKIS_INIT_STR = 4;
+        public const int MAGI_ZELKIS_INIT_AGL = 2;
+        public const int MAGI_ZELKIS_INIT_INT = 1;
+        public const int MAGI_ZELKIS_INIT_STM = 3;
+        public const int MAGI_ZELKIS_INIT_MND = 3;
+
+        public const int EONE_FULNEA_INIT_STR = 1;
+        public const int EONE_FULNEA_INIT_AGL = 2;
+        public const int EONE_FULNEA_INIT_INT = 5;
+        public const int EONE_FULNEA_INIT_STM = 2;
+        public const int EONE_FULNEA_INIT_MND = 3;
+
+        public const int SELMOI_RO_INIT_STR = 3;
+        public const int SELMOI_RO_INIT_AGL = 3;
+        public const int SELMOI_RO_INIT_INT = 1;
+        public const int SELMOI_RO_INIT_STM = 3;
+        public const int SELMOI_RO_INIT_MND = 3;
+
+        public const int KARTIN_MAI_INIT_STR = 4;
+        public const int KARTIN_MAI_INIT_AGL = 4;
+        public const int KARTIN_MAI_INIT_INT = 1;
+        public const int KARTIN_MAI_INIT_STM = 1;
+        public const int KARTIN_MAI_INIT_MND = 3;
+
+        public const int JEDA_ARUS_INIT_STR = 3;
+        public const int JEDA_ARUS_INIT_AGL = 1;
+        public const int JEDA_ARUS_INIT_INT = 2;
+        public const int JEDA_ARUS_INIT_STM = 4;
+        public const int JEDA_ARUS_INIT_MND = 3;
 
         public const string COMMON_FINE_BOW = @"ファイン・ボウ";
         public const string COMMON_ELVISH_BOW = @"エルヴィッシュ・ボウ";
         public const string RARE_WINGED_LONG_BOW = @"ウィングド・ロング・ボウ";
 
+        //public const string DUEL_SIN_OSCURETE = @"シン・オスキュレーテ";
+        //public const string DUEL_LADA_MYSTORUS = @"ラダ・ミストゥルス";
+        //public const string DUEL_OHRYU_GENMA = @"オウリュウ・ゲンマ";
+        //public const string DUEL_VAN_HEHGUSTEL = @"ヴァン・ヘーグステル";
+        //public const string DUEL_RVEL_ZELKIS = @"ルベル・ゼルキス";
+        //public const string DUEL_SHUVALTZ_FLORE = @"シュヴァルツェ・フローレ";
+        //public const string DUEL_SUN_YU = @"サン・ユウ";
+        //public const string DUEL_CALMANS_OHN = @"カルマンズ・オーン";
+        //public const string DUEL_ANNA_HAMILTON = @"アンナ・ハミルトン";
+        //public const string DUEL_BILLY_RAKI = @"ビリー・ラキ";
+        //public const string DUEL_KILT_JORJU = @"キルト・ジョルジュ";
+        //public const string DUEL_PERMA_WARAMY = @"ペルマ・ワラミィ";
+        //public const string DUEL_SCOTY_ZALGE = @"スコーティ・ザルゲ";
+        //public const string DUEL_LENE_COLTOS = @"レネ・コルトス";
+        //public const string DUEL_ADEL_BRIGANDY = @"アデル・ブリガンディ";
+        //public const string DUEL_SINIKIA_VEILHANZ = @"シニキア・ヴェイルハンツ";
+        public const string DUEL_JEDA_ARUS = @"ジェダ・アルス";
+        public const string DUEL_KARTIN_MAI = @"カーティン・マイ";
+        public const string DUEL_SELMOI_RO = @"セルモイ・ロウ";
+        public const string DUEL_MAGI_ZELKIS = @"マーギ・ゼルキス";
+        public const string DUEL_EONE_FULNEA = @"エオネ・フルネア";
         #endregion
-        #endregion
+
     }
 }

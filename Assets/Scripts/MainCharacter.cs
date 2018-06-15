@@ -58,7 +58,12 @@ namespace ObsidianPortal
         // Obsidian parameter
         public int ObsidianStone = 1;
         public FIX.Race Race = FIX.Race.Human;
-        public FIX.JobClass job = FIX.JobClass.None;
+        protected FIX.JobClass job = FIX.JobClass.None;
+        public FIX.JobClass Job
+        {
+            set { job = value; }
+            get { return job; }
+        }
 
         public int MaxLife
         {

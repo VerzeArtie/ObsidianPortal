@@ -138,29 +138,29 @@ namespace ObsidianPortal
         {
             base.Start();
             RenderSettings.skybox = (Material)Resources.Load("Skybox4");
-            ONE.P1.labelFullName = this.txtPlayerName;
-            ONE.P1.labelRace = this.txtRace;
-            ONE.P1.ImageRace = this.iconRace;
-            ONE.P1.MeterExp = this.meterExp;
+            ONE.Chara[0].labelFullName = this.txtPlayerName;
+            ONE.Chara[0].labelRace = this.txtRace;
+            ONE.Chara[0].ImageRace = this.iconRace;
+            ONE.Chara[0].MeterExp = this.meterExp;
 
             this.interval = MOVE_INTERVAL;
             this.MovementInterval = MOVE_INTERVAL;
 
             // プレイヤー設定
-            txtPlayerName.text = ONE.P1.FullName;
-            for (int ii = 0; ii < ONE.P1.ObsidianStone; ii++)
+            txtPlayerName.text = ONE.Chara[0].FullName;
+            for (int ii = 0; ii < ONE.Chara[0].ObsidianStone; ii++)
             {
                 orbList[ii].SetActive(true);
             }
-            txtLevel.text = ONE.P1.Level.ToString();
-            if (ONE.P1.Race == FIX.Race.Human) { txtRace.text = "人間族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Human"); }
-            else if (ONE.P1.Race == FIX.Race.Mech) { txtRace.text = "機巧族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Mech"); }
-            else if (ONE.P1.Race == FIX.Race.Angel) { txtRace.text = "天使族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Angel"); }
-            else if (ONE.P1.Race == FIX.Race.Demon) { txtRace.text = "魔貴族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Demon"); }
-            else if (ONE.P1.Race == FIX.Race.Fire) { txtRace.text = "炎霊族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Fire"); }
-            else if (ONE.P1.Race == FIX.Race.Ice) { txtRace.text = "氷霊族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Ice"); }
-            ONE.P1.UpdateExp();
-            txtExp.text = "( " + ONE.P1.Exp.ToString() + " / " + ONE.P1.NextLevelBorder.ToString() + " )";
+            txtLevel.text = ONE.Chara[0].Level.ToString();
+            if (ONE.Chara[0].Race == FIX.Race.Human) { txtRace.text = "人間族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Human"); }
+            else if (ONE.Chara[0].Race == FIX.Race.Mech) { txtRace.text = "機巧族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Mech"); }
+            else if (ONE.Chara[0].Race == FIX.Race.Angel) { txtRace.text = "天使族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Angel"); }
+            else if (ONE.Chara[0].Race == FIX.Race.Demon) { txtRace.text = "魔貴族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Demon"); }
+            else if (ONE.Chara[0].Race == FIX.Race.Fire) { txtRace.text = "炎霊族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Fire"); }
+            else if (ONE.Chara[0].Race == FIX.Race.Ice) { txtRace.text = "氷霊族"; iconRace.GetComponent<Image>().sprite = Resources.Load<Sprite>("Icon_Ice"); }
+            ONE.Chara[0].UpdateExp();
+            txtExp.text = "( " + ONE.Chara[0].Exp.ToString() + " / " + ONE.Chara[0].NextLevelBorder.ToString() + " )";
 
 
             #region "ステージのセットアップ"
@@ -221,25 +221,45 @@ namespace ObsidianPortal
                 int counter = 0;
                 Unit current = null;
                 // ユニット配置(味方)
-                current = SetupUnit(counter, false, Unit.RaceType.Human, Unit.UnitType.Fighter, 2, 2); counter++;
-                current.UnitImage = Resources.Load<Sprite>("UnitMark_001");
-                AllyList.Add(current);
-                AllList.Add(current);
+                //current = SetupUnit(counter, false, Unit.RaceType.Human, Unit.UnitType.Fighter, 2, 2); counter++;
+                //current.UnitImage = Resources.Load<Sprite>("UnitMark_001");
+                //AllyList.Add(current);
+                //AllList.Add(current);
 
-                // ユニット配置(敵)
-                current = SetupUnit(counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 11, 7); counter++;
-                current.UnitImage = Resources.Load<Sprite>("UnitMark_002");
-                EnemyList.Add(current);
-                AllList.Add(current);
+                // ユニット配置
+                int[] objList = DAT.OBJECT_1_1;
+                for (int ii = 0; ii < objList.Length; ii++)
+                {
+                    if (objList[ii] > 0)
+                    {
+                        if (objList[ii] == 1)
+                        {
+                            current = SetupUnit(counter, false, Unit.RaceType.Human, (Unit.UnitType)(Enum.ToObject(typeof(Unit.UnitType), objList[ii])), ii % DAT.COLUMN_1_1, ii / DAT.COLUMN_1_1);
+                            current.UnitImage = Resources.Load<Sprite>("UnitMark_" + (ii % 3).ToString());
+                            AllyList.Add(current);
+                        }
+                        else if (objList[ii] == 2)
+                        {
+                            current = SetupUnit(counter, true, Unit.RaceType.Monster, (Unit.UnitType)(Enum.ToObject(typeof(Unit.UnitType), objList[ii])), ii % DAT.COLUMN_1_1, ii / DAT.COLUMN_1_1);
+                            current.UnitImage = Resources.Load<Sprite>("UnitMark_" + (ii % 3).ToString());
+                            EnemyList.Add(current);
+                        }
+                        AllList.Add(current);
+                    }
+                }
 
-                current = SetupUnit(counter, true, Unit.RaceType.Monster, Unit.UnitType.Magician, 21, 7); counter++;
-                current.UnitImage = Resources.Load<Sprite>("UnitMark_003");
-                EnemyList.Add(current);
-                AllList.Add(current);
 
-                //SetupUnit(ref EnemyList, counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 25, 15); counter++;
+                //current = SetupUnit(counter, true, Unit.RaceType.Monster, Unit.UnitType.Fighter, 7, 7); counter++;
+                //current.UnitImage = Resources.Load<Sprite>("UnitMark_002");
+                //EnemyList.Add(current);
+                //AllList.Add(current);
+
+                CameraView.transform.localPosition = new Vector3(5,
+                                                5,
+                                                CameraView.transform.localPosition.z);
+
                 // 宝箱配置
-                SetupItem(ref TreasureList, counter, 11, 10); counter++;
+                //SetupItem(ref TreasureList, counter, 11, 10); counter++;
             }
             else if (ONE.CurrentStage == FIX.Stage.Stage1_2)
             {
@@ -348,11 +368,6 @@ namespace ObsidianPortal
             //}
             #endregion
 
-            // カメラをプレイヤー１にセット
-            CameraView.transform.localPosition = new Vector3(AllList[0].transform.localPosition.x,
-                                                 AllList[0].transform.localPosition.y,
-                                                 CameraView.transform.localPosition.z);
-
             // 通常移動モードでは、常にプレイヤ－１を選択する。
             for (int ii = 0; ii < AllyList.Count; ii++)
             {
@@ -375,7 +390,6 @@ namespace ObsidianPortal
         new void Update()
         {
             base.Update();
-
             #region "ゲーム終了"
             if (this.GameEnd)
             {
@@ -437,77 +451,77 @@ namespace ObsidianPortal
                 }
 
                 // double tap
-                if (isDoubleTapStart == false)
-                {
-                    if (Input.GetMouseButtonDown(0))
-                    {
-                        isDoubleTapStart = true;
-                        Unit loc = ExistUnitFromLocation(Cursor.transform.localPosition);
-                        if (loc != null)
-                        {
-                            UpdateUnitStatus(loc);
-                        }
+                //if (isDoubleTapStart == false)
+                //{
+                //    if (Input.GetMouseButtonDown(0))
+                //    {
+                //        isDoubleTapStart = true;
+                //        Unit loc = ExistUnitFromLocation(Cursor.transform.localPosition);
+                //        if (loc != null)
+                //        {
+                //            UpdateUnitStatus(loc);
+                //        }
 
-                        Vector3 diff = Cursor.transform.localPosition - CameraView.transform.localPosition;
-                        Debug.Log("diff: " + diff.ToString());
-                        this.dstView = diff;
-                    }
-                }
-                else
-                {
-                    Debug.Log("GetMouseButton(0) " + Input.GetMouseButton(0).ToString());
-                    Debug.Log("GetMouseButtonUp(0) " + Input.GetMouseButtonUp(0).ToString());
-                    Debug.Log("isDoubleTapChatter " + isDoubleTapChatter.ToString());
+                //        Vector3 diff = Cursor.transform.localPosition - CameraView.transform.localPosition;
+                //        Debug.Log("diff: " + diff.ToString());
+                //        this.dstView = diff;
+                //    }
+                //}
+                //else
+                //{
+                //    Debug.Log("GetMouseButton(0) " + Input.GetMouseButton(0).ToString());
+                //    Debug.Log("GetMouseButtonUp(0) " + Input.GetMouseButtonUp(0).ToString());
+                //    Debug.Log("isDoubleTapChatter " + isDoubleTapChatter.ToString());
 
-                    if (Input.GetMouseButton(0) == true && Input.GetMouseButtonUp(0) == false && isDoubleTapChatter == false)
-                    {
-                    }
-                    else
-                    {
-                        Debug.Log("isDoubleTapChatter ON");
-                        isDoubleTapChatter = true;
-                        doubleTapTime += Time.deltaTime;
-                        if (doubleTapTime < 0.2f)
-                        {
-                            if (Input.GetMouseButtonDown(0))
-                            {
-                                Debug.Log("Detect doubletap ON");
-                                isDoubleTapStart = false;
-                                CameraMove = MAX_CAMERAMOVE;
-                                doubleTapTime = 0.0f;
-                                dragTime = 0.0f;
-                                isDoubleTapChatter = false;
-                            }
-                        }
-                        else
-                        {
-                            Debug.Log("Detect reset");
-                            // reset
-                            isDoubleTapStart = false;
-                            doubleTapTime = 0.0f;
-                            dragTime = 0.0f;
-                            this.dstView = new Vector3();
-                            CameraMove = 0;
-                            isDoubleTapChatter = false;
-                        }
-                    }
-                }
+                //    if (Input.GetMouseButton(0) == true && Input.GetMouseButtonUp(0) == false && isDoubleTapChatter == false)
+                //    {
+                //    }
+                //    else
+                //    {
+                //        Debug.Log("isDoubleTapChatter ON");
+                //        isDoubleTapChatter = true;
+                //        doubleTapTime += Time.deltaTime;
+                //        if (doubleTapTime < 0.2f)
+                //        {
+                //            if (Input.GetMouseButtonDown(0))
+                //            {
+                //                Debug.Log("Detect doubletap ON");
+                //                isDoubleTapStart = false;
+                //                CameraMove = MAX_CAMERAMOVE;
+                //                doubleTapTime = 0.0f;
+                //                dragTime = 0.0f;
+                //                isDoubleTapChatter = false;
+                //            }
+                //        }
+                //        else
+                //        {
+                //            Debug.Log("Detect reset");
+                //            // reset
+                //            isDoubleTapStart = false;
+                //            doubleTapTime = 0.0f;
+                //            dragTime = 0.0f;
+                //            this.dstView = new Vector3();
+                //            CameraMove = 0;
+                //            isDoubleTapChatter = false;
+                //        }
+                //    }
+                //}
             }
 
-            if (Input.GetMouseButton(0) == true && Input.GetMouseButtonUp(0) == false && isDoubleTapChatter == false)
-            {
-                dragTime += Time.deltaTime;
-                if (dragTime > 0.2f)
-                {
-                    Debug.Log("Drag mode enter");
-                    // drag mode
-                    CameraView.transform.localPosition = new Vector3(CameraView.transform.localPosition.x + dstView.x * 0.05f,
-                                            CameraView.transform.localPosition.y + dstView.y * 0.05f,
-                                            CameraView.transform.localPosition.z);
-                    dstView = Cursor.transform.localPosition - CameraView.transform.localPosition;
-                }
+            //if (Input.GetMouseButton(0) == true && Input.GetMouseButtonUp(0) == false && isDoubleTapChatter == false)
+            //{
+            //    dragTime += Time.deltaTime;
+            //    if (dragTime > 0.2f)
+            //    {
+            //        Debug.Log("Drag mode enter");
+            //        // drag mode
+            //        CameraView.transform.localPosition = new Vector3(CameraView.transform.localPosition.x + dstView.x * 0.05f,
+            //                                CameraView.transform.localPosition.y + dstView.y * 0.05f,
+            //                                CameraView.transform.localPosition.z);
+            //        dstView = Cursor.transform.localPosition - CameraView.transform.localPosition;
+            //    }
 
-            }
+            //}
 
             #region "カーソルとキー操作"
             if (MoveMode == FieldMode.Move)
@@ -560,6 +574,7 @@ namespace ObsidianPortal
             }
             #endregion
 
+            //Debug.Log("Update: " + this.Phase.ToString());
             #region "タイム進行とアクティブユニット探索"
             if (this.Phase == ActionPhase.WaitActive)
             {
@@ -621,8 +636,6 @@ namespace ObsidianPortal
                 if (activePlayer != null)
                 {
                     Debug.Log("ActivePlayer is " + activePlayer.UnitName);
-                    //AllList.Sort()
-                    //for (int )
                     TimeComparer comp = new TimeComparer();
                     AllList.Sort(comp);
                     Debug.Log("AllList count: " + AllList.Count.ToString());
@@ -636,10 +649,10 @@ namespace ObsidianPortal
                     FocusCursor.transform.localPosition = new Vector3(activePlayer.transform.localPosition.x,
                                                                  activePlayer.transform.localPosition.y,
                                                                  FocusCursor.transform.localPosition.z);
-                    CameraView.transform.localPosition = new Vector3(activePlayer.transform.localPosition.x,
-                                                                     activePlayer.transform.localPosition.y,
-                                                                     CameraView.transform.localPosition.z);
-                    activePlayer.CurrentAP+=3;
+                    //CameraView.transform.localPosition = new Vector3(activePlayer.transform.localPosition.x,
+                    //                                                 activePlayer.transform.localPosition.y,
+                    //                                                 CameraView.transform.localPosition.z);
+                    activePlayer.CurrentAP += 3;
                     UpdateUnitStatus(activePlayer);
                     UpdateUnitAP(activePlayer);
                     this.groupAP.SetActive(true);
@@ -659,6 +672,7 @@ namespace ObsidianPortal
                     Debug.Log("EnemyUnit End");
                     UnitEnd();
                 }
+                Debug.Log("Enemy phase end???");
                 return;
             }
             //if (this.CurrentUnit.IsAlly == false)
@@ -1348,7 +1362,11 @@ namespace ObsidianPortal
                     ExecExplosion(this.CurrentUnit, this.CurrentTarget);
                 }
                 JudgeUnitDead();
-                this.Phase = ActionPhase.SelectFirst;
+                JudgeGameEnd();
+                if (this.GameEnd == false)
+                {
+                    this.Phase = ActionPhase.SelectFirst;
+                }
             }
             // 終了
             else if (this.Phase == ActionPhase.End)

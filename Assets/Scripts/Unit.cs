@@ -156,7 +156,7 @@ namespace ObsidianPortal
             //if (race == RaceType.Fire && type == UnitType.Wall)       { SetupProperty(race, type, FIX.OBJ_LAVAWALL,    99,  0, 0,  0,  0,  0, 0, 0,  0,  0,  0, FIX.NONE); }
 
             // ÉÇÉìÉXÉ^Å[
-            if (race == RaceType.Monster && type == UnitType.Fighter)   { SetupProperty(race, type, FIX.HUMAN_FIGHTER,   36,  8, 2,  5,  1,  1, 4, 1,  0,  0, 10, FIX.NONE); }
+            if (race == RaceType.Monster)   { SetupProperty(race, type, FIX.HUMAN_FIGHTER,   36,  8, 2,  5,  1,  1, 4, 1,  0,  0, 10, FIX.NONE); }
         }
 
         private void SetupProperty(RaceType race, UnitType type, string unitName, int maxLife, int attack, int def, int spd, int mag, int mdf, int move, int range, int healRange, int effectRange, int cost, string skill)

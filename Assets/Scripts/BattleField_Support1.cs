@@ -614,29 +614,29 @@ namespace ObsidianPortal
             for (int ii = 0; ii < max; ii++)
             {
                 float x = 0;
-                float z = 0;
+                float y = 0;
                 if (direction == FIX.Direction.Top)
                 {
-                    x = -FIX.HEX_MOVE_X * (ii + 1);
-                    z = 0;
+                    x = 0;
+                    y = FIX.HEX_MOVE_Z * (ii + 1);
                 }
                 else if (direction == FIX.Direction.Right)
                 {
-                    x = -FIX.HEX_MOVE_X * (ii + 1);
-                    z = FIX.HEX_MOVE_Z * (ii + 1);
+                    x = FIX.HEX_MOVE_X * (ii + 1);
+                    y = 0;
                 }
                 else if (direction == FIX.Direction.Left)
                 {
                     x = -FIX.HEX_MOVE_X * (ii + 1);
-                    z = -FIX.HEX_MOVE_Z * (ii + 1);
+                    y = 0;
                 }
                 else if (direction == FIX.Direction.Bottom)
                 {
-                    x = FIX.HEX_MOVE_X * (ii + 1);
-                    z = 0;
+                    x = 0;
+                    y = -FIX.HEX_MOVE_Z * (ii + 1);
                 }
                 if (ContainPositionX(src.transform.position.x + x, target.transform.position.x) &&
-                    (src.transform.position.y + z == target.transform.position.y))// &&
+                    (src.transform.position.y + y == target.transform.position.y))// &&
                     //(target.Type != Unit.UnitType.Wall))
                 {
                     Debug.Log("ExistAttackableUnitLinear(E) " + ii.ToString());
