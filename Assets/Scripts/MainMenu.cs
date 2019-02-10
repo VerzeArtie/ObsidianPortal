@@ -55,8 +55,8 @@ namespace ObsidianPortal
             //    supportMessage.gameObject.SetActive(true);
             //    GroupMenu.SetActive(false);
             //}
-            txtHeroName.GetComponent<TextMesh>().text = ONE.Chara[0].FullName;
-            txtLevel.GetComponent<TextMesh>().text = ONE.Chara[0].Level.ToString();
+            txtHeroName.GetComponent<TextMesh>().text = ONE.UnitList[0].FullName;
+            txtLevel.GetComponent<TextMesh>().text = ONE.UnitList[0].Level.ToString();
             txtTotalPlayed.GetComponent<TextMesh>().text = ONE.WE2.TotalPlayed.ToString();
             txtMostDamageDone.GetComponent<TextMesh>().text = ONE.WE2.MostDamageDone.ToString();
             txtMostHealingDone.GetComponent<TextMesh>().text = ONE.WE2.MostHealingDone.ToString();

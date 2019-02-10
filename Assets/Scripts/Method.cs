@@ -315,16 +315,13 @@ namespace ObsidianPortal
                 case FIX.JobClass.Fighter:
                     target.GetComponent<Image>().sprite = Resources.Load<Sprite>("Unit_Fighter");
                     break;
-                case FIX.JobClass.Archer:
+                case FIX.JobClass.Ranger:
                     target.GetComponent<Image>().sprite = Resources.Load<Sprite>("Unit_Archer");
                     break;
                 case FIX.JobClass.Magician:
                     target.GetComponent<Image>().sprite = Resources.Load<Sprite>("Unit_Magician");
                     break;
-                case FIX.JobClass.Armorer:
-                    target.GetComponent<Image>().sprite = Resources.Load<Sprite>("Unit_Shield");
-                    break;
-                case FIX.JobClass.Apprentice:
+                case FIX.JobClass.Seeker:
                     target.GetComponent<Image>().sprite = Resources.Load<Sprite>("Unit_Enchanter");
                     break;
                 default:

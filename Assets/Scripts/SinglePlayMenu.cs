@@ -9,11 +9,44 @@ namespace ObsidianPortal
 {
     public class SinglePlayMenu : MotherForm
     {
+        // Group
+        public GameObject groupMessage;
         public GameObject groupCreateCharacter;
         public GameObject groupPlayer;
         public GameObject groupCharacter;
-        public GameObject groupStage;
-        public GameObject groupMainMenu;
+        public GameObject groupQuest;
+        public GameObject groupMember;
+        public GameObject groupShop;
+        public GameObject groupBackpack;
+        public GameObject groupInn;
+        
+        // Message
+        public Text txtMessage;
+        public Image panelHide;
+        public Button btnOK;
+        private List<string> m_list = new List<string>();
+        private List<MessagePack.ActionEvent> e_list = new List<MessagePack.ActionEvent>();
+        private int nowReading = 0;
+        private bool nowHideing;
+        public Text systemMessage;
+        public GameObject systemMessagePanel;
+
+        // Backpack
+        public GameObject groupBackpackNormal;
+        public GameObject groupBackpackValuables;
+        public GameObject ItemNormalContent;
+        public GameObject ItemValuablesContent;
+        public GameObject ItemNode;
+        public GameObject ItemDetailGroup;
+        public Image ItemDetailImage;
+        public Text ItemDetailTitle;
+        public Text ItemDetailDesc;
+        public Text ItemDetailSpecial;
+        public Text ItemDetailStr;
+        public Text ItemDetailAgl;
+        public Text ItemDetailInt;
+        public Text ItemDetailStm;
+        public Text ItemDetailMnd;
 
         // Player View
         public Text txtPlayerName;
@@ -105,109 +138,86 @@ namespace ObsidianPortal
         private int MaxWeaponPoint = 99;
         private int MaxSkillPoint = 99;
 
-        public GameObject node;
-        public GameObject content;
+        public GameObject CharacterContent;
+        public GameObject CharacterNode;
+
+        const int HEIGHT = 200;
+        const int MARGIN = 10;
 
         public override void Start()
         {
             base.Start();
 
-            const int HEIGHT = 200;
-            const int MARGIN = 10;
-            RectTransform rect = content.GetComponent<RectTransform>();
-            for (int ii = 0; ii < ONE.Chara.Count; ii++)
-            {
-                GameObject item = GameObject.Instantiate(node);
-                item.transform.SetParent(content.transform, false);
-                item.transform.localPosition = new Vector3(item.transform.localPosition.x, item.transform.localPosition.y - HEIGHT * ii, item.transform.localPosition.z);
-                item.SetActive(true);
+            Method.ReloadTruthWorldEnvironment();
 
-                // 個数に応じて、コンテンツ長さを延長する。
-                rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + HEIGHT);
-                item.GetComponentInChildren<Text>().text = ONE.Chara[ii].FullName;
-                Text[] txtField = item.GetComponentsInChildren<Text>();
-                for (int jj = 0; jj < txtField.Length; jj++)
-                {
-                    Debug.Log("txtfield: " + txtField[jj].name);
-                    if (txtField[jj].name == "CharaName") { txtField[jj].text = ONE.Chara[ii].FullName; }
-                    if (txtField[jj].name == "txtLevel") { txtField[jj].text = ONE.Chara[ii].Level.ToString(); }
-                    if (txtField[jj].name == "txtLife") { txtField[jj].text = ONE.Chara[ii].MaxLife.ToString(); }
-                    if (txtField[jj].name == "txtStrength") { txtField[jj].text = ONE.Chara[ii].TotalStrength.ToString(); }
-                    if (txtField[jj].name == "txtAgility") { txtField[jj].text = ONE.Chara[ii].TotalAgility.ToString(); }
-                    if (txtField[jj].name == "txtIntelligence") { txtField[jj].text = ONE.Chara[ii].TotalIntelligence.ToString(); }
-                    if (txtField[jj].name == "txtStamina") { txtField[jj].text = ONE.Chara[ii].TotalStamina.ToString(); }
-                    if (txtField[jj].name == "txtMind") { txtField[jj].text = ONE.Chara[ii].TotalMind.ToString(); }
-                    if (txtField[jj].name == "txtMainWeapon")
-                    {
-                        if (ONE.Chara[ii].MainWeapon != null)
-                        {
-                            txtField[jj].text = ONE.Chara[ii].MainWeapon.Name;
-                            GameObject parent = txtField[jj].GetComponentInParent<Image>().gameObject;
-                            Image[] imgIcon = parent.GetComponentsInChildren<Image>();
-                            for (int kk = 0; kk < imgIcon.Length; kk++)
-                            {
-                                if (imgIcon[kk].name == "imgMainWeapon")
-                                {
-                                    Method.UpdateItemImage(ONE.Chara[ii].MainWeapon, imgIcon[kk]);
-                                    break;
-                                }
-                            }
-                            Method.UpdateRareColor(ONE.Chara[ii].MainWeapon, txtField[jj], parent, null);
-                        }
-                    }
-                }
-                Image[] imgField = item.GetComponentsInChildren<Image>();
-                for (int jj = 0; jj < imgField.Length; jj++)
-                {
-                    if (imgField[jj].name == "CharaClass")
-                    {
-                        Method.UpdateJobClassImage(ONE.Chara[ii].Job, imgField[jj].gameObject);
-                        break;
-                    }
-                }
-            }
-            // 最後に余白を追加しておく。
-            rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + MARGIN);
+            // クエストの設定
+            SetupQuestList();
 
+            // キャラクターリストの設定
+            SetupCharacterList();
 
-            txtCoin.text = ONE.Chara[0].Gold.ToString();
-            txtSoul.text = ONE.Chara[0].ObsidianStone.ToString();
+            // 貴重品の設定
+            SetupValuablesList();
 
-            //CurrentAttributePoint[0] = ONE.P1.BaseStrength;
-            //CurrentAttributePoint[1] = ONE.P1.BaseAgility;
-            //CurrentAttributePoint[2] = ONE.P1.BaseIntelligence;
-            //CurrentAttributePoint[3] = ONE.P1.BaseStamina;
-            //CurrentAttributePoint[4] = ONE.P1.BaseMind;
-            //for (int ii = 0; ii < CurrentAttributePoint.Length; ii++)
-            //{
-            //    txtAttributeValue[ii].text = CurrentAttributePoint[ii].ToString();
-            //}
+            // バックパックの設定
+            SetupBackpackList();
 
+            // ヘッダー情報（コインとソウルフラグメンツを設定）
+            txtCoin.text = ONE.UnitList[0].Gold.ToString();
+            txtSoul.text = ONE.UnitList[0].ObsidianStone.ToString();
+            
             CurrentAbility = MaxAbility;
             txtAvailableAbility.text = "Available Ability Points: " + CurrentAbility.ToString();
             CurrentAttribute = MaxAttribute;
             txtAvailableAttributes.text = "Available Attribute Points: " + CurrentAttribute.ToString();
 
             groupAppearance.SetActive(true);
-
-            TapArea(1);
         }
         
-        public void TapStage()
+        public void TapQuest()
         {
-            Debug.Log("TapStage");
-            groupMainMenu.SetActive(false);
-            groupCreateCharacter.SetActive(false);
-            groupStage.SetActive(true);
+            Debug.Log("TapQuest");
+            if (ONE.WE2.EventHomeTown_0001 == false)
+            {
+                TapBottomMenu(false, false, false, false, false);
+                MessagePack.Message10001(ref m_list, ref e_list);
+                TapOK();
+            }
+            else
+            {
+                TapBottomMenu(true, false, false, false, false);
+            }
         }
-        public void TapTavern()
+        public void TapMember()
         {
-            groupMainMenu.SetActive(true);
-            groupCreateCharacter.SetActive(false);
-            groupStage.SetActive(false);
-
+            Debug.Log("TapMember");
+            TapBottomMenu(false, true, false, false, false);
+        }
+        public void TapShop()
+        {
+            Debug.Log("TapShop");
+            TapBottomMenu(false, false, true, false, false);
+        }
+        public void TapBackpack()
+        {
+            Debug.Log("TapBackpack");
+            TapBottomMenu(false, false, false, true, false);
+        }
+        public void TapInn()
+        {
+            Debug.Log("TapInn");
+            TapBottomMenu(false, false, false, false, true);
         }
 
+        private void TapBottomMenu(bool g1, bool g2, bool g3, bool g4, bool g5)
+        {
+            groupQuest.SetActive(g1);
+            groupMember.SetActive(g2);
+            groupShop.SetActive(g3);
+            groupBackpack.SetActive(g4);
+            groupInn.SetActive(g5);
+        }
+            
         public void TapArea(int number)
         {
             Debug.Log("TapArea: " + number.ToString());
@@ -644,34 +654,34 @@ namespace ObsidianPortal
 
         public void TapAccept()
         {
-            ONE.Chara[0].FullName = txtName.text;
-            ONE.Chara[0].Gender = txtGender.text;
-            ONE.Chara[0].Personality = txtPersonality.text;
-            ONE.Chara[0].MainColor = txtMainColor.text;
-            ONE.Chara[0].BaseStrength = CurrentAttributePoint[0];
-            ONE.Chara[0].BaseAgility = CurrentAttributePoint[1];
-            ONE.Chara[0].BaseIntelligence = CurrentAttributePoint[2];
-            ONE.Chara[0].BaseStamina = CurrentAttributePoint[3];
-            ONE.Chara[0].BaseMind = CurrentAttributePoint[4];
-            ONE.Chara[0].Ability_01 = CurrentWeaponPoint[0];
-            ONE.Chara[0].Ability_02 = CurrentWeaponPoint[1];
-            ONE.Chara[0].Ability_03 = CurrentWeaponPoint[2];
-            ONE.Chara[0].Ability_04 = CurrentWeaponPoint[3];
-            ONE.Chara[0].Ability_05 = CurrentWeaponPoint[4];
-            ONE.Chara[0].Ability_06 = CurrentSkillPoint[0];
-            ONE.Chara[0].Ability_07 = CurrentSkillPoint[1];
-            ONE.Chara[0].Ability_08 = CurrentSkillPoint[2];
-            ONE.Chara[0].Ability_09 = CurrentSkillPoint[3];
-            ONE.Chara[0].Ability_10 = CurrentSkillPoint[4];
-            ONE.Chara[0].Ability_11 = CurrentSkillPoint[5];
-            ONE.Chara[0].Ability_12 = CurrentSkillPoint[6];
-            ONE.Chara[0].Ability_13 = CurrentSkillPoint[7];
-            ONE.Chara[0].Ability_14 = CurrentSkillPoint[8];
-            ONE.Chara[0].Ability_15 = CurrentSkillPoint[9];
-            ONE.Chara[0].Ability_16 = CurrentSkillPoint[10];
-            ONE.Chara[0].Ability_17 = CurrentSkillPoint[11];
+            ONE.UnitList[0].FullName = txtName.text;
+            ONE.UnitList[0].Gender = txtGender.text;
+            ONE.UnitList[0].Personality = txtPersonality.text;
+            ONE.UnitList[0].MainColor = txtMainColor.text;
+            ONE.UnitList[0].BaseStrength = CurrentAttributePoint[0];
+            ONE.UnitList[0].BaseAgility = CurrentAttributePoint[1];
+            ONE.UnitList[0].BaseIntelligence = CurrentAttributePoint[2];
+            ONE.UnitList[0].BaseStamina = CurrentAttributePoint[3];
+            ONE.UnitList[0].BaseMind = CurrentAttributePoint[4];
+            ONE.UnitList[0].Ability_01 = CurrentWeaponPoint[0];
+            ONE.UnitList[0].Ability_02 = CurrentWeaponPoint[1];
+            ONE.UnitList[0].Ability_03 = CurrentWeaponPoint[2];
+            ONE.UnitList[0].Ability_04 = CurrentWeaponPoint[3];
+            ONE.UnitList[0].Ability_05 = CurrentWeaponPoint[4];
+            ONE.UnitList[0].Ability_06 = CurrentSkillPoint[0];
+            ONE.UnitList[0].Ability_07 = CurrentSkillPoint[1];
+            ONE.UnitList[0].Ability_08 = CurrentSkillPoint[2];
+            ONE.UnitList[0].Ability_09 = CurrentSkillPoint[3];
+            ONE.UnitList[0].Ability_10 = CurrentSkillPoint[4];
+            ONE.UnitList[0].Ability_11 = CurrentSkillPoint[5];
+            ONE.UnitList[0].Ability_12 = CurrentSkillPoint[6];
+            ONE.UnitList[0].Ability_13 = CurrentSkillPoint[7];
+            ONE.UnitList[0].Ability_14 = CurrentSkillPoint[8];
+            ONE.UnitList[0].Ability_15 = CurrentSkillPoint[9];
+            ONE.UnitList[0].Ability_16 = CurrentSkillPoint[10];
+            ONE.UnitList[0].Ability_17 = CurrentSkillPoint[11];
             groupCreateCharacter.SetActive(false);
-            groupMainMenu.SetActive(true);
+            groupMember.SetActive(true);
         }
 
         public void TapCharacterDetail()
@@ -696,6 +706,340 @@ namespace ObsidianPortal
         private void UpdateAttributePoint()
         {
             txtAvailableAttributes.text = "Available Attribute Points: " + CurrentAttribute.ToString();
+        }
+
+        public void TapItemNormal()
+        {
+            Debug.Log("TapItemNormal");
+            groupBackpackNormal.SetActive(true);
+            groupBackpackValuables.SetActive(false);
+        }
+        public void TapItemValuables()
+        {
+            Debug.Log("TapItemValuables");
+            groupBackpackNormal.SetActive(false);
+            groupBackpackValuables.SetActive(true);
+        }
+
+        public void TapOK()
+        {
+            bool ForceSkipTapOK = false;
+
+            if (this.nowReading < this.m_list.Count)
+            {
+                // 非表示のメッセージ枠を表示する。
+                if (this.panelHide.isActiveAndEnabled == false && this.nowHideing)
+                {
+                    this.panelHide.gameObject.SetActive(true);
+                }
+                this.groupMessage.SetActive(true);
+                this.btnOK.enabled = true;
+                this.btnOK.gameObject.SetActive(true);
+
+                // メッセージ処理
+                MessagePack.ActionEvent current = this.e_list[this.nowReading];
+                if (current == MessagePack.ActionEvent.HomeTownMessageDisplay)
+                {
+                    systemMessage.text = this.m_list[this.nowReading];
+                    systemMessagePanel.SetActive(true);
+                }
+                else
+                {
+                    systemMessagePanel.SetActive(false);
+                    systemMessage.text = "";
+                    txtMessage.text = this.m_list[this.nowReading];
+                    //GroundOne.playbackMessage.Add(this.m_list[this.nowReading]);
+                }
+
+                // イベント毎の処理
+                if (current == MessagePack.ActionEvent.AutoSaveWorldEnvironment)
+                {
+                    Method.AutoSaveTruthWorldEnvironment();
+                    ForceSkipTapOK = true;
+                }
+
+                this.nowReading++;
+                if (this.m_list[this.nowReading - 1] == "" || ForceSkipTapOK)
+                {
+                    TapOK();
+                }
+            }
+
+            if (this.nowReading >= this.m_list.Count)
+            {
+                this.nowReading = 0;
+                this.m_list.Clear();
+                this.e_list.Clear();
+
+                this.systemMessage.text = "";
+                this.systemMessagePanel.SetActive(false);
+                this.txtMessage.text = "";
+                this.groupMessage.SetActive(false);
+                this.nowHideing = false;
+                this.panelHide.gameObject.SetActive(false);
+                this.btnOK.enabled = false;
+                this.btnOK.gameObject.SetActive(false);
+                this.groupMessage.SetActive(false);
+            }
+        }
+
+        public void TapItemBackpack(Text txtItem)
+        {
+            Debug.Log("TapItemBackpack");
+            Item item = new Item(txtItem.text);
+            UpdateItemDetail(item);
+            ItemDetailGroup.SetActive(true);
+        }
+        public void TapItemBackpackBack()
+        {
+            Debug.Log("TapItemBackpackBack");
+            ItemDetailGroup.SetActive(false);
+        }
+        public void TapItemDelete(Text txtItem)
+        {
+            Debug.Log("TapItemDelete");
+            Item deleteItem = new Item(txtItem.text);
+            if (groupBackpackNormal.activeInHierarchy)
+            {
+                Debug.Log("TapItemDelete: group Normal");
+                ONE.UnitList[0].DeleteBackPack(deleteItem, 10);
+                foreach (Transform t in ItemNormalContent.transform)
+                {
+                    GameObject.Destroy(t.gameObject);
+                }
+                SetupBackpackList();
+            }
+            else
+            {
+                Debug.Log("TapItemDelete: group else");
+                ONE.UnitList[0].DeleteValuables(deleteItem, 10);
+                foreach (Transform t in ItemValuablesContent.transform)
+                {
+                    GameObject.Destroy(t.gameObject);
+                }
+                SetupValuablesList();
+            }
+            
+            this.ItemDetailGroup.SetActive(false);
+        }
+
+
+        private void UpdateItemDetail(Item item)
+        {
+            Method.UpdateItemImage(item, ItemDetailImage);
+            ItemDetailTitle.text = item.Name;
+            ItemDetailDesc.text = item.Description;
+            ItemDetailSpecial.text = item.UseSpecialAbility.ToString();
+
+            if (item.BuffUpStrength <= 0) { ItemDetailStr.text = "----"; }
+            else { ItemDetailStr.text = item.BuffUpStrength.ToString(); }
+
+            if (item.BuffUpAgility <= 0) { ItemDetailAgl.text = "----"; }
+            else { ItemDetailAgl.text = item.BuffUpAgility.ToString(); }
+
+            if (item.BuffUpIntelligence <= 0) { ItemDetailInt.text = "----"; }
+            else { ItemDetailInt.text = item.BuffUpIntelligence.ToString(); }
+
+            if (item.BuffUpStamina <= 0) { ItemDetailStm.text = "----"; }
+            else { ItemDetailStm.text = item.BuffUpStamina.ToString(); }
+
+            if (item.BuffUpMind <= 0) { ItemDetailMnd.text = "----"; }
+            else { ItemDetailMnd.text = item.BuffUpMind.ToString(); }
+        }
+
+        private void SetupQuestList()
+        {
+            //RectTransform rect = ItemNormalContent.GetComponent<RectTransform>();
+            //for (int ii = 0; ii < ONE.Chara.Count; ii++)
+            //{
+            //    List<Item> backpack = ONE.Chara[ii].GetBackPackInfo();
+
+            //    Debug.Log("backpack length: " + backpack.Count.ToString());
+            //    for (int jj = 0; jj < backpack.Count; jj++)
+            //    {
+            //        if (backpack[jj] == null) { continue; }
+            //        if (backpack[jj].Name == "" || backpack[jj].Name == String.Empty) { continue; }
+
+            //        Debug.Log("backpack " + jj.ToString() + " " + backpack[jj].Name);
+
+            //        // 個数に応じて、コンテンツ長さを延長する。
+            //        rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + HEIGHT);
+
+            //        GameObject item = GameObject.Instantiate(ItemNode);
+            //        item.transform.SetParent(ItemNormalContent.transform, false);
+            //        item.transform.localPosition = new Vector3(item.transform.localPosition.x, item.transform.localPosition.y - HEIGHT * jj, item.transform.localPosition.z);
+            //        item.SetActive(true);
+
+            //        Text[] txtField = item.GetComponentsInChildren<Text>();
+            //        Text txtColorField = null;
+            //        Text txtColorFieldNum = null;
+            //        for (int kk = 0; kk < txtField.Length; kk++)
+            //        {
+            //            if (txtField[kk].name == "txtItem") { txtField[kk].text = backpack[jj].Name; txtColorField = txtField[kk]; }
+            //            if (txtField[kk].name == "txtItemNumber") { txtField[kk].text = "x " + backpack[jj].StackValue.ToString(); txtColorFieldNum = txtField[kk]; }
+            //        }
+
+            //        Image[] imgField = item.GetComponentsInChildren<Image>();
+            //        Image img_item = null;
+            //        Image[] objField = item.GetComponentsInChildren<Image>();
+            //        Image obj_back = null; ;
+            //        for (int kk = 0; kk < imgField.Length; kk++)
+            //        {
+            //            if (objField[kk].name == "back_item")
+            //            {
+            //                obj_back = objField[kk];
+            //                break;
+            //            }
+            //        }
+
+            //        for (int kk = 0; kk < imgField.Length; kk++)
+            //        {
+            //            if (imgField[kk].name == "imgItem")
+            //            {
+            //                img_item = imgField[kk];
+            //                Method.UpdateItemImage(backpack[jj], imgField[kk]);
+            //                Method.UpdateRareColor(backpack[jj], txtColorField, obj_back.gameObject, txtColorFieldNum);
+            //            }
+            //        }
+            //    }
+
+            //}
+            //// 最後に余白を追加しておく。
+            //rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + MARGIN);
+        }
+
+        private void SetupCharacterList()
+        {
+            RectTransform rect = CharacterContent.GetComponent<RectTransform>();
+            for (int ii = 0; ii < ONE.UnitList.Count; ii++)
+            {
+                GameObject item = GameObject.Instantiate(CharacterNode);
+                item.transform.SetParent(CharacterContent.transform, false);
+                item.transform.localPosition = new Vector3(item.transform.localPosition.x, item.transform.localPosition.y - HEIGHT * ii, item.transform.localPosition.z);
+                item.SetActive(true);
+
+                // 個数に応じて、コンテンツ長さを延長する。
+                rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + HEIGHT);
+                item.GetComponentInChildren<Text>().text = ONE.UnitList[ii].FullName;
+                Text[] txtField = item.GetComponentsInChildren<Text>();
+                for (int jj = 0; jj < txtField.Length; jj++)
+                {
+                    Debug.Log("txtfield: " + txtField[jj].name);
+                    if (txtField[jj].name == "CharaName") { txtField[jj].text = ONE.UnitList[ii].FullName; }
+                    if (txtField[jj].name == "txtLevel") { txtField[jj].text = ONE.UnitList[ii].Level.ToString(); }
+                    if (txtField[jj].name == "txtLife") { txtField[jj].text = ONE.UnitList[ii].MaxLife.ToString(); }
+                    if (txtField[jj].name == "txtStrength") { txtField[jj].text = ONE.UnitList[ii].TotalStrength.ToString(); }
+                    if (txtField[jj].name == "txtAgility") { txtField[jj].text = ONE.UnitList[ii].TotalAgility.ToString(); }
+                    if (txtField[jj].name == "txtIntelligence") { txtField[jj].text = ONE.UnitList[ii].TotalIntelligence.ToString(); }
+                    if (txtField[jj].name == "txtStamina") { txtField[jj].text = ONE.UnitList[ii].TotalStamina.ToString(); }
+                    if (txtField[jj].name == "txtMind") { txtField[jj].text = ONE.UnitList[ii].TotalMind.ToString(); }
+                    if (txtField[jj].name == "txtMainWeapon")
+                    {
+                        if (ONE.UnitList[ii].MainWeapon != null)
+                        {
+                            txtField[jj].text = ONE.UnitList[ii].MainWeapon.Name;
+                            Image current = txtField[jj].GetComponentInParent<Image>();
+                            if (current == null) { Debug.Log("current image is null?"); }
+                            else
+                            {
+
+                                GameObject parent = current.gameObject;
+                                Image[] imgIcon = parent.GetComponentsInChildren<Image>();
+                                for (int kk = 0; kk < imgIcon.Length; kk++)
+                                {
+                                    if (imgIcon[kk].name == "imgMainWeapon")
+                                    {
+                                        Method.UpdateItemImage(ONE.UnitList[ii].MainWeapon, imgIcon[kk]);
+                                        break;
+                                    }
+                                }
+                                Method.UpdateRareColor(ONE.UnitList[ii].MainWeapon, txtField[jj], parent, null);
+                            }
+                        }
+                    }
+                }
+                Image[] imgField = item.GetComponentsInChildren<Image>();
+                for (int jj = 0; jj < imgField.Length; jj++)
+                {
+                    if (imgField[jj].name == "CharaClass")
+                    {
+                        Method.UpdateJobClassImage(ONE.UnitList[ii].Job, imgField[jj].gameObject);
+                        break;
+                    }
+                }
+            }
+            // 最後に余白を追加しておく。
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + MARGIN);
+        }
+
+        private void SetupBackpackList()
+        {
+            groupBackpack.SetActive(true);
+            groupBackpackNormal.SetActive(true);
+            groupBackpackValuables.SetActive(false);
+            AbstractSetupItemList(ItemNormalContent, ONE.UnitList[0].GetBackPackInfo());
+        }
+        private void SetupValuablesList()
+        {
+            groupBackpack.SetActive(true);
+            groupBackpackNormal.SetActive(false);
+            groupBackpackValuables.SetActive(true);
+            AbstractSetupItemList(ItemValuablesContent, ONE.UnitList[0].GetValuablesInfo());
+        }
+        private void AbstractSetupItemList(GameObject groupContent, List<Item> list)
+        {
+            RectTransform rect = groupContent.GetComponent<RectTransform>();
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, 1);
+            Debug.Log("list length: " + list.Count.ToString());
+            for (int jj = 0; jj < list.Count; jj++)
+            {
+                if (list[jj] == null) { continue; }
+                if (list[jj].Name == "" || list[jj].Name == String.Empty) { continue; }
+
+                Debug.Log("list " + jj.ToString() + " " + list[jj].Name);
+
+                // 個数に応じて、コンテンツ長さを延長する。
+                rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + HEIGHT);
+
+                GameObject item = GameObject.Instantiate(ItemNode);
+                item.transform.SetParent(groupContent.transform, false);
+                item.transform.localPosition = new Vector3(item.transform.localPosition.x, item.transform.localPosition.y - HEIGHT * jj, item.transform.localPosition.z);
+                item.SetActive(true);
+
+                Text[] txtField = item.GetComponentsInChildren<Text>();
+                Text txtColorField = null;
+                Text txtColorFieldNum = null;
+                for (int kk = 0; kk < txtField.Length; kk++)
+                {
+                    if (txtField[kk].name == "txtItem") { txtField[kk].text = list[jj].Name; txtColorField = txtField[kk]; }
+                    if (txtField[kk].name == "txtItemNumber") { txtField[kk].text = "x " + list[jj].StackValue.ToString(); txtColorFieldNum = txtField[kk]; }
+                }
+
+                Image[] imgField = item.GetComponentsInChildren<Image>();
+                Image img_item = null;
+                Image[] objField = item.GetComponentsInChildren<Image>();
+                Image obj_back = null; ;
+                for (int kk = 0; kk < imgField.Length; kk++)
+                {
+                    if (objField[kk].name == "back_item")
+                    {
+                        obj_back = objField[kk];
+                        break;
+                    }
+                }
+
+                for (int kk = 0; kk < imgField.Length; kk++)
+                {
+                    if (imgField[kk].name == "imgItem")
+                    {
+                        img_item = imgField[kk];
+                        Method.UpdateItemImage(list[jj], imgField[kk]);
+                        Method.UpdateRareColor(list[jj], txtColorField, obj_back.gameObject, txtColorFieldNum);
+                    }
+                }
+            }
+            // 最後に余白を追加しておく。
+            rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + MARGIN);
         }
     }
 }

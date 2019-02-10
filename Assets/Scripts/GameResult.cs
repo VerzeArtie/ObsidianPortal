@@ -84,9 +84,9 @@ namespace ObsidianPortal
             {
                 back_WinLose.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
             }
-            txtHeroName.GetComponent<TextMesh>().text = ONE.Chara[0].FullName;
-            txtCurrentLevel.GetComponent<TextMesh>().text = ONE.Chara[0].Level.ToString();
-            txtNextLevel.GetComponent<TextMesh>().text = (ONE.Chara[0].Level + 1).ToString();
+            txtHeroName.GetComponent<TextMesh>().text = ONE.UnitList[0].FullName;
+            txtCurrentLevel.GetComponent<TextMesh>().text = ONE.UnitList[0].Level.ToString();
+            txtNextLevel.GetComponent<TextMesh>().text = (ONE.UnitList[0].Level + 1).ToString();
             txtElimination.GetComponent<TextMesh>().text = ONE.BattleElimination.ToString();
             txtTactics.GetComponent<TextMesh>().text = ONE.BattleTacticsPoint.ToString();
             txtTotalTurn.GetComponent<TextMesh>().text = ONE.BattleTotalTurn.ToString();
@@ -94,7 +94,7 @@ namespace ObsidianPortal
             txtHealingDone.GetComponent<TextMesh>().text = ONE.BattleHealingDone.ToString();
             txtBonusValue.GetComponent<TextMesh>().text = "+" + BonusValue.ToString();
             txtExp.GetComponent<TextMesh>().text = GettingExp.ToString() + " Exp";
-            txtTotalExp.GetComponent<TextMesh>().text = ONE.Chara[0].Exp.ToString() + "/" + ONE.Chara[0].NextLevelBorder.ToString();
+            txtTotalExp.GetComponent<TextMesh>().text = ONE.UnitList[0].Exp.ToString() + "/" + ONE.UnitList[0].NextLevelBorder.ToString();
 
             string GOLD = "MedalGold";
             string SILVER = "MedalSilver";
@@ -134,8 +134,8 @@ namespace ObsidianPortal
 
             Method.AutoSaveTruthWorldEnvironment();
 
-            float percent = (float)(((float)ONE.Chara[0].Exp * 100) / (float)ONE.Chara[0].NextLevelBorder);
-            GettingGauge = (float)((float)(GettingExp * 100) / (float)ONE.Chara[0].NextLevelBorder);
+            float percent = (float)(((float)ONE.UnitList[0].Exp * 100) / (float)ONE.UnitList[0].NextLevelBorder);
+            GettingGauge = (float)((float)(GettingExp * 100) / (float)ONE.UnitList[0].NextLevelBorder);
             GettingExpPercent = (float)((float)GettingExp / (float)GettingGauge);
             for (int ii = 0; ii < percent; ii++)
             {
@@ -158,20 +158,20 @@ namespace ObsidianPortal
                 System.Threading.Thread.Sleep(10);
                 GettingGauge--;
                 txtExp.GetComponent<TextMesh>().text = (GettingExp - counter * GettingExpPercent).ToString("N0") + " Exp";
-                txtTotalExp.GetComponent<TextMesh>().text = (ONE.Chara[0].Exp + counter * GettingExpPercent).ToString("N0") + "/" + ONE.Chara[0].NextLevelBorder.ToString();
+                txtTotalExp.GetComponent<TextMesh>().text = (ONE.UnitList[0].Exp + counter * GettingExpPercent).ToString("N0") + "/" + ONE.UnitList[0].NextLevelBorder.ToString();
                 counter++;
                 IncreaseExpGauge();
 
                 if (GettingGauge <= 0)
                 {
-                    ONE.Chara[0].Exp += GettingExp;
+                    ONE.UnitList[0].Exp += GettingExp;
                     txtExp.GetComponent<TextMesh>().text = "0";
-                    txtTotalExp.GetComponent<TextMesh>().text = (ONE.Chara[0].Exp).ToString("N0") + "/" + ONE.Chara[0].NextLevelBorder.ToString();
+                    txtTotalExp.GetComponent<TextMesh>().text = (ONE.UnitList[0].Exp).ToString("N0") + "/" + ONE.UnitList[0].NextLevelBorder.ToString();
 
-                    if (ONE.Chara[0].Exp >= ONE.Chara[0].NextLevelBorder)
+                    if (ONE.UnitList[0].Exp >= ONE.UnitList[0].NextLevelBorder)
                     {
-                        ONE.Chara[0].Exp -= ONE.Chara[0].NextLevelBorder;
-                        ONE.Chara[0].Level++;
+                        ONE.UnitList[0].Exp -= ONE.UnitList[0].NextLevelBorder;
+                        ONE.UnitList[0].Level++;
                         for (int ii = 0; ii < ExpGauge.Length; ii++)
                         {
                             ExpGauge[ii].SetActive(false);
@@ -179,7 +179,7 @@ namespace ObsidianPortal
                         txtTotalExp.SetActive(false);
                         txtExp.SetActive(false);
 
-                        txtLevelUpMessage.GetComponent<TextMesh>().text = "REACHED LEVEL " + ONE.Chara[0].Level.ToString() + "!";
+                        txtLevelUpMessage.GetComponent<TextMesh>().text = "REACHED LEVEL " + ONE.UnitList[0].Level.ToString() + "!";
                         back_LevelUpMessage.SetActive(true);
                         txtLevelUpMessage.SetActive(true);
                     }

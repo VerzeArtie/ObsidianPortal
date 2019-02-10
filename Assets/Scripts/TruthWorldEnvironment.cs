@@ -67,6 +67,10 @@ namespace ObsidianPortal
         public bool CompleteStage54 { get; set; }
         public bool CompleteStage55 { get; set; }
 
+        public bool EventHomeTown_0001 { get; set; }
+        public bool EventHomeTown_0002 { get; set; }
+        public bool EventHomeTown_0003 { get; set; }
+        public bool EventHomeTown_0004 { get; set; }
         // SQLログ採取用アカウント
         public string Account { get; set; }
     }

@@ -15,14 +15,31 @@ namespace ObsidianPortal
         public const string LAYER_STAGEPANEL = "StagePanel";
         public const string LAYER_AREAPANEL = "AreaPanel";
 
+        public enum RaceType
+        {
+            None = 0,
+            Human,
+            Monster,
+            //Angel,
+            //Fire,
+            //Demon,
+            //Mech,
+            //Ice,
+            TimeKeeper,
+        }
+
         public enum JobClass
         {
             None,
             Fighter,
-            Archer,
+            Ranger,
+            Seeker,
+            Priest,
             Magician,
-            Armorer,
-            Apprentice,
+            Enchanter,
+            MonsterA,
+            MonsterB,
+            TimeKeeper,
         }
 
         // 人間族
@@ -63,13 +80,38 @@ namespace ObsidianPortal
         public const string ICE_I3 = "I3";
         public const string ICE_I4 = "I4";
         public const string ICE_I5 = "I5";
+        // モンスター
+        public const string MONSTER = "モンスター";
+        public const string MONSTER_B = "モンスターＢ";
+        // タイム・キーパー
+        public const string TIME_KEEPER = "タイム・キーパー";
+
+        public const string UNIT_FIGHTER = "Unit_Fighter";
+        public const string UNIT_RANGER = "Unit_Ranger";
+        public const string UNIT_SEEKER = "Unit_Seeker";
+        public const string UNIT_PRIEST = "Unit_Priest";
+        public const string UNIT_MAGICIAN = "Unit_Magician";
+        public const string UNIT_ENCHANTER = "Unit_Enchanter";
+        public const string UNIT_MONSTER_A = "Unit_MonsterA";
+        public const string UNIT_MONSTER_B = "Unit_MonsterB";
+        public const string UNIT_TIME_KEEPER = "Unit_TimeKeeper";
 
         // 壁
         public const string OBJ_LAVAWALL = "炎の壁";
 
         // スキル名称
-        public const string NORMAL_ATTACK = "攻撃";
-        public const string NORMAL_END = "待機";
+        public const string NORMAL_MOVE = "Move";
+        public const string NORMAL_ATTACK = "Attack";
+        public const string NORMAL_DEFENSE = "Defense";
+        public const string NORMAL_STAY = "Stay";
+        //public const string STRAIGHT_SMASH = "ストレート・スマッシュ";
+        //public const string HUNTER_SHOT = "ハンター・ショット";
+        public const string ENERGY_BOLT = "エナジー・ボルト";
+        //public const string FRESH_HEAL = "フレッシュ・ヒール";
+        public const string WORD_OF_LIGHT = "ワード・オブ・ライト";
+        //public const string SHIELD_BASH = "シールド・バッシュ";
+        public const string FORCE_OF_STRENGTH = "フォース・オブ・ストレングス";
+
         public const string DASH = "ダッシュ";
         public const string REACHABLETARGET = "リーチャブル・ターゲット";
         public const string EARTHBIND = "アース・バインド";
@@ -89,9 +131,131 @@ namespace ObsidianPortal
 
         // コマンド名称
         public const string SHADOWINJURY = "Shadow Injury";
-        public const string FIREBOLT = "File Bolt";
         public const string GALE_WIND = "ゲイル・ウィンド";
 
+        // Delve I
+        public const string STRAIGHT_SMASH = "Straight Smash";
+        public const string SHIELD_BASH = "Shield Bash";
+        public const string HUNTER_SHOT = "Hunter Shot";
+        public const string VENOM_SLASH = "Venom Slash";
+        public const string HEART_OF_THE_LIFE = "Heart of the Life";
+        public const string ORACLE_COMMAND = "Oracle Command";
+        public const string FRESH_HEAL = "Fresh Heal";
+        public const string SHADOW_BLAST = "Shadow Blast";
+        public const string FIRE_BOLT = "Fire Bolt";
+        public const string ICE_NEEDLE = "Ice Needle";
+        public const string AURA_OF_POWER = "Aura of Power";
+        public const string SKY_SHIELD = "Sky Shield";
+
+        // Devle II
+        public const string STANCE_OF_THE_BLADE = "Stance of the Blade";
+        public const string STANCE_OF_THE_GUARD = "Stance of the Guard";
+        public const string MULTIPLE_SHOT = "Multiple Shot";
+        public const string INVISIBLE_BIND = "Invisible Bind";
+        public const string FORTUNE_SPIRIT = "Fortune Spirit";
+        public const string ZERO_IMMUNITY = "Zero Immunity";
+        public const string DIVINE_CIRCLE = "Divine Circle";
+        public const string BLOOD_SIGN = "Blood Sign";
+        public const string FLAME_BLADE = "Flame Blade";
+        public const string PURE_PURIFICATION = "Pure Purification";
+        public const string STORM_ARMOR = "Storm Armor";
+        public const string DISPEL_MAGIC = "Dispel Magic";
+
+        // Delve III
+        public const string DOUBLE_SLASH = "Double Slash";
+        public const string CONCUSSIVE_HIT = "Concussive Hit";
+        public const string REACHABLE_TARGET = "Reachable Target";
+        public const string IRREGULAR_STEP = "Irregular Step";
+        public const string VOICE_OF_THE_VIGOR = "Voice of the Vigor";
+        public const string SPIRITUAL_REST = "Spiritual Rest";
+        public const string HOLY_BREATH = "Holy Breath";
+        public const string DEATH_SCYTHE = "Death Scythe";
+        public const string METEOR_BULLET = "Meteor Bullet";
+        public const string BLUE_BULLET = "Blue Bullet";
+        public const string AETHER_DRIVE = "Aether Drive";
+        public const string MUTE_IMPULSE = "Mute Impulse";
+
+        // Delve IV
+        public const string WAR_SWING = "War Swing";
+        public const string DOMINATION_FIELD = "Domination Field";
+        public const string HAWK_EYE = "Hawk Eye";
+        public const string DISSENSION_RHYTHM = "Dissension Rhythm";
+        public const string SIGIL_OF_THE_FAITH = "Sigil of the Faith";
+        public const string ESSENCE_OVERFLOW = "Essence Overflow";
+        public const string SANCTION_FIELD = "Sanction Field";
+        public const string BLACK_VOICE = "Black Voice";
+        public const string FLAME_STRIKE = "Flame Strike";
+        public const string FREEZING_CUBE = "Freezing Cube";
+        public const string CIRCLE_OF_THE_POWER = "Circle of the Power";
+        public const string DETACHMENT_FAULT = "Detachment Fault";
+
+        // Delve V
+        public const string KINETIC_SMASH = "Kinetic Smash";
+        public const string SAFETY_FIELD = "Safety Field";
+        public const string PIERCING_ARROW = "Piercing Arrow";
+        public const string ASSASINATION_HIT = "Assasination Hit";
+        public const string CALL_OF_THE_STORM = "Call of the Storm";
+        public const string INNER_INSPIRATION = "Inner Inspiration";
+        public const string VALKYRIE_BREAK = "Valkyrie Break";
+        public const string ABYSS_EYE = "Abyss Eye";
+        public const string SIGIL_OF_THE_HOMURA = "Sigil of the Homura";
+        public const string FROST_LANCE = "Frost Lance";
+        public const string RUNE_STRIKE = "Rune Strike";
+        public const string PHANTOM_OBORO = "Phantom Oboro";
+
+        // Delve VI
+        public const string STANCE_OF_THE_IAI = "Stance of the Iai";
+        public const string OATH_OF_THE_AEGIS = "Oath of the Aegis";
+        public const string WIND_RUNNER = "Wind Runner";
+        public const string KILLER_GAZE = "Killer Gaze";
+        public const string SOUL_SHOUT = "Soul Shout";
+        public const string EVERFLOW_MIND = "Everflow Mind";
+        public const string SHINING_HEAL = "Shining Heal";
+        public const string THE_DARK_INTENSITY = "The Dark Intensity";
+        public const string PIERCING_FLAME = "Piercing Flame";
+        public const string WATER_SPLASH = "Water Splash";
+        public const string WORD_OF_THE_REVOLUTION = "Word of the Revolution";
+        public const string TRANQUILITY = "Tranquility";
+
+        // Delve VII
+        public const string DESTROYER_SMASH = "Destroyer Smash";
+        public const string ONE_IMMUNITY = "One Immunity";
+        public const string DEADLY_ARROW = "Deadly Arrow";
+        public const string CARNAGE_RUSH = "Carnage Rush";
+        public const string OVERWHELMING_DESTINY = "Overwhelming Destiny";
+        public const string TRANSCENDENCE_REACHED = "Transcendence Reached";
+        public const string RESURRECTION = "Resurrection";
+        public const string DEMON_CONTRACT = "Demon Contract";
+        public const string LAVA_ANNIHILATION = "Lava Annihilation";
+        public const string ABSOLUTE_ZERO = "Absolute Zero";
+        public const string BRILLIANT_FORM = "Brilliant Form";
+        public const string TIME_SKIP = "Time Skip";
+
+        // Effect 
+        public const string EFFECT_POISON = "Poison Effect";
+        public const string EFFECT_HEART_OF_LIFE = "Life Gain";
+        public const string EFFECT_SHADOW_BLAST = "Blind Effect";
+        public const string EFFECT_FORTUNE = "Fortune";
+        public const string EFFECT_SLIP = "Slip";
+
+        // Label
+        public const string LABEL_CRITICAL = "Critical";
+
+        // Color
+        public static Color COLOR_DAMAGE = new Color(1.0F, 0.3F, 0.3F);
+        public static Color COLOR_COMBATTRICK = Color.black;
+        public static Color COLOR_MINDFULNESS = Color.gray;
+        public static Color COLOR_FIRE = Color.red;
+        public static Color COLOR_ICE = Color.blue;
+        public static Color COLOR_ENHANCE = Color.magenta;
+        public static Color COLOR_MIST = Color.white;
+
+        // BUFF
+        public static int BUFFPANEL_OFFSET_X = 5; // add unity
+        public static int BUFFPANEL_BUFF_WIDTH = 40; // -25; change unity
+        public static int BUFF_NUM = 180; // [警告] component数が200*6=1200, 1000だと6000でスローダウン現象につながる
+        public static int BUFF_SIZE_X = 25;
+        public static int BUFF_SIZE_Y = 40;
 
         // シーン名
         public const string SCENE_MAINMENU = "MainMenu";
@@ -141,16 +305,6 @@ namespace ObsidianPortal
             Stage5_5,
         }
 
-        public enum Race
-        {
-            Human,
-            Mech,
-            Angel,
-            Demon,
-            Fire,
-            Ice,
-        }
-
         public enum Direction
         {
             None = -1,
@@ -161,8 +315,8 @@ namespace ObsidianPortal
         }
 
         #region "DungeonPlayerからインポート"
-        public static int INFINITY = 99999;
-        public static int MAX_BACKPACK_SIZE = 20; // 10->20 後編編集
+        public static int INFINITY = 9999999;
+        public static int MAX_BACKPACK_SIZE = 99; // 10->20 後編編集
         public const string WE2_FILE = @"TruthWorldEnvironment.xml";
         public static string BaseSaveFolder = Environment.CurrentDirectory + @"\Save\";
 
@@ -1028,13 +1182,25 @@ namespace ObsidianPortal
         #endregion
         #endregion
 
+        #region "エフェクト文字列"
+        public const string STRING_MISS = "ミス";
+        #endregion
+
         #region "Obsidian Portal"
 
-        public const int MAGI_ZELKIS_INIT_STR = 4;
-        public const int MAGI_ZELKIS_INIT_AGL = 2;
-        public const int MAGI_ZELKIS_INIT_INT = 1;
-        public const int MAGI_ZELKIS_INIT_STM = 3;
-        public const int MAGI_ZELKIS_INIT_MND = 3;
+        public const int MAX_TIME = 1000;
+
+        public const int BILLY_RAKI_INIT_STR = 4;
+        public const int BILLY_RAKI_INIT_AGL = 2;
+        public const int BILLY_RAKI_INIT_INT = 1;
+        public const int BILLY_RAKI_INIT_STM = 3;
+        public const int BILLY_RAKI_INIT_MND = 3;
+
+        public const int ANNA_HAMILTON_INIT_STR = 1;
+        public const int ANNA_HAMILTON_INIT_AGL = 4;
+        public const int ANNA_HAMILTON_INIT_INT = 2;
+        public const int ANNA_HAMILTON_INIT_STM = 3;
+        public const int ANNA_HAMILTON_INIT_MND = 3;
 
         public const int EONE_FULNEA_INIT_STR = 1;
         public const int EONE_FULNEA_INIT_AGL = 2;
@@ -1042,23 +1208,25 @@ namespace ObsidianPortal
         public const int EONE_FULNEA_INIT_STM = 2;
         public const int EONE_FULNEA_INIT_MND = 3;
 
-        public const int SELMOI_RO_INIT_STR = 3;
-        public const int SELMOI_RO_INIT_AGL = 3;
-        public const int SELMOI_RO_INIT_INT = 1;
-        public const int SELMOI_RO_INIT_STM = 3;
-        public const int SELMOI_RO_INIT_MND = 3;
+        //public const int MAGI_ZELKIS_INIT_STR = 4;
+        //public const int MAGI_ZELKIS_INIT_AGL = 2;
+        //public const int MAGI_ZELKIS_INIT_INT = 1;
+        //public const int MAGI_ZELKIS_INIT_STM = 3;
+        //public const int MAGI_ZELKIS_INIT_MND = 3;
 
-        public const int KARTIN_MAI_INIT_STR = 4;
-        public const int KARTIN_MAI_INIT_AGL = 4;
-        public const int KARTIN_MAI_INIT_INT = 1;
-        public const int KARTIN_MAI_INIT_STM = 1;
-        public const int KARTIN_MAI_INIT_MND = 3;
 
-        public const int JEDA_ARUS_INIT_STR = 3;
-        public const int JEDA_ARUS_INIT_AGL = 1;
-        public const int JEDA_ARUS_INIT_INT = 2;
-        public const int JEDA_ARUS_INIT_STM = 4;
-        public const int JEDA_ARUS_INIT_MND = 3;
+        //public const int SELMOI_RO_INIT_STR = 3;
+        //public const int SELMOI_RO_INIT_AGL = 3;
+        //public const int SELMOI_RO_INIT_INT = 1;
+        //public const int SELMOI_RO_INIT_STM = 3;
+        //public const int SELMOI_RO_INIT_MND = 3;
+
+
+        //public const int JEDA_ARUS_INIT_STR = 3;
+        //public const int JEDA_ARUS_INIT_AGL = 1;
+        //public const int JEDA_ARUS_INIT_INT = 2;
+        //public const int JEDA_ARUS_INIT_STM = 4;
+        //public const int JEDA_ARUS_INIT_MND = 3;
 
         public const string COMMON_FINE_BOW = @"ファイン・ボウ";
         public const string COMMON_ELVISH_BOW = @"エルヴィッシュ・ボウ";
@@ -1072,8 +1240,8 @@ namespace ObsidianPortal
         //public const string DUEL_SHUVALTZ_FLORE = @"シュヴァルツェ・フローレ";
         //public const string DUEL_SUN_YU = @"サン・ユウ";
         //public const string DUEL_CALMANS_OHN = @"カルマンズ・オーン";
-        //public const string DUEL_ANNA_HAMILTON = @"アンナ・ハミルトン";
-        //public const string DUEL_BILLY_RAKI = @"ビリー・ラキ";
+        public const string DUEL_ANNA_HAMILTON = @"アンナ・ハミルトン";
+        public const string DUEL_BILLY_RAKI = @"ビリー・ラキ";
         //public const string DUEL_KILT_JORJU = @"キルト・ジョルジュ";
         //public const string DUEL_PERMA_WARAMY = @"ペルマ・ワラミィ";
         //public const string DUEL_SCOTY_ZALGE = @"スコーティ・ザルゲ";
@@ -1085,6 +1253,22 @@ namespace ObsidianPortal
         public const string DUEL_SELMOI_RO = @"セルモイ・ロウ";
         public const string DUEL_MAGI_ZELKIS = @"マーギ・ゼルキス";
         public const string DUEL_EONE_FULNEA = @"エオネ・フルネア";
+
+        public const string SOUND_NORMAL_ATTACK = "NormalAttack";
+        public const string SOUND_MAGIC_ATTACK = "MagicAttack";
+
+        public const string SOUND_STRAIGHT_SMASH = "StraightSmash";
+        public const string SOUND_SHIELD_BASH = "ShieldBash";
+        public const string SOUND_HUNTER_SHOT = "HunterShot";
+        public const string SOUND_VENOM_SLASH = "VenomSlash";
+        public const string SOUND_HEART_OF_THE_LIFE = "HeartoftheLife";
+        public const string SOUND_ORACLE_COMMAND = "OracleCommand";
+        public const string SOUND_FRESH_HEAL = "FreshHeal";
+        public const string SOUND_SHADOW_BLAST = "ShadowBlast";
+        public const string SOUND_FIRE_BOLT = "FireBolt";
+        public const string SOUND_ICE_NEEDLE = "IceNeedle";
+        public const string SOUND_SEAL_OF_THE_FORCE = "SealoftheForce";
+        public const string SOUND_SKY_SHIELD = "SkyShield";
         #endregion
 
     }

@@ -16,22 +16,48 @@ namespace ObsidianPortal
             if (unit != null)
             {
                 txtUnitName.GetComponent<Text>().text = unit.UnitName;
-                txtAttack.text = unit.AttackValue.ToString();
-                txtDefense.text = unit.DefenseValue.ToString();
-                txtSpeed.text = unit.SpeedValue.ToString();
-                txtMagicAttack.text = unit.MagicAttackValue.ToString();
-                txtMagicDefense.text = unit.MagicDefenseValue.ToString();
-                txtMove.text = unit.MoveValue.ToString();
+                txtStrength.text = unit.BaseStrength.ToString();
+                txtAgility.text = unit.BaseAgility.ToString();
+                txtIntelligence.text = unit.BaseIntelligence.ToString();
+                txtMind.text = unit.BaseMind.ToString();
+                txtMove.text = unit.MovePoint.ToString();
                 txtTime.text = unit.CurrentTime.ToString();
                 txtOrder.text = GetSequenceNumber(unit).ToString();
-                UpdateLife(unit);
-                UpdateUnitImage(unit);
+                UpdateLife(unit, UnitLifeText, UnitLifeMeter);
+                UpdateUnitImage(unit, UnitImage);
             }
             else
             {
                 txtUnitName.GetComponent<Text>().text = "";
                 UnitLifeText.text = "";
-                UpdateUnitImage(unit);
+                UpdateUnitImage(unit, UnitImage);
+            }
+        }
+        /// <summary>
+        /// 対象ユニットのステータスを表示します。(ミニ版)
+        /// </summary>
+        /// <param name="unit"></param>
+
+        private void UpdateUnitStatusMini(Unit unit)
+        {
+            if (unit != null)
+            {
+                txtUnitName_mini.GetComponent<Text>().text = unit.UnitName;
+                txtStrength_mini.text = unit.BaseStrength.ToString();
+                txtAgility_mini.text = unit.BaseAgility.ToString();
+                txtIntelligence_mini.text = unit.BaseIntelligence.ToString();
+                txtMind_mini.text = unit.BaseMind.ToString();
+                txtMove_mini.text = unit.MovePoint.ToString();
+                txtTime_mini.text = unit.CurrentTime.ToString();
+                txtOrder_mini.text = GetSequenceNumber(unit).ToString();
+                UpdateLife(unit, UnitLifeText_mini, UnitLifeMeter_mini);
+                UpdateUnitImage(unit, UnitImage_mini);
+            }
+            else
+            {
+                txtUnitName_mini.GetComponent<Text>().text = "";
+                UnitLifeText_mini.text = "";
+                UpdateUnitImage(unit, UnitImage_mini);
             }
         }
 
@@ -39,26 +65,26 @@ namespace ObsidianPortal
         /// 対象ユニットのAPを表示します。
         /// </summary>
         /// <param name="unit"></param>
-        private void UpdateUnitAP(Unit unit)
+        private void UpdateUnitAP(List<Image> listAP, Unit unit)
         {
             if (unit == null)
             {
-                for (int ii = 0; ii < ActionPoint.Count; ii++)
+                for (int ii = 0; ii < listAP.Count; ii++)
                 {
-                    ActionPoint[ii].sprite = Resources.Load<Sprite>("ActionPoint_use");
+                    listAP[ii].sprite = Resources.Load<Sprite>("ActionPoint_use");
                 }
                 return;
             }
 
-            for (int ii = 0; ii < ActionPoint.Count; ii++)
+            for (int ii = 0; ii < listAP.Count; ii++)
             {
                 if (ii < unit.CurrentAP)
                 {
-                    ActionPoint[ii].sprite = Resources.Load<Sprite>("ActionPoint");
+                    listAP[ii].sprite = Resources.Load<Sprite>("ActionPoint");
                 }
                 else
                 {
-                    ActionPoint[ii].sprite = Resources.Load<Sprite>("ActionPoint_use");
+                    listAP[ii].sprite = Resources.Load<Sprite>("ActionPoint_use");
                 }
             }
         }
@@ -89,7 +115,9 @@ namespace ObsidianPortal
             //}
         }
 
-        // ゲームが終了したかどうかを判定し、画面に表示します。
+        /// <summary>
+        /// ゲームが終了したかどうかを判定し、画面に表示します。
+        /// </summary>
         private void JudgeGameEnd()
         {
             if (DetectWin())
@@ -114,10 +142,10 @@ namespace ObsidianPortal
         private void ExecCancel(Unit unit)
         {
             this.Phase = ActionPhase.SelectFirst;
-            ClearQuadTile();
-            ClearAttackTile();
-            ClearHealTile();
-            ClearAllyEffectTile();
+            ClearTile(MoveTile);
+            ClearTile(AttackTile);
+            ClearTile(HealTile);
+            ClearTile(AllyEffectTile);
         }
 
         /// <summary>
@@ -170,6 +198,14 @@ namespace ObsidianPortal
             }
             return false;
         }
+        private bool ContainPositionY(float y, float y2)
+        {
+            if (y - 0.01 <= y2 && y2 <= y + 0.01)
+            {
+                return true;
+            }
+            return false;
+        }
 
         /// <summary>
         /// 移動可能な範囲かどうかを確認します。(Abstract -> Move)
@@ -192,17 +228,13 @@ namespace ObsidianPortal
         }
 
         /// <summary>
-        /// 回復可能な範囲かどうかを確認します。 (Abstract -> Heal)
+        /// 味方対象可能な範囲かどうかを確認します。 (Abstract -> Heal)
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        private bool CheckHealableArea(Vector3 src)
+        private bool CheckAllyEffectArea(Vector3 src, List<GameObject> tile)
         {
-            return AbstractCheckArea(src, HealTile);
-        }
-        private bool CheckAllyEffectArea(Vector3 src)
-        {
-            return AbstractCheckArea(src, AllyEffectTile);
+            return AbstractCheckArea(src, tile);
         }
 
         /// <summary>
@@ -277,22 +309,49 @@ namespace ObsidianPortal
             return false;
         }
 
+        private void OpenAllyPoint(Unit src, int max)
+        {
+            ClearTile(AllyEffectTile);
+            for (int ii = 0; ii < fieldTile.Count; ii++)
+            {
+                AreaInformation area = ExistAreaFromLocation(fieldTile[ii].transform.localPosition);
+                if (area != null && area.field != AreaInformation.Field.None)
+                {
+                    Unit unit = ExistUnitFromLocation(fieldTile[ii].transform.localPosition);
+                    if (unit != null && unit.IsAlly)
+                    {
+                        GameObject current = Instantiate(prefab_AllyEffectTile, new Vector3(area.transform.localPosition.x, area.transform.localPosition.y, area.transform.localPosition.z - 0.51f), Quaternion.identity) as GameObject;
+                        current.transform.Rotate(new Vector3(0, 0, 0));
+                        current.gameObject.SetActive(true);
+                        AllyEffectTile.Add(current);
+                    }
+                }
+            }
+
+        }
+
         /// <summary>
-        /// ヒール可能な範囲を取得・表示します。
+        /// 射程範囲を取得・表示します。
         /// </summary>
         /// <param name="src"></param>
-        private void OpenHealable(Unit src)
+        private void OpenEffectArea(Unit src, int max, List<GameObject> tileList, GameObject prefab_Tile)
         {
-            ClearHealTile();
-            List<Vector3> result = new List<Vector3>();
-            result.Add(src.transform.localPosition);
-            SearchMoveablePoint(ref result, src.transform.localPosition, src.HealRange, -1, src.ally, false);
-            for (int ii = 0; ii < result.Count; ii++)
+            ClearTile(tileList);
+            for (int ii = 0; ii < fieldTile.Count; ii++)
             {
-                GameObject current = Instantiate(prefab_HealTile, new Vector3(result[ii].x, result[ii].y, ExistAreaFromLocation(result[ii]).transform.localPosition.z - 0.51f), Quaternion.identity) as GameObject;
-                current.transform.Rotate(new Vector3(0, 0, 0));
-                current.gameObject.SetActive(true);
-                HealTile.Add(current);
+                AreaInformation area = ExistAreaFromLocation(fieldTile[ii].transform.localPosition);
+                if (area != null && area.field != AreaInformation.Field.None)
+                {
+                    //Unit unit = ExistUnitFromLocation(fieldTile[ii].transform.localPosition);
+                    int distance = UnitDistance(src.transform.localPosition, area.transform.localPosition);
+                    if (distance <= max)
+                    {
+                        GameObject current = Instantiate(prefab_Tile, new Vector3(fieldTile[ii].transform.localPosition.x, fieldTile[ii].transform.localPosition.y, fieldTile[ii].transform.localPosition.z - 0.51f), Quaternion.identity) as GameObject;
+                        current.transform.Rotate(new Vector3(0, 0, 0));
+                        current.gameObject.SetActive(true);
+                        tileList.Add(current);
+                    }
+                }
             }
         }
 
@@ -302,7 +361,7 @@ namespace ObsidianPortal
         /// <param name="src"></param>
         private void OpenAttackable(Unit src, int range, bool linear)
         {
-            ClearAttackTile();
+            ClearTile(AttackTile);
             List<Vector3> result = new List<Vector3>();
             result.Add(src.transform.localPosition);
             if (linear)
@@ -325,36 +384,27 @@ namespace ObsidianPortal
                 AttackTile.Add(current);
             }
         }
-
-        /// <summary>
-        /// 味方を対象とするエリア範囲を取得・表示します。
-        /// </summary>
-        /// <param name="src"></param>
-        private void OpenAllyEffectable(Unit src)
-        {
-            ClearAllyEffectTile();
-            List<Vector3> result = new List<Vector3>();
-            result.Add(src.transform.localPosition);
-            SearchMoveablePoint(ref result, src.transform.localPosition, src.EffectRange, -1, src.ally, false);
-            for (int ii = 0; ii < result.Count; ii++)
-            {
-                GameObject current = Instantiate(prefab_AllyEffectTile, new Vector3(result[ii].x, result[ii].y, ExistAreaFromLocation(result[ii]).transform.localPosition.z - 0.51f), Quaternion.identity) as GameObject;
-                current.transform.Rotate(new Vector3(0, 0, 0));
-                current.gameObject.SetActive(true);
-                AllyEffectTile.Add(current);
-            }
-        }
-
+        
         /// <summary>
         /// 移動可能な範囲を取得・表示します。
         /// </summary>
         /// <param name="src"></param>
         private void OpenMoveable(Unit src)
         {
-            ClearQuadTile();
+            ClearTile(MoveTile);
             List<Vector3> result = new List<Vector3>();
             result.Add(src.transform.localPosition);
-            SearchMoveablePoint(ref result, src.transform.localPosition, src.MoveValue, -1, src.ally, true);
+            if (src.CurrentBind > 0)
+            {
+                Debug.Log("CurrentUnit is binded, then no move.");
+                GameObject current = Instantiate(prefab_Quad, new Vector3(result[0].x, result[0].y, ExistAreaFromLocation(result[0]).transform.localPosition.z - 0.51f), Quaternion.identity) as GameObject;
+                current.transform.Rotate(new Vector3(0, 0, 0));
+                current.gameObject.SetActive(true);
+                MoveTile.Add(current);
+                return;
+            }
+
+            SearchMoveablePoint(ref result, src.transform.localPosition, src.MovePoint, -1, src.ally, true);
             for (int ii = 0; ii < result.Count; ii++)
             {
                 GameObject current = Instantiate(prefab_Quad, new Vector3(result[ii].x, result[ii].y, ExistAreaFromLocation(result[ii]).transform.localPosition.z - 0.51f), Quaternion.identity) as GameObject;
@@ -362,9 +412,80 @@ namespace ObsidianPortal
                 current.gameObject.SetActive(true);
                 MoveTile.Add(current);
             }
-            for (int ii = 0; ii < MoveTile.Count; ii++)
+            //for (int ii = 0; ii < MoveTile.Count; ii++)
+            //{
+            //    Debug.Log(MoveTile[ii].transform.localPosition.ToString());
+            //}
+        }
+
+        /// <summary>
+        /// 地点AとBの距離を取得します。
+        /// </summary>
+        /// <param name="src"></param>
+        /// <param name="dst"></param>
+        /// <returns></returns>
+        private int UnitDistance(Vector3 src, Vector3 dst)
+        {
+            int distanceX = (int)(src.x - dst.x);
+            if (distanceX < 0) { distanceX = distanceX * -1; }
+            int distanceY = (int)(src.y - dst.y);
+            if (distanceY < 0) { distanceY = distanceY * -1; }
+            int total = distanceX + distanceY;
+
+            return total;
+        }
+        private void PushUnit(Unit src, Unit dst)
+        {
+            if (ContainPositionX(src.transform.localPosition.x, dst.transform.localPosition.x) &&
+                ContainPositionY(src.transform.localPosition.y + FIX.HEX_MOVE_X, dst.transform.localPosition.y))
             {
-                Debug.Log(MoveTile[ii].transform.localPosition.ToString());
+                Unit anotherUnit = ExistUnitFromLocation(new Vector3(dst.transform.position.x,
+                                                                 dst.transform.position.y + FIX.HEX_MOVE_X,
+                                                                 dst.transform.position.z));
+                if (anotherUnit == null)
+                {
+                    dst.Move(FIX.Direction.Top);
+                }
+                return;
+            }
+            
+            if (ContainPositionX(src.transform.localPosition.x - FIX.HEX_MOVE_X, dst.transform.localPosition.x) &&
+                ContainPositionY(src.transform.localPosition.y, dst.transform.localPosition.y)) 
+            {
+                Unit anotherUnit = ExistUnitFromLocation(new Vector3(dst.transform.position.x - FIX.HEX_MOVE_X,
+                                                               dst.transform.position.y,
+                                                               dst.transform.position.z));
+                if (anotherUnit == null)
+                {
+                    dst.Move(FIX.Direction.Left);
+                }
+                return;
+            }
+
+            if (ContainPositionX(src.transform.localPosition.x + FIX.HEX_MOVE_X, dst.transform.localPosition.x) &&
+                ContainPositionY(src.transform.localPosition.y, dst.transform.localPosition.y))
+            {
+                Unit anotherUnit = ExistUnitFromLocation(new Vector3(dst.transform.position.x + FIX.HEX_MOVE_X,
+                                                                 dst.transform.position.y,
+                                                                 dst.transform.position.z));
+                if (anotherUnit == null)
+                {
+                    dst.Move(FIX.Direction.Right);
+                }
+                return;
+            }
+
+            if (ContainPositionX(src.transform.localPosition.x, dst.transform.localPosition.x) &&
+                ContainPositionY(src.transform.localPosition.y - FIX.HEX_MOVE_X, dst.transform.localPosition.y))
+            {
+                Unit anotherUnit = ExistUnitFromLocation(new Vector3(dst.transform.position.x,
+                                               dst.transform.position.y - FIX.HEX_MOVE_X,
+                                               dst.transform.position.z));
+                if (anotherUnit == null)
+                {
+                    dst.Move(FIX.Direction.Bottom);
+                }
+                return;
             }
         }
 
@@ -469,7 +590,6 @@ namespace ObsidianPortal
             SearchMoveablePoint(ref target, src.transform.localPosition, range, -1, src.ally, false);
             for (int ii = 0; ii < AllyList.Count; ii++)
             {
-                Debug.Log("ally type: " + AllList[ii].Type.ToString());
                 if (AllyList[ii].Dead) { continue; }
                 //if (AllyList[ii].Type == Unit.UnitType.Wall) { continue; }
 
@@ -667,26 +787,29 @@ namespace ObsidianPortal
         /// <param name="type"></param>
         /// <param name="x"></param>
         /// <param name="z"></param>
-        private Unit SetupUnit(int number, bool enemy, Unit.RaceType race, Unit.UnitType type, float x, float y)
+        private Unit SetupUnit(int number, Unit.Ally ally, FIX.RaceType race, FIX.JobClass type, float x, float y)
         {
             Unit prefab = null;
             Unit unit = null;
-            if (type == Unit.UnitType.Fighter) { prefab = prefab_Fighter; }
-            else if (type == Unit.UnitType.Archer) { prefab = prefab_Archer; }
-            else if (type == Unit.UnitType.Magician) { prefab = prefab_Magician; }
+            if (type == FIX.JobClass.Fighter) { prefab = prefab_Fighter; }
+            else if (type == FIX.JobClass.Ranger) { prefab = prefab_Archer; }
+            else if (type == FIX.JobClass.Magician) { prefab = prefab_Magician; }
             //else if (type == Unit.UnitType.Sorcerer) { prefab = prefab_Sorcerer; }
             //else if (type == Unit.UnitType.Priest) { prefab = prefab_Priest; }
             //else if (type == Unit.UnitType.Enchanter) { prefab = prefab_Enchanter; }
             //else if (type == Unit.UnitType.Wall) { prefab = prefab_Wall; }
-            if (race == Unit.RaceType.Monster) { prefab = prefab_Monster; }
+            else if (type == FIX.JobClass.MonsterA) { prefab = prefab_MonsterA; }
+            else if (type == FIX.JobClass.MonsterB) { prefab = prefab_MonsterB; }
+            else if (type == FIX.JobClass.TimeKeeper) { prefab = prefab_TimeKeeper; }
 
             x = x * FIX.HEX_MOVE_X;
             y = y * FIX.HEX_MOVE_Z;
 
             unit = Instantiate(prefab, new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f), Quaternion.identity) as Unit;
 
-            unit.Initialize(race, type, enemy);
+            unit.Initialize(race, type, ally);
             unit.name = type.ToString() + "_" + number.ToString();
+            //unit.ConstructUnit(objActionButton);
             unit.gameObject.SetActive(true);
 
             AddUnitWithAdjustTime(unit);
@@ -741,55 +864,16 @@ namespace ObsidianPortal
         }
 
         /// <summary>
-        /// ヒール可能タイルをクリアします。
+        /// タイルをクリアします。
         /// </summary>
-        private void ClearHealTile()
+        private void ClearTile(List<GameObject> tile)
         {
-            for (int ii = 0; ii < HealTile.Count; ii++)
+            for (int ii = 0; ii < tile.Count; ii++)
             {
-                HealTile[ii].SetActive(false);
-                Destroy(HealTile[ii]);
+                tile[ii].SetActive(false);
+                Destroy(tile[ii]);
             }
-            HealTile.Clear();
-        }
-
-        /// <summary>
-        /// 攻撃可能タイルをクリアします。
-        /// </summary>
-        private void ClearAttackTile()
-        {
-            for (int ii = 0; ii < AttackTile.Count; ii++)
-            {
-                AttackTile[ii].SetActive(false);
-                Destroy(AttackTile[ii]);
-            }
-            AttackTile.Clear();
-        }
-
-        /// <summary>
-        /// 味方効果タイルをクリアします。
-        /// </summary>
-        private void ClearAllyEffectTile()
-        {
-            for (int ii = 0; ii < AllyEffectTile.Count; ii++)
-            {
-                AllyEffectTile[ii].SetActive(false);
-                Destroy(AllyEffectTile[ii]);
-            }
-            AllyEffectTile.Clear();
-        }
-
-        /// <summary>
-        /// 移動可能タイルをクリアします。
-        /// </summary>
-        private void ClearQuadTile()
-        {
-            for (int ii = 0; ii < MoveTile.Count; ii++)
-            {
-                MoveTile[ii].SetActive(false);
-                Destroy(MoveTile[ii]);
-            }
-            MoveTile.Clear();
+            tile.Clear();
         }
 
         private void SearchMoveableLinear(ref List<Vector3> result, Vector3 p, int max, int direction, Unit.Ally ally, bool ristriction)
@@ -899,6 +983,10 @@ namespace ObsidianPortal
                                 return 999;
                             }
                             if (attr == Unit.Ally.Enemy && target.ally == Unit.Ally.Ally)
+                            {
+                                return 999;
+                            }
+                            if (target.ally == Unit.Ally.TimerKeeper)
                             {
                                 return 999;
                             }

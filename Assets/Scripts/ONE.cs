@@ -11,7 +11,7 @@ namespace ObsidianPortal
         private static GameObject objWE2 = null;
         private static GameObject objAchieve = null;
 
-        public static List<MainCharacter> Chara; // キャラクター１
+        public static List<Unit> UnitList; // キャラクター１
 
         public static ControlSQL SQL = null; // SQLログ情報
         public static TruthWorldEnvironment WE2 = null; // ゲームストーリー全体のワールド環境フラグ
@@ -41,71 +41,100 @@ namespace ObsidianPortal
             objWE2 = new GameObject("objWE2");
             objSQL = new GameObject("objSQL");
             objAchieve = new GameObject("objAchieve");
-            Chara = new List<MainCharacter>();
+            UnitList = new List<Unit>();
 
-            // オブジェクトに暮らすを付与
-            MainCharacter obj = objPlayer.AddComponent<MainCharacter>();
+            // オブジェクトにクラスを付与
+            Unit obj = objPlayer.AddComponent<Unit>();
             // デバッグ用データ
-            obj.FullName = FIX.DUEL_EONE_FULNEA;
+            obj.FullName = FIX.DUEL_BILLY_RAKI;
             obj.Level = 1;
-            obj.Job = FIX.JobClass.Magician;
-            obj.BaseStrength = FIX.EONE_FULNEA_INIT_STR;
-            obj.BaseAgility = FIX.EONE_FULNEA_INIT_AGL;
-            obj.BaseIntelligence = FIX.EONE_FULNEA_INIT_INT;
-            obj.BaseStamina = FIX.EONE_FULNEA_INIT_STM;
-            obj.BaseMind = FIX.EONE_FULNEA_INIT_MND;
-            obj.MainWeapon = new Item(FIX.COMMON_WOOD_ROD);
-            Chara.Add(obj);
+            obj.Race = FIX.RaceType.Human;
+            obj.Job = FIX.JobClass.Fighter;
+            obj.BaseStrength = FIX.BILLY_RAKI_INIT_STR;
+            obj.BaseAgility = FIX.BILLY_RAKI_INIT_AGL;
+            obj.BaseIntelligence = FIX.BILLY_RAKI_INIT_INT;
+            obj.BaseStamina = FIX.BILLY_RAKI_INIT_STM;
+            obj.BaseMind = FIX.BILLY_RAKI_INIT_MND;
+            obj.MainWeapon = new Item(FIX.COMMON_FINE_SWORD);
+            obj.AddBackPack(new Item(FIX.COMMON_FINE_SWORD), 1);
+            obj.AddBackPack(new Item(FIX.COMMON_FINE_ARMOR), 1);
+            obj.AddBackPack(new Item(FIX.COMMON_LARGE_RED_POTION), 3);
+            obj.AddBackPack(new Item(FIX.POOR_BLACK_MATERIAL3), 1);
+            obj.AddBackPack(new Item(FIX.RARE_ADERKER_FALSE_ROD), 1);
+            obj.AddBackPack(new Item(FIX.EPIC_FLOW_FUNNEL_OF_THE_ZVELDOZE), 1);
+            obj.AddBackPack(new Item(FIX.COMMON_AOSAME_KENSHI), 1);
+            obj.AddBackPack(new Item(FIX.RARE_ANGEL_SILK), 1);
+            obj.AddBackPack(new Item(FIX.COMMON_LARGE_RED_POTION), 2);
+            obj.AddBackPack(new Item(FIX.EPIC_SHEZL_MYSTIC_FORTUNE), 1);
+            obj.AddValuables(new Item(FIX.RARE_EARRING_OF_LANA), 1);
+            obj.ActionButtonCommand.Add(FIX.NORMAL_MOVE);
+            obj.ActionButtonCommand.Add(FIX.NORMAL_ATTACK);
+            obj.ActionButtonCommand.Add(FIX.STRAIGHT_SMASH);
+            obj.ActionButtonCommand.Add(FIX.STRAIGHT_SMASH);
+            obj.ActionButtonCommand.Add(FIX.ZERO_IMMUNITY);
+            UnitList.Add(obj);
 
-            MainCharacter obj2 = objPlayer.AddComponent<MainCharacter>();
+            Unit obj2 = objPlayer.AddComponent<Unit>();
             // デバッグ用データ
-            obj2.FullName = FIX.DUEL_MAGI_ZELKIS;
+            obj2.FullName = FIX.DUEL_ANNA_HAMILTON;
             obj2.Level = 1;
-            obj2.Job = FIX.JobClass.Fighter;
-            obj2.BaseStrength = FIX.MAGI_ZELKIS_INIT_STR;
-            obj2.BaseAgility = FIX.MAGI_ZELKIS_INIT_AGL;
-            obj2.BaseIntelligence = FIX.MAGI_ZELKIS_INIT_INT;
-            obj2.BaseStamina = FIX.MAGI_ZELKIS_INIT_STM;
-            obj2.BaseMind = FIX.MAGI_ZELKIS_INIT_MND;
-            obj2.MainWeapon = new Item(FIX.COMMON_FINE_SWORD);
-            Chara.Add(obj2);
+            obj2.Race = FIX.RaceType.Human;
+            obj2.Job = FIX.JobClass.Ranger;
+            obj2.BaseStrength = FIX.ANNA_HAMILTON_INIT_STR;
+            obj2.BaseAgility = FIX.ANNA_HAMILTON_INIT_AGL;
+            obj2.BaseIntelligence = FIX.ANNA_HAMILTON_INIT_INT;
+            obj2.BaseStamina = FIX.ANNA_HAMILTON_INIT_STM;
+            obj2.BaseMind = FIX.ANNA_HAMILTON_INIT_MND;
+            obj2.MainWeapon = new Item(FIX.COMMON_FINE_BOW);
+            obj2.ActionButtonCommand.Add(FIX.NORMAL_MOVE);
+            obj2.ActionButtonCommand.Add(FIX.NORMAL_ATTACK);
+            obj2.ActionButtonCommand.Add(FIX.ZERO_IMMUNITY);
+            obj2.ActionButtonCommand.Add(FIX.ZERO_IMMUNITY);
+            obj2.ActionButtonCommand.Add(FIX.ZERO_IMMUNITY);
+            UnitList.Add(obj2);
 
-            MainCharacter obj3 = objPlayer.AddComponent<MainCharacter>();
+            Unit obj3 = objPlayer.AddComponent<Unit>();
             // デバッグ用データ
-            obj3.FullName = FIX.DUEL_SELMOI_RO;
+            obj3.FullName = FIX.DUEL_EONE_FULNEA;
             obj3.Level = 1;
-            obj3.Job = FIX.JobClass.Archer;
-            obj3.BaseStrength = FIX.SELMOI_RO_INIT_STR;
-            obj3.BaseAgility = FIX.SELMOI_RO_INIT_AGL;
-            obj3.BaseIntelligence = FIX.SELMOI_RO_INIT_INT;
-            obj3.BaseStamina = FIX.SELMOI_RO_INIT_STM;
-            obj3.BaseMind = FIX.SELMOI_RO_INIT_MND;
-            obj3.MainWeapon = new Item(FIX.COMMON_FINE_BOW);
-            Chara.Add(obj3);
+            obj3.Race = FIX.RaceType.Human;
+            obj3.Job = FIX.JobClass.Magician;
+            obj3.BaseStrength = FIX.EONE_FULNEA_INIT_STR;
+            obj3.BaseAgility = FIX.EONE_FULNEA_INIT_AGL;
+            obj3.BaseIntelligence = FIX.EONE_FULNEA_INIT_INT;
+            obj3.BaseStamina = FIX.EONE_FULNEA_INIT_STM;
+            obj3.BaseMind = FIX.EONE_FULNEA_INIT_MND;
+            obj3.MainWeapon = new Item(FIX.COMMON_WOOD_ROD);
+            obj3.ActionButtonCommand.Add(FIX.NORMAL_MOVE);
+            obj3.ActionButtonCommand.Add(FIX.NORMAL_ATTACK);
+            obj3.ActionButtonCommand.Add(FIX.FIRE_BOLT);
+            obj3.ActionButtonCommand.Add(FIX.FRESH_HEAL);
+            obj3.ActionButtonCommand.Add(FIX.FIRE_BOLT);
+            UnitList.Add(obj3);
 
-            MainCharacter obj4 = objPlayer.AddComponent<MainCharacter>();
-            obj4.FullName = FIX.DUEL_KARTIN_MAI;
-            obj4.Level = 1;
-            obj4.Job = FIX.JobClass.Apprentice;
-            obj4.BaseStrength = FIX.KARTIN_MAI_INIT_STR;
-            obj4.BaseAgility = FIX.KARTIN_MAI_INIT_AGL;
-            obj4.BaseIntelligence = FIX.KARTIN_MAI_INIT_INT;
-            obj4.BaseStamina = FIX.KARTIN_MAI_INIT_STM;
-            obj4.BaseMind = FIX.KARTIN_MAI_INIT_MND;
-            obj4.MainWeapon = new Item(FIX.COMMON_LIGHT_CLAW);
-            Chara.Add(obj4);
+            //Unit obj4 = objPlayer.AddComponent<Unit>();
+            //obj4.FullName = FIX.DUEL_KARTIN_MAI;
+            //obj4.Level = 1;
+            //obj4.Job = FIX.JobClass.Apprentice;
+            //obj4.BaseStrength = FIX.KARTIN_MAI_INIT_STR;
+            //obj4.BaseAgility = FIX.KARTIN_MAI_INIT_AGL;
+            //obj4.BaseIntelligence = FIX.KARTIN_MAI_INIT_INT;
+            //obj4.BaseStamina = FIX.KARTIN_MAI_INIT_STM;
+            //obj4.BaseMind = FIX.KARTIN_MAI_INIT_MND;
+            //obj4.MainWeapon = new Item(FIX.COMMON_LIGHT_CLAW);
+            //Chara.Add(obj4);
 
-            MainCharacter obj5 = objPlayer.AddComponent<MainCharacter>();
-            obj5.FullName = FIX.DUEL_JEDA_ARUS;
-            obj5.Level = 1;
-            obj5.Job = FIX.JobClass.Armorer;
-            obj5.BaseStrength = FIX.JEDA_ARUS_INIT_STR;
-            obj5.BaseAgility = FIX.JEDA_ARUS_INIT_AGL;
-            obj5.BaseIntelligence = FIX.JEDA_ARUS_INIT_INT;
-            obj5.BaseStamina = FIX.JEDA_ARUS_INIT_STM;
-            obj5.BaseMind = FIX.JEDA_ARUS_INIT_MND;
-            obj5.MainWeapon = new Item(FIX.COMMON_LIGHT_CLAW);
-            Chara.Add(obj5);
+            //Unit obj5 = objPlayer.AddComponent<Unit>();
+            //obj5.FullName = FIX.DUEL_JEDA_ARUS;
+            //obj5.Level = 1;
+            //obj5.Job = FIX.JobClass.Armorer;
+            //obj5.BaseStrength = FIX.JEDA_ARUS_INIT_STR;
+            //obj5.BaseAgility = FIX.JEDA_ARUS_INIT_AGL;
+            //obj5.BaseIntelligence = FIX.JEDA_ARUS_INIT_INT;
+            //obj5.BaseStamina = FIX.JEDA_ARUS_INIT_STM;
+            //obj5.BaseMind = FIX.JEDA_ARUS_INIT_MND;
+            //obj5.MainWeapon = new Item(FIX.COMMON_LIGHT_CLAW);
+            //Chara.Add(obj5);
 
             // P1.subWeapon = new Item(FIX.COMMON_FINE_SHIELD);
             //P1.MainArmor = new Item(FIX.COMMON_FINE_ARMOR);
@@ -115,16 +144,16 @@ namespace ObsidianPortal
             //Player.Exp = 65;
             //Player.Race = FIX.Race.Angel;
 
-            
-            
+
+
             WE2 = objWE2.AddComponent<TruthWorldEnvironment>();
             SQL = objSQL.AddComponent<ControlSQL>();
             SQL.SetupSql();
             ACV = objAchieve.AddComponent<Achievement>();
 
-            for (int ii = 0; ii < Chara.Count; ii++)
+            for (int ii = 0; ii < UnitList.Count; ii++)
             {
-                UnityEngine.Object.DontDestroyOnLoad(Chara[ii]);
+                UnityEngine.Object.DontDestroyOnLoad(UnitList[ii]);
             }
             UnityEngine.Object.DontDestroyOnLoad(WE2);
         }
