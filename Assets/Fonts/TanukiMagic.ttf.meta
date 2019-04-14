@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d3ce9e0f174147742a004ae6329c884a
+guid: 39019fccf9c9dcc4dbe1cf73970b12ba
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,9 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: KouzanBrushFontOTF
+  fontName: Tanuki Permanent Marker
   fontNames:
-  - KouzanBrushFontOTF
+  - Tanuki Permanent Marker
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
