@@ -42,6 +42,17 @@ namespace ObsidianPortal
             TimeKeeper,
         }
 
+        public enum EquipItemType
+        {
+            None,
+            MainWeapon,
+            SubWeapon,
+            Armor,
+            Accessory1,
+            Accessory2,
+            Accessory3,
+        }
+
         // 人間族
         public const string HUMAN_FIGHTER = "ファイター";
         public const string HUMAN_ARCHER = "アーチャー";
@@ -259,6 +270,7 @@ namespace ObsidianPortal
 
         // シーン名
         public const string SCENE_MAINMENU = "MainMenu";
+        public const string SCENE_HOMETOWN = "HomeTown";
         public const string SCENE_STAGESELECT = "StageSelect";
         public const string SCENE_BATTLEFIELD = "BattleField";
         public const string SCENE_GAMERESULT = "GameResult";
@@ -267,12 +279,13 @@ namespace ObsidianPortal
         public enum PortalArea
         {
             Area_None,
-            Area_Human,
-            Area_Mech,
-            Area_Angel,
-            Area_Demon,
-            Area_Fire,
-            Area_Ice,
+            Area_Esmilia,
+            Area_Kilcood,
+            Area_Vagas,
+            Area_Arvidia,
+            Area_Dorgan,
+            Area_MoonForder,
+            Area_Iveltoon,
         }
 
         public enum Stage
@@ -316,7 +329,7 @@ namespace ObsidianPortal
 
         #region "DungeonPlayerからインポート"
         public static int INFINITY = 9999999;
-        public static int MAX_BACKPACK_SIZE = 99; // 10->20 後編編集
+        public static int MAX_BACKPACK_SIZE = 999;
         public const string WE2_FILE = @"TruthWorldEnvironment.xml";
         public static string BaseSaveFolder = Environment.CurrentDirectory + @"\Save\";
 
@@ -364,10 +377,18 @@ namespace ObsidianPortal
         public const string COMMON_FIT_BANGLE = @"フィット・バングル";
         public const string COMMON_PRISM_EMBLEM = @"プリズム・エムブレム";
         public const string COMMON_FINE_SWORD = @"ファイン・ソード";
+        public const string COMMON_FINE_LANCE = @"ファイン・ランス";
+        public const string COMMON_FINE_CLAW = @"ファイン・クロー";
+        public const string COMMON_FINE_AXE = @"ファイン・アックス";
+        public const string COMMON_FINE_BOW = @"ファイン・ボウ";
+        public const string COMMON_FINE_ROD = @"ファイン・ロッド";
+        public const string COMMON_FINE_BOOK = @"ファイン・ブック";
+        public const string COMMON_FINE_SHIELD = @"ファイン・シールド";
+        public const string COMMON_FINE_ORB = @"ファイン・オーブ";
+
         public const string COMMON_TWEI_SWORD = @"ツヴァイ・ソード";
         public const string COMMON_FINE_ARMOR = @"ファイン・アーマー";
         public const string COMMON_GOTHIC_PLATE = @"ゴシック・プレート";
-        public const string COMMON_FINE_SHIELD = @"ファイン・シールド";
         public const string COMMON_GRIPPING_SHIELD = @"グリッピング・シールド";
 
         public const string RARE_JOUSITU_BLUE_POWERRING = @"上質の青いパワーリング";
@@ -1179,6 +1200,298 @@ namespace ObsidianPortal
         public const string RARE_PERFECT_BLUE_POTION = @"青ポーション【完全版】";
         public const string RARE_PERFECT_GREEN_POTION = @"緑ポーション【完全版】";
         #endregion
+
+        // 後編、ハンナの料理屋
+        #region "食事"
+        // １階
+        public const string FOOD_KATUCARRY = @"激辛カツカレー定食";
+        public const string FOOD_OLIVE_AND_ONION = @"オリーブパンとオニオンスープ";
+        public const string FOOD_INAGO_AND_TAMAGO = @"イナゴの佃煮と卵和え定食";
+        public const string FOOD_USAGI = @"ウサギ肉のシチュー";
+        public const string FOOD_SANMA = @"サンマ定食（煮物添え）";
+        // ２階
+        public const string FOOD_FISH_GURATAN = @"フィッシュ・グラタン";
+        public const string FOOD_SEA_TENPURA = @"海鮮サクサク天プラ";
+        public const string FOOD_TRUTH_YAMINABE_1 = @"真実の闇鍋（パート１）";
+        public const string FOOD_OSAKANA_ZINGISKAN = @"お魚ジンギスカン";
+        public const string FOOD_RED_HOT_SPAGHETTI = @"レッドホット・スパゲッティ";
+        // ３階
+        public const string FOOD_HINYARI_YASAI = @"ヒンヤリ・カリっと野菜定食";
+        public const string FOOD_AZARASI_SHIOYAKI = @"白アザラシの塩焼き";
+        public const string FOOD_WINTER_BEEF_CURRY = @"ウィンター・ビーフカレー";
+        public const string FOOD_GATTURI_GOZEN = @"ガッツリ骨太御膳";
+        public const string FOOD_KOGOERU_DESSERT = @"身も凍える・ブルーデザート";
+        // ４階
+        public const string FOOD_BLACK_BUTTER_SPAGHETTI = @"ブラックバター・スパゲッティ";
+        public const string FOOD_KOROKORO_PIENUS_HAMBURG = @"コロコロ・ピーナッツ・ハンバーグ";
+        public const string FOOD_PIRIKARA_HATIMITSU_STEAK = @"ピリ辛・ハチミツステーキ定食";
+        public const string FOOD_HUNWARI_ORANGE_TOAST = @"ふんわり・オレンジトースト";
+        public const string FOOD_TRUTH_YAMINABE_2 = @"真実の闇鍋（パート２）";
+        #endregion
+        #region "食事説明"
+        public static string DESC_11 = DESC_11_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力＋５\r\n  技\r\n  知\r\n  体＋５\r\n  心";
+        public static string DESC_12 = DESC_12_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技\r\n  知\r\n  体＋５\r\n  心＋５";
+        public static string DESC_13 = DESC_13_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技\r\n  知＋５\r\n  体\r\n  心＋５";
+        public static string DESC_14 = DESC_14_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力＋５\r\n  技＋５\r\n  知\r\n  体\r\n  心";
+        public static string DESC_15 = DESC_15_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技＋５\r\n  知＋５\r\n  体\r\n  心";
+
+        public static string DESC_21 = DESC_21_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技＋３０\r\n  知\r\n  体＋２０\r\n  心";
+        public static string DESC_22 = DESC_22_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力＋２０\r\n  技\r\n  知\r\n  体＋３０\r\n  心";
+        public static string DESC_23 = DESC_23_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技\r\n  知＋２０\r\n  体\r\n  心＋３０";
+        public static string DESC_24 = DESC_24_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力＋３０\r\n  技\r\n  知\r\n  体\r\n  心＋２０";
+        public static string DESC_25 = DESC_25_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技\r\n  知＋３０\r\n  体＋２０\r\n  心";
+
+        public static string DESC_31 = DESC_31_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技\r\n  知＋８０\r\n  体\r\n  心＋６０";
+        public static string DESC_32 = DESC_32_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技＋８０\r\n  知＋６０\r\n  体＋６０\r\n  心";
+        public static string DESC_33 = DESC_33_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力＋８０\r\n  技\r\n  知\r\n  体＋８０\r\n  心＋４０";
+        public static string DESC_34 = DESC_34_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力＋５０\r\n  技＋５０\r\n  知＋５０\r\n  体＋５０\r\n  心＋５０";
+        public static string DESC_35 = DESC_35_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技\r\n  知＋１５０\r\n  体＋１００\r\n  心";
+
+        public static string DESC_41 = DESC_41_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技＋２５０\r\n  知＋２５０\r\n  体\r\n  心＋２５０";
+        public static string DESC_42 = DESC_42_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力＋２５０\r\n  技\r\n  知\r\n  体＋２５０\r\n  心＋２５０";
+        public static string DESC_43 = DESC_43_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力＋２５０\r\n  知＋２５０\r\n  知\r\n  体＋２５０";
+        public static string DESC_44 = DESC_44_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力\r\n  技＋２５０\r\n  知＋２５０\r\n  体＋２５０\r\n  心";
+        public static string DESC_45 = DESC_45_MINI + "\r\n\r\n食べた次の日は、以下の効果。\r\n  力＋２５０\r\n  技＋２５０\r\n  知\r\n  体\r\n  心＋２５０";
+
+        public const string DESC_11_MINI = "か・・・辛い！！でもウマイ！！\r\n　実はハンナが客に応じて辛い配分を全調整してるとの事。";
+        public const string DESC_12_MINI = "ほんのりとするオリーブの香りと、アッサリ味に仕立ててあるオニオン味のスープ。非常に好評のため定番メニューの一つとなっている。";
+        public const string DESC_13_MINI = "味自体が非常に絶妙で美味しく、歯ごたえも非常に良い。問題はその見た目だが・・・。";
+        public const string DESC_14_MINI = "ウサギ独特の臭みを無くし、肉の旨みは残してある。歯ごたえがかなりあるが、噛めばかむほど味が出る。";
+        public const string DESC_15_MINI = "魚本来の味を引き出しており、かつ、煮物と非常にマッチしてる。";
+
+        public const string DESC_21_MINI = "新鮮な魚介類の素材を細切りにして散りばめてあるグラタン。";
+        public const string DESC_22_MINI = "魚介類独特の臭みを完全に除去し、質の高いテンプラに仕上げられている。大きさ／柔らかさ／食べごたえ共に申し分なく、腹いっぱい食べられる。";
+        public const string DESC_23_MINI = "真実は闇の中にこそ潜む。味だけは保証されてるらしい・・・。";
+        public const string DESC_24_MINI = "魚とは思えないような歯ごたえのあるジンギスカン。食べた後の後味は良く、何度でも食べたくなる味付け。";
+        public const string DESC_25_MINI = "真っ赤なスパゲッティだが、実は全然辛く無いらしい。\r\n　素材の原色を駆使し、着色は一切行ってないそうだ。";
+
+        public const string DESC_31_MINI = "カリっと天ぷら粉で焼き上げた野菜天ぷら。\r\n野菜であることを忘れてしまうぐらい、非常に香ばしい食感が残る。";
+        public const string DESC_32_MINI = "固くて歯ごたえの悪いアザラシ肉を十分にほぐし、凍らせた後、焼き、塩をまぶした究極の一品。";
+        public const string DESC_33_MINI = "冬の季節、急激な温度変化により身が引き締まったビーフを使用したカレーライス。臭みは一切感じない。";
+        public const string DESC_34_MINI = "肉、魚、豆、味噌汁、ご飯、煎茶。全てが揃ったバランスの良い定食。\r\nハンナおばさん自慢の定食。";
+        public const string DESC_35_MINI = "何という青さ・・・見ただけで凍えてしまいそうだ。\r\n　食べた時の口いっぱいに広がる感触は一級品のデザートそのものである。";
+
+        public const string DESC_41_MINI = "真っ黒な色のスパゲッティ\r\n見た目がかなり不気味だが・・・スパイスの効いた香りがする。";
+        public const string DESC_42_MINI = "ハンバーグの中に小さめに切り刻んだピーナッツが入っている\r\nフワフワとしたジューシーな肉とカリっとしたピーナッツが食欲をそそる。";
+        public const string DESC_43_MINI = "表面に真っ赤なトウガラシがかけられているヒレステーキ。\r\nその裏には実はほんのりとハチミツが隠し味として入っており、食べた者には辛さと甘さが同時に響き渡る。";
+        public const string DESC_44_MINI = "１番人気のトースト定食といえば、このオレンジトースト。\r\nふんだんに塗られたオレンジジャムとホワイトクリームを乗せたバカでかいトーストは男女問わず人気の一品である。";
+        public const string DESC_45_MINI = "食物の匂いが全くしない闇の鍋\r\n　ハンナ叔母さん曰く、美味しいモノはちゃんと入っているとの事。それを信じて食べるしか選択肢は無い。";
+        #endregion
+
+        #region "敵の名前：ダンジョン１階"
+        public const string ENEMY_HIYOWA_BEATLE = @"ひ弱なビートル";
+        public const string ENEMY_HENSYOKU_PLANT = @"変色したプラント";
+        public const string ENEMY_GREEN_CHILD = @"グリーン・チャイルド";
+        public const string ENEMY_TINY_MANTIS = @"タイニー・マンティス";
+        public const string ENEMY_KOUKAKU_WURM = @"甲殻ワーム";
+        public const string ENEMY_MANDRAGORA = @"マンドラゴラ";
+
+        public const string ENEMY_SUN_FLOWER = @"サン・フラワー";
+        public const string ENEMY_RED_HOPPER = @"レッド・ホッパー";
+        public const string ENEMY_EARTH_SPIDER = @"アースパイダー";
+        public const string ENEMY_WILD_ANT = @"ワイルド・アント";
+        public const string ENEMY_ALRAUNE = @"アルラウネ";
+        public const string ENEMY_POISON_MARY = @"ポイズン・マリー";
+
+        public const string ENEMY_SPEEDY_TAKA = @"俊敏な鷹";
+        public const string ENEMY_ZASSYOKU_RABBIT = @"雑食ウサギ";
+        public const string ENEMY_WONDER_SEED = @"ワンダー・シード";
+        public const string ENEMY_ASH_CREEPER = @"アッシュ・クリーパー";
+        public const string ENEMY_GIANT_SNAKE = @"ジャイアント・スネーク";
+        public const string ENEMY_FLANSIS_KNIGHT = @"フランシス・ナイト";
+        public const string ENEMY_SHOTGUN_HYUI = @"ショットガン・ヒューイ";
+
+        public const string ENEMY_WAR_WOLF = @"番狼";
+        public const string ENEMY_BRILLIANT_BUTTERFLY = @"ブリリアント・バタフライ";
+        public const string ENEMY_MIST_ELEMENTAL = @"ミスト・エレメンタル";
+        public const string ENEMY_WHISPER_DRYAD = @"ウィスパー・ドライアド";
+        public const string ENEMY_BLOOD_MOSS = @"ブラッド・モス";
+        public const string ENEMY_MOSSGREEN_DADDY = @"モスグリーン・ダディ";
+
+        public const string ENEMY_BOSS_KARAMITUKU_FLANSIS = @"一階の守護者：絡みつくフランシス";
+
+        public const string ENEMY_DRAGON_SOKUBAKU_BRIYARD = @"束縛する者ブライヤード(The Restrainer)";
+        #endregion
+        #region "敵の名前：ダンジョン２階"
+
+        public const string ENEMY_DAGGER_FISH = @"ダガーフィッシュ";
+        public const string ENEMY_SIPPU_FLYING_FISH = @"疾風・フライングフィッシュ";
+        public const string ENEMY_ORB_SHELLFISH = @"オーブ・シェルフィッシュ";
+        public const string ENEMY_SPLASH_KURIONE = @"スプラッシュ・クリオネ";
+        public const string ENEMY_TRANSPARENT_UMIUSHI = @"透明なウミウシ";
+
+        public const string ENEMY_ROLLING_MAGURO = @"ローリング・マグロ";
+        public const string ENEMY_RANBOU_SEA_ARTINE = @"乱暴なシー・アーチン";
+        public const string ENEMY_BLUE_SEA_WASI = @"青海鷲";
+        public const string ENEMY_BRIGHT_SQUID = @"ブライト・スクイッド";
+        public const string ENEMY_GANGAME = @"頑亀";
+        public const string ENEMY_BIGMOUSE_JOE = @"ビッグマウス・ジョー";
+
+        public const string ENEMY_MOGURU_MANTA = @"モーグル・マンタ";
+        public const string ENEMY_FLOATING_GOLD_FISH = @"浮遊するゴールドフィッシュ";
+        public const string ENEMY_GOEI_HERMIT_CLUB = @"護衛隊・ハーミットクラブ";
+        public const string ENEMY_ABARE_SHARK = @"暴れ大ザメ";
+        public const string ENEMY_VANISHING_CORAL = @"バニッシング・コーラル";
+        public const string ENEMY_CASSY_CANCER = @"キャシー・ザ・キャンサー";
+
+        public const string ENEMY_BLACK_STARFISH = @"ブラック・スターフィッシュ";
+        public const string ENEMY_RAINBOW_ANEMONE = @"レインボー・アネモネ";
+        public const string ENEMY_MACHIBUSE_ANKOU = @"待ち伏せアンコウ";
+        public const string ENEMY_EDGED_HIGH_SHARK = @"エッジド・ハイ・シャーク";
+        public const string ENEMY_EIGHT_EIGHT = @"エイト・エイト";
+
+        public const string ENEMY_BRILLIANT_SEA_PRINCE = @"輝ける海の王子";
+        public const string ENEMY_ORIGIN_STAR_CORAL_QUEEN = @"源星・珊瑚の女王";
+        public const string ENEMY_SHELL_SWORD_KNIGHT = @"シェル・ザ・ソードナイト";
+        public const string ENEMY_JELLY_EYE_BRIGHT_RED = @"ジェリーアイ・熱光";
+        public const string ENEMY_JELLY_EYE_DEEP_BLUE = @"ジェリーアイ・流冷";
+        public const string ENEMY_SEA_STAR_KNIGHT_AEGIRU = @"海星騎士・エーギル";
+        public const string ENEMY_SEA_STAR_KNIGHT_AMARA = @"海星騎士・アマラ";
+        public const string ENEMY_SEA_STAR_ORIGIN_KING = @"海星源の王";
+
+        public const string ENEMY_BOSS_LEVIATHAN = @"二階の守護者：大海蛇リヴィアサン";
+
+        public const string ENEMY_DRAGON_TINKOU_DEEPSEA = @"沈降せし者ディープシー";//(The Akashic)";
+        #endregion
+        #region "敵の名前：ダンジョン３階"
+        public const string ENEMY_TOSSIN_ORC = @"突進オーク";
+        public const string ENEMY_SNOW_CAT = @"スノー・キャット";
+        public const string ENEMY_WAR_MAMMOTH = @"ウォー・マンモス";
+        public const string ENEMY_WINGED_COLD_FAIRY = @"ウィングド・コールドフェアリー";
+        public const string ENEMY_FREEZING_GRIFFIN = @"フリージング・グリフィン";
+
+        public const string ENEMY_BRUTAL_OGRE = @"ブルータル・オーガ";
+        public const string ENEMY_HYDRO_LIZARD = @"ハイドロ・リザード";
+        public const string ENEMY_PENGUIN_STAR = @"ペンギンスター";
+        public const string ENEMY_ICEBERG_SPIRIT = @"アイスバーグ・スピリット";
+        public const string ENEMY_SWORD_TOOTH_TIGER = @"剣歯虎";
+        public const string ENEMY_FEROCIOUS_RAGE_BEAR = @"フェロシアス・レイジベア";
+
+        public const string ENEMY_WINTER_ORB = @"ウィンター・オーヴ";
+        public const string ENEMY_PATHFINDING_LIGHTNING_AZARASI = @"追従する雷アザラシ";
+        public const string ENEMY_MAJESTIC_CENTAURUS = @"マジェスティック・ケンタウルス";
+        public const string ENEMY_INTELLIGENCE_ARGONIAN = @"知的なアルゴニアン";
+        public const string ENEMY_MAGIC_HYOU_RIFLE = @"魔法雹穴銃";
+        public const string ENEMY_PURE_BLIZZARD_CRYSTAL = @"ピュア・ブリザード・クリスタル";
+
+        public const string ENEMY_PURPLE_EYE_WARE_WOLF = @"紫目・ウェアウルフ";
+        public const string ENEMY_FROST_HEART = @"フロスト・ハート";
+        public const string ENEMY_WHITENIGHT_GRIZZLY = @"白夜のグリズリー";
+        public const string ENEMY_WIND_BREAKER = @"ウィンド・ブレイカー";
+        public const string ENEMY_TUNDRA_LONGHORN_DEER = @"ツンドラ・ロングホーン・ディア";
+
+        public const string ENEMY_BOSS_HOWLING_SEIZER = @"恐鳴主ハウリング・シーザー";
+
+        public const string ENEMY_DRAGON_DESOLATOR_AZOLD = @"凍てつく者アゾルド";//(The Desolate)";
+        #endregion
+        #region "敵の名前：ダンジョン４階"
+        public const string ENEMY_GENAN_HUNTER = @"幻暗ハンター";
+        public const string ENEMY_BEAST_MASTER = @"ビーストマスター";
+        public const string ENEMY_ELDER_ASSASSIN = @"エルダーアサシン";
+        public const string ENEMY_FALLEN_SEEKER = @"フォールン・シーカー";
+        public const string ENEMY_MEPHISTO_RIGHTARM = @"メフィスト・ザ・ライトアーム";
+
+        public const string ENEMY_DARK_MESSENGER = @"闇の眷属";
+        public const string ENEMY_MASTER_LOAD = @"マスターロード";
+        public const string ENEMY_EXECUTIONER = @"エグゼキューショナー";
+        public const string ENEMY_MARIONETTE_NEMESIS = @"マリオネット・ネメシス";
+        public const string ENEMY_BLACKFIRE_MASTER_BLADE = @"黒炎マスターブレイド";
+        public const string ENEMY_SIN_THE_DARKELF = @"シン・ザ・ダークエルフ";
+
+        public const string ENEMY_SUN_STRIDER = @"サン・ストライダー";
+        public const string ENEMY_ARC_DEMON = @"アークデーモン";
+        public const string ENEMY_BALANCE_IDLE = @"天秤を司る者";
+        public const string ENEMY_UNDEAD_WYVERN = @"アンデッド・ワイバーン";
+        public const string ENEMY_GO_FLAME_SLASHER = @"業・フレイムスラッシャー";
+        public const string ENEMY_DEVIL_CHILDREN = @"デビル・チルドレン";
+
+        public const string ENEMY_HOWLING_HORROR = @"ハウリングホラー";
+        public const string ENEMY_PAIN_ANGEL = @"ペインエンジェル";
+        public const string ENEMY_CHAOS_WARDEN = @"カオス・ワーデン";
+        public const string ENEMY_DREAD_KNIGHT = @"ドレッド・ナイト";
+        public const string ENEMY_DOOM_BRINGER = @"ドゥームブリンガー";
+
+        public const string ENEMY_BOSS_LEGIN_ARZE = @"闇焔レギィン・アーゼ";
+        public const string ENEMY_BOSS_LEGIN_ARZE_1 = @"闇焔レギィン・アーゼ【瘴気】";
+        public const string ENEMY_BOSS_LEGIN_ARZE_2 = @"闇焔レギィン・アーゼ【無音】";
+        public const string ENEMY_BOSS_LEGIN_ARZE_3 = @"闇焔レギィン・アーゼ【深淵】";
+
+        public const string ENEMY_DRAGON_IDEA_CAGE_ZEED = @"黙考せし者ジード";
+        #endregion
+        #region "敵の名前：ダンジョン５階"
+        public const string ENEMY_PHOENIX = @"Phoenix";
+        public const string ENEMY_NINE_TAIL = @"Nine Tail";
+        public const string ENEMY_MEPHISTOPHELES = @"Mephistopheles";
+        public const string ENEMY_JUDGEMENT = @"Judgement";
+        public const string ENEMY_EMERALD_DRAGON = @"Emerald Dragon";
+
+        public const string ENEMY_BOSS_BYSTANDER_EMPTINESS = @"支　配　竜";
+        public const string ENEMY_DRAGON_ALAKH_VES_T_ETULA = @"AlakhVes T Etula";
+
+        #endregion
+        #region "敵の名前：真実世界"
+        public const string ENEMY_LAST_RANA_AMILIA = @"ラナ・アミリア "; // DUEL名識別のため、最後の空白スペースで意図的に区別
+        public const string ENEMY_LAST_OL_LANDIS = @"オル・ランディス "; // DUEL名識別のため、最後の空白スペースで意図的に区別
+        public const string ENEMY_LAST_SINIKIA_KAHLHANZ = @"シニキア・カールハンツ "; // DUEL名識別のため、最後の空白スペースで意図的に区別
+        public const string ENEMY_LAST_VERZE_ARTIE = @"ヴェルゼ・アーティ "; // DUEL名識別のため、最後の空白スペースで意図的に区別
+        public const string ENEMY_LAST_SIN_VERZE_ARTIE = @"【原罪】ヴェルゼ・アーティ";
+        #endregion
+
+        #region "Duel闘技場"
+        public const string DUEL_SIN_OSCURETE = @"シン・オスキュレーテ"; // 60
+        public const string DUEL_SIN_OSCURETE_DB = @"sin_oscurete";
+        public const string DUEL_LADA_MYSTORUS = @"ラダ・ミストゥルス"; // 58
+        public const string DUEL_LADA_MYSTORUS_DB = @"lada_mystorus";
+        public const string DUEL_OHRYU_GENMA = @"オウリュウ・ゲンマ"; // 56
+        public const string DUEL_OHRYU_GENMA_DB = @"ohryu_genma";
+        public const string DUEL_VAN_HEHGUSTEL = @"ヴァン・ヘーグステル"; // 54
+        public const string DUEL_VAN_HEHGUSTEL_DB = @"van_hehgustel";
+        public const string DUEL_RVEL_ZELKIS = @"ルベル・ゼルキス"; // 52
+        public const string DUEL_RVEL_ZELKIS_DB = @"rvel_zelkis";
+
+        public const string DUEL_SHUVALTZ_FLORE = @"シュヴァルツェ・フローレ"; // 50
+        public const string DUEL_SHUVALTZ_FLORE_DB = @"shuvaltz_flore";
+        public const string DUEL_SUN_YU = @"サン・ユウ"; // 47
+        public const string DUEL_SUN_YU_DB = @"sun_yu";
+        public const string DUEL_CALMANS_OHN = @"カルマンズ・オーン"; // 44
+        public const string DUEL_CALMANS_OHN_DB = @"calmans_ohn";
+        public const string DUEL_ANNA_HAMILTON = @"アンナ・ハミルトン"; // 41
+        public const string DUEL_ANNA_HAMILTON_DB = @"anna_hamilton";
+        public const string DUEL_BILLY_RAKI = @"ビリー・ラキ"; // 38
+        public const string DUEL_BILLY_RAKI_DB = @"billy_raki";
+
+        public const string DUEL_KILT_JORJU = @"キルト・ジョルジュ"; // 35
+        public const string DUEL_KILT_JORJU_DB = @"kilt_jorju";
+        public const string DUEL_PERMA_WARAMY = @"ペルマ・ワラミィ"; // 32
+        public const string DUEL_PERMA_WARAMY_DB = @"perma_waramy";
+        public const string DUEL_SCOTY_ZALGE = @"スコーティ・ザルゲ"; // 29
+        public const string DUEL_SCOTY_ZALGE_DB = @"scoty_zalge";
+        public const string DUEL_LENE_COLTOS = @"レネ・コルトス"; // 26
+        public const string DUEL_LENE_COLTOS_DB = @"lene_coltos";
+        public const string DUEL_ADEL_BRIGANDY = @"アデル・ブリガンディ"; // 23
+        public const string DUEL_ADEL_BRIGANDY_DB = @"adel_brigandy";
+
+        public const string DUEL_SINIKIA_VEILHANZ = @"シニキア・ヴェイルハンツ"; // 20
+        public const string DUEL_SINIKIA_VEILHANZ_DB = @"sinikia_veilhanz";
+        public const string DUEL_JEDA_ARUS = @"ジェダ・アルス"; // 16
+        public const string DUEL_JEDA_ARUS_DB = @"jeda_arus";
+        public const string DUEL_KARTIN_MAI = @"カーティン・マイ"; // 13
+        public const string DUEL_KARTIN_MAI_DB = @"kartin_mai";
+        public const string DUEL_SELMOI_RO = @"セルモイ・ロウ"; // 10
+        public const string DUEL_SELMOI_RO_DB = @"selmoi_ro";
+        public const string DUEL_MAGI_ZELKIS = @"マーギ・ゼルキス"; // 7
+        public const string DUEL_MAGI_ZELKIS_DB = @"magi_zelkis";
+        public const string DUEL_EONE_FULNEA = @"エオネ・フルネア"; // 4
+        public const string DUEL_EONE_FULNEA_DB = @"eone_fulnea";
+        #endregion
+        #region "闘技場、Duelist説明"
+        public const string DUEL_DESC_001 = "";
+        public const string DUEL_DESC_002 = "";
+        public const string DUEL_DESC_003 = "";
+        public const string DUEL_DESC_004 = "";
+        public const string DUEL_DESC_005 = "";
+        public const string DUEL_DESC_006 = "";
+        #endregion
         #endregion
         #endregion
 
@@ -1188,25 +1501,28 @@ namespace ObsidianPortal
 
         #region "Obsidian Portal"
 
-        public const int MAX_TIME = 1000;
+        public const int MAX_TIME = 10000;
 
         public const int BILLY_RAKI_INIT_STR = 4;
         public const int BILLY_RAKI_INIT_AGL = 2;
         public const int BILLY_RAKI_INIT_INT = 1;
-        public const int BILLY_RAKI_INIT_STM = 3;
+        public const int BILLY_RAKI_INIT_STM = 5;
         public const int BILLY_RAKI_INIT_MND = 3;
+        public const int BILLY_RAKI_INIT_BASELIFE = 16;
 
         public const int ANNA_HAMILTON_INIT_STR = 1;
         public const int ANNA_HAMILTON_INIT_AGL = 4;
         public const int ANNA_HAMILTON_INIT_INT = 2;
-        public const int ANNA_HAMILTON_INIT_STM = 3;
+        public const int ANNA_HAMILTON_INIT_STM = 4;
         public const int ANNA_HAMILTON_INIT_MND = 3;
+        public const int ANNA_HAMILTON_INIT_BASELIFE = 13;
 
         public const int EONE_FULNEA_INIT_STR = 1;
         public const int EONE_FULNEA_INIT_AGL = 2;
         public const int EONE_FULNEA_INIT_INT = 5;
         public const int EONE_FULNEA_INIT_STM = 2;
         public const int EONE_FULNEA_INIT_MND = 3;
+        public const int EONE_FULNEA_INIT_BASELIFE = 10;
 
         //public const int MAGI_ZELKIS_INIT_STR = 4;
         //public const int MAGI_ZELKIS_INIT_AGL = 2;
@@ -1228,31 +1544,8 @@ namespace ObsidianPortal
         //public const int JEDA_ARUS_INIT_STM = 4;
         //public const int JEDA_ARUS_INIT_MND = 3;
 
-        public const string COMMON_FINE_BOW = @"ファイン・ボウ";
         public const string COMMON_ELVISH_BOW = @"エルヴィッシュ・ボウ";
         public const string RARE_WINGED_LONG_BOW = @"ウィングド・ロング・ボウ";
-
-        //public const string DUEL_SIN_OSCURETE = @"シン・オスキュレーテ";
-        //public const string DUEL_LADA_MYSTORUS = @"ラダ・ミストゥルス";
-        //public const string DUEL_OHRYU_GENMA = @"オウリュウ・ゲンマ";
-        //public const string DUEL_VAN_HEHGUSTEL = @"ヴァン・ヘーグステル";
-        //public const string DUEL_RVEL_ZELKIS = @"ルベル・ゼルキス";
-        //public const string DUEL_SHUVALTZ_FLORE = @"シュヴァルツェ・フローレ";
-        //public const string DUEL_SUN_YU = @"サン・ユウ";
-        //public const string DUEL_CALMANS_OHN = @"カルマンズ・オーン";
-        public const string DUEL_ANNA_HAMILTON = @"アンナ・ハミルトン";
-        public const string DUEL_BILLY_RAKI = @"ビリー・ラキ";
-        //public const string DUEL_KILT_JORJU = @"キルト・ジョルジュ";
-        //public const string DUEL_PERMA_WARAMY = @"ペルマ・ワラミィ";
-        //public const string DUEL_SCOTY_ZALGE = @"スコーティ・ザルゲ";
-        //public const string DUEL_LENE_COLTOS = @"レネ・コルトス";
-        //public const string DUEL_ADEL_BRIGANDY = @"アデル・ブリガンディ";
-        //public const string DUEL_SINIKIA_VEILHANZ = @"シニキア・ヴェイルハンツ";
-        public const string DUEL_JEDA_ARUS = @"ジェダ・アルス";
-        public const string DUEL_KARTIN_MAI = @"カーティン・マイ";
-        public const string DUEL_SELMOI_RO = @"セルモイ・ロウ";
-        public const string DUEL_MAGI_ZELKIS = @"マーギ・ゼルキス";
-        public const string DUEL_EONE_FULNEA = @"エオネ・フルネア";
 
         public const string SOUND_NORMAL_ATTACK = "NormalAttack";
         public const string SOUND_MAGIC_ATTACK = "MagicAttack";
@@ -1269,6 +1562,22 @@ namespace ObsidianPortal
         public const string SOUND_ICE_NEEDLE = "IceNeedle";
         public const string SOUND_SEAL_OF_THE_FORCE = "SealoftheForce";
         public const string SOUND_SKY_SHIELD = "SkyShield";
+        #endregion
+
+        #region "GUI Layout"
+        public const int BACKPACK_HEIGHT = 200;
+        public const int BACKPACK_MARGIN = 10;
+        public const int COMMAND_HEIGHT = 300;
+        public const int COMMAND_MARGIN = 100;
+        public const int DUNGEON_NODE_WIDTH = 500;
+        public const int DUNGEON_NODE_MARGIN = 10;
+        public const int ITEM_NODE_WIDTH = 500;
+        public const int ITEM_NODE_MARGIN = 10;
+        public const int LAYOUT_MARGIN = 10;
+        #endregion
+
+        #region "Resources"
+        public const string FIELD_FOREST = "Field_Forest";
         #endregion
 
     }

@@ -45,6 +45,10 @@ namespace ObsidianPortal
         public Unit prefab_TimeKeeper;
         public GameObject prefab_Treasure;
         public Unit prefab_TreasureOpen;
+        public GameObject prefab_ArrowLeft;
+        public GameObject prefab_ArrowRight;
+        public GameObject prefab_ArrowTop;
+        public GameObject prefab_ArrowBottom;
         public GameObject prefab_Damage;
         // オブジェクト
         public Camera CameraView;
@@ -53,6 +57,8 @@ namespace ObsidianPortal
         private List<Unit> EnemyList = new List<Unit>();
         private List<Unit> OtherList = new List<Unit>();
         private List<GameObject> TreasureList = new List<GameObject>();
+        private List<bool> TreasureGetList = new List<bool>();
+        private List<GameObject> GoalList = new List<GameObject>();
         private List<AreaInformation> fieldTile = new List<AreaInformation>();
         private List<GameObject> MoveTile = new List<GameObject>();
         private List<GameObject> AttackTile = new List<GameObject>();
@@ -93,6 +99,7 @@ namespace ObsidianPortal
         public Text txtMove_mini;
         public Text txtOrder_mini;
         public Text txtTime_mini;
+        public Text txtMessage;
         public GameObject groupAP_mini;
         public List<Image> ActionPoint_mini = new List<Image>();
 
@@ -115,15 +122,18 @@ namespace ObsidianPortal
         // 移動状態
         public enum FieldMode
         {
+            None,
             Move,
-            Battle,
+            Action,
+            Event,
+            Stop,
         }
         // 実行中状態
         public enum ActionPhase
         {
             WaitActive = 0,
             UntapStep,
-            SelectFirst,
+            MainAction,
             //Upkeep,
             UpkeepAnimation,
             UpkeepExec,
@@ -142,7 +152,6 @@ namespace ObsidianPortal
             Fail,
         }
 
-        private FieldMode MoveMode = FieldMode.Move;
         private ActionPhase Phase = ActionPhase.WaitActive;
 
         public enum JudgeResult
@@ -152,13 +161,15 @@ namespace ObsidianPortal
             Draw
         }
 
+        private FieldMode fieldMode = FieldMode.Move;
+        private FieldMode shadowFieldMode = FieldMode.Move;
         private bool GameEnd = false;
 
         // 一時記憶
-        public Unit OwnerUnit;
-        public Unit CurrentUnit;
-        public Unit CurrentTarget;
-        public Unit CurrentEffect;
+        public Unit OwnerUnit = null;
+        public Unit CurrentUnit = null;
+        public Unit CurrentTarget = null;
+        public Unit CurrentEffect = null;
         private string currentCommand = string.Empty;
         private FIX.Direction currentDirection = FIX.Direction.None;
         private int currentDistance = 0;
@@ -188,6 +199,8 @@ namespace ObsidianPortal
         int interval = 0;
         private int MovementInterval = 0; // ダンジョンマップ全体を見ている時のインターバル
         #endregion
+
+        private AreaInformation animationDstPoint = null;
 
         new void Start()
         {
@@ -220,97 +233,139 @@ namespace ObsidianPortal
 
             #region "ステージのセットアップ"
             int column = DAT.COLUMN_1_1;
-            int[] tileData = DAT.Tile1_1;
-            int[] tileH = DAT.TileH1_1;
-            if (ONE.CurrentStage == FIX.Stage.Stage1_1) { column = DAT.COLUMN_1_1; tileData = DAT.Tile1_1; tileH = DAT.TileH1_1; }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_2) { column = DAT.COLUMN_1_2; tileData = DAT.Tile1_2; }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_3) { column = DAT.COLUMN_1_3; tileData = DAT.Tile1_3; }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_4) { column = DAT.COLUMN_1_4; tileData = DAT.Tile1_4; }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_5) { column = DAT.COLUMN_1_5; tileData = DAT.Tile1_5; }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_1) { column = DAT.COLUMN_2_1; tileData = DAT.Tile2_1; }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_2) { column = DAT.COLUMN_2_2; tileData = DAT.Tile2_2; }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_3) { column = DAT.COLUMN_2_3; tileData = DAT.Tile2_3; }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_4) { column = DAT.COLUMN_2_4; tileData = DAT.Tile2_4; }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_5) { column = DAT.COLUMN_2_5; tileData = DAT.Tile2_5; }
+            List<string> tileList = new List<string>();
+            List<int> heightList = new List<int>();
+            List<int> objectList = new List<int>();
+            ConstructStringTile(ref tileList, DAT.Tile1_39); ConstructIntTile(ref heightList, DAT.TileH1_39); ConstructIntTile(ref objectList, DAT.Obj1_39);
+            ConstructStringTile(ref tileList, DAT.Tile1_38); ConstructIntTile(ref heightList, DAT.TileH1_38); ConstructIntTile(ref objectList, DAT.Obj1_38);
+            ConstructStringTile(ref tileList, DAT.Tile1_37); ConstructIntTile(ref heightList, DAT.TileH1_37); ConstructIntTile(ref objectList, DAT.Obj1_37);
+            ConstructStringTile(ref tileList, DAT.Tile1_36); ConstructIntTile(ref heightList, DAT.TileH1_36); ConstructIntTile(ref objectList, DAT.Obj1_36);
+            ConstructStringTile(ref tileList, DAT.Tile1_35); ConstructIntTile(ref heightList, DAT.TileH1_35); ConstructIntTile(ref objectList, DAT.Obj1_35);
+            ConstructStringTile(ref tileList, DAT.Tile1_34); ConstructIntTile(ref heightList, DAT.TileH1_34); ConstructIntTile(ref objectList, DAT.Obj1_34);
+            ConstructStringTile(ref tileList, DAT.Tile1_33); ConstructIntTile(ref heightList, DAT.TileH1_33); ConstructIntTile(ref objectList, DAT.Obj1_33);
+            ConstructStringTile(ref tileList, DAT.Tile1_32); ConstructIntTile(ref heightList, DAT.TileH1_32); ConstructIntTile(ref objectList, DAT.Obj1_32);
+            ConstructStringTile(ref tileList, DAT.Tile1_31); ConstructIntTile(ref heightList, DAT.TileH1_31); ConstructIntTile(ref objectList, DAT.Obj1_31);
+            ConstructStringTile(ref tileList, DAT.Tile1_30); ConstructIntTile(ref heightList, DAT.TileH1_30); ConstructIntTile(ref objectList, DAT.Obj1_30);
+            ConstructStringTile(ref tileList, DAT.Tile1_29); ConstructIntTile(ref heightList, DAT.TileH1_29); ConstructIntTile(ref objectList, DAT.Obj1_29);
+            ConstructStringTile(ref tileList, DAT.Tile1_28); ConstructIntTile(ref heightList, DAT.TileH1_28); ConstructIntTile(ref objectList, DAT.Obj1_28);
+            ConstructStringTile(ref tileList, DAT.Tile1_27); ConstructIntTile(ref heightList, DAT.TileH1_27); ConstructIntTile(ref objectList, DAT.Obj1_27);
+            ConstructStringTile(ref tileList, DAT.Tile1_26); ConstructIntTile(ref heightList, DAT.TileH1_26); ConstructIntTile(ref objectList, DAT.Obj1_26);
+            ConstructStringTile(ref tileList, DAT.Tile1_25); ConstructIntTile(ref heightList, DAT.TileH1_25); ConstructIntTile(ref objectList, DAT.Obj1_25);
+            ConstructStringTile(ref tileList, DAT.Tile1_24); ConstructIntTile(ref heightList, DAT.TileH1_24); ConstructIntTile(ref objectList, DAT.Obj1_24);
+            ConstructStringTile(ref tileList, DAT.Tile1_23); ConstructIntTile(ref heightList, DAT.TileH1_23); ConstructIntTile(ref objectList, DAT.Obj1_23);
+            ConstructStringTile(ref tileList, DAT.Tile1_22); ConstructIntTile(ref heightList, DAT.TileH1_22); ConstructIntTile(ref objectList, DAT.Obj1_22);
+            ConstructStringTile(ref tileList, DAT.Tile1_21); ConstructIntTile(ref heightList, DAT.TileH1_21); ConstructIntTile(ref objectList, DAT.Obj1_21);
+            ConstructStringTile(ref tileList, DAT.Tile1_20); ConstructIntTile(ref heightList, DAT.TileH1_20); ConstructIntTile(ref objectList, DAT.Obj1_20);
+            ConstructStringTile(ref tileList, DAT.Tile1_19); ConstructIntTile(ref heightList, DAT.TileH1_19); ConstructIntTile(ref objectList, DAT.Obj1_19);
+            ConstructStringTile(ref tileList, DAT.Tile1_18); ConstructIntTile(ref heightList, DAT.TileH1_18); ConstructIntTile(ref objectList, DAT.Obj1_18);
+            ConstructStringTile(ref tileList, DAT.Tile1_17); ConstructIntTile(ref heightList, DAT.TileH1_17); ConstructIntTile(ref objectList, DAT.Obj1_17);
+            ConstructStringTile(ref tileList, DAT.Tile1_16); ConstructIntTile(ref heightList, DAT.TileH1_16); ConstructIntTile(ref objectList, DAT.Obj1_16);
+            ConstructStringTile(ref tileList, DAT.Tile1_15); ConstructIntTile(ref heightList, DAT.TileH1_15); ConstructIntTile(ref objectList, DAT.Obj1_15);
+            ConstructStringTile(ref tileList, DAT.Tile1_14); ConstructIntTile(ref heightList, DAT.TileH1_14); ConstructIntTile(ref objectList, DAT.Obj1_14);
+            ConstructStringTile(ref tileList, DAT.Tile1_13); ConstructIntTile(ref heightList, DAT.TileH1_13); ConstructIntTile(ref objectList, DAT.Obj1_13);
+            ConstructStringTile(ref tileList, DAT.Tile1_12); ConstructIntTile(ref heightList, DAT.TileH1_12); ConstructIntTile(ref objectList, DAT.Obj1_12);
+            ConstructStringTile(ref tileList, DAT.Tile1_11); ConstructIntTile(ref heightList, DAT.TileH1_11); ConstructIntTile(ref objectList, DAT.Obj1_11);
+            ConstructStringTile(ref tileList, DAT.Tile1_10); ConstructIntTile(ref heightList, DAT.TileH1_10); ConstructIntTile(ref objectList, DAT.Obj1_10);
+            ConstructStringTile(ref tileList, DAT.Tile1_09); ConstructIntTile(ref heightList, DAT.TileH1_09); ConstructIntTile(ref objectList, DAT.Obj1_09);
+            ConstructStringTile(ref tileList, DAT.Tile1_08); ConstructIntTile(ref heightList, DAT.TileH1_08); ConstructIntTile(ref objectList, DAT.Obj1_08);
+            ConstructStringTile(ref tileList, DAT.Tile1_07); ConstructIntTile(ref heightList, DAT.TileH1_07); ConstructIntTile(ref objectList, DAT.Obj1_07);
+            ConstructStringTile(ref tileList, DAT.Tile1_06); ConstructIntTile(ref heightList, DAT.TileH1_06); ConstructIntTile(ref objectList, DAT.Obj1_06);
+            ConstructStringTile(ref tileList, DAT.Tile1_05); ConstructIntTile(ref heightList, DAT.TileH1_05); ConstructIntTile(ref objectList, DAT.Obj1_05);
+            ConstructStringTile(ref tileList, DAT.Tile1_04); ConstructIntTile(ref heightList, DAT.TileH1_04); ConstructIntTile(ref objectList, DAT.Obj1_04);
+            ConstructStringTile(ref tileList, DAT.Tile1_03); ConstructIntTile(ref heightList, DAT.TileH1_03); ConstructIntTile(ref objectList, DAT.Obj1_03);
+            ConstructStringTile(ref tileList, DAT.Tile1_02); ConstructIntTile(ref heightList, DAT.TileH1_02); ConstructIntTile(ref objectList, DAT.Obj1_02);
+            ConstructStringTile(ref tileList, DAT.Tile1_01); ConstructIntTile(ref heightList, DAT.TileH1_01); ConstructIntTile(ref objectList, DAT.Obj1_01);
+            ConstructStringTile(ref tileList, DAT.Tile1_00); ConstructIntTile(ref heightList, DAT.TileH1_00); ConstructIntTile(ref objectList, DAT.Obj1_00);
 
-            for (int ii = 0; ii < tileData.Length; ii++)
+            if (ONE.CurrentStage == FIX.Stage.Stage1_1) { column = DAT.COLUMN_1_1; }
+            if (ONE.CurrentStage == FIX.Stage.Stage1_2) { column = DAT.COLUMN_1_2;  }
+            if (ONE.CurrentStage == FIX.Stage.Stage1_3) { column = DAT.COLUMN_1_3;  }
+            if (ONE.CurrentStage == FIX.Stage.Stage1_4) { column = DAT.COLUMN_1_4;  }
+            if (ONE.CurrentStage == FIX.Stage.Stage1_5) { column = DAT.COLUMN_1_5;  }
+            if (ONE.CurrentStage == FIX.Stage.Stage2_1) { column = DAT.COLUMN_2_1;  }
+            if (ONE.CurrentStage == FIX.Stage.Stage2_2) { column = DAT.COLUMN_2_2;  }
+            if (ONE.CurrentStage == FIX.Stage.Stage2_3) { column = DAT.COLUMN_2_3;  }
+            if (ONE.CurrentStage == FIX.Stage.Stage2_4) { column = DAT.COLUMN_2_4;  }
+            if (ONE.CurrentStage == FIX.Stage.Stage2_5) { column = DAT.COLUMN_2_5;  }
+
+            for (int ii = 0; ii < tileList.Count; ii++)
             {
                 AreaInformation current = this.prefab_Tile;
                 current.field = AreaInformation.Field.Plain;
-                if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.None))
+                if (tileList[ii] == "UnknownTile")
                 {
                     current = this.prefab_NoneTile;
                     current.field = AreaInformation.Field.None;
                 }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Forest))
+                else if (tileList[ii] == "Field_Forest")
                 {
                     current = this.prefab_Forest;
                     current.field = AreaInformation.Field.Forest;
                 }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Sea))
+                else if (tileList[ii] == "Field_Plain")
                 {
-                    current = this.prefab_Sea;
-                    current.field = AreaInformation.Field.Sea;
+                    current = this.prefab_Tile;
+                    current.field = AreaInformation.Field.Plain;
                 }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Mountain))
-                {
-                    current = this.prefab_Mountain;
-                    current.field = AreaInformation.Field.Mountain;
-                }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Bridge1))
-                {
-                    current = this.prefab_Bridge1;
-                    current.field = AreaInformation.Field.Bridge1;
-                }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Bridge2))
-                {
-                    current = this.prefab_Bridge2;
-                    current.field = AreaInformation.Field.Bridge2;
-                }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_V))
-                {
-                    current = this.prefab_Road_V;
-                    current.field = AreaInformation.Field.Road_V;
-                }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_H))
-                {
-                    current = this.prefab_Road_H;
-                    current.field = AreaInformation.Field.Road_H;
-                }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Wall_1))
-                {
-                    current = this.prefab_Wall_1;
-                    current.field = AreaInformation.Field.Wall_1;
-                }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_RB))
-                {
-                    current = this.prefab_Road_RB;
-                    current.field = AreaInformation.Field.Road_RB;
-                }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_LB))
-                {
-                    current = this.prefab_Road_LB;
-                    current.field = AreaInformation.Field.Road_LB;
-                }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_TR))
-                {
-                    current = this.prefab_Road_TR;
-                    current.field = AreaInformation.Field.Road_TR;
-                }
-                else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_TL))
-                {
-                    current = this.prefab_Road_TL;
-                    current.field = AreaInformation.Field.Road_TL;
-                }
+                //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Mountain))
+                //{
+                //    current = this.prefab_Mountain;
+                //    current.field = AreaInformation.Field.Mountain;
+                //}
+                //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Bridge1))
+                //{
+                //    current = this.prefab_Bridge1;
+                //    current.field = AreaInformation.Field.Bridge1;
+                //}
+                //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Bridge2))
+                //{
+                //    current = this.prefab_Bridge2;
+                //    current.field = AreaInformation.Field.Bridge2;
+                //}
+                //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_V))
+                //{
+                //    current = this.prefab_Road_V;
+                //    current.field = AreaInformation.Field.Road_V;
+                //}
+                //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_H))
+                //{
+                //    current = this.prefab_Road_H;
+                //    current.field = AreaInformation.Field.Road_H;
+                //}
+                //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Wall_1))
+                //{
+                //    current = this.prefab_Wall_1;
+                //    current.field = AreaInformation.Field.Wall_1;
+                //}
+                //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_RB))
+                //{
+                //    current = this.prefab_Road_RB;
+                //    current.field = AreaInformation.Field.Road_RB;
+                //}
+                //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_LB))
+                //{
+                //    current = this.prefab_Road_LB;
+                //    current.field = AreaInformation.Field.Road_LB;
+                //}
+                //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_TR))
+                //{
+                //    current = this.prefab_Road_TR;
+                //    current.field = AreaInformation.Field.Road_TR;
+                //}
+                //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Road_TL))
+                //{
+                //    current = this.prefab_Road_TL;
+                //    current.field = AreaInformation.Field.Road_TL;
+                //}
                 else
                 {
-                    Debug.Log("TapArea else routine..." + tileData[ii].ToString());
+                    Debug.Log("TapArea else routine..." + tileList[ii].ToString());
                 }
                 AreaInformation tile;
-                tile = Instantiate(current, new Vector3(HEX_MOVE_X * (ii % column), HEX_MOVE_Z * (ii / column), -0.5f * tileH[ii]), Quaternion.identity) as AreaInformation;
+                tile = Instantiate(current, new Vector3(HEX_MOVE_X * (ii % column), HEX_MOVE_Z * (ii / column), -0.5f * heightList[ii]), Quaternion.identity) as AreaInformation;
                 tile.transform.Rotate(new Vector3(0, 0, 0));
                 tile.gameObject.SetActive(true);
-                if (tileData[ii] == 0)
+                if (tileList[ii] == "UnknownTile")
                 {
                     tile.gameObject.SetActive(false);
                 }
@@ -414,100 +469,181 @@ namespace ObsidianPortal
                 Debug.Log("stage Stage1_1");
                 int counter = 0;
                 Unit current = null;
+                GameObject currentObj = null;
 
-                current = SetupUnit(0, Unit.Ally.TimerKeeper, FIX.RaceType.TimeKeeper, FIX.JobClass.TimeKeeper, 0, 0);
+                current = SetupUnit(counter, ONE.UnitList[AllList.Count].FullName, Unit.Ally.TimerKeeper, FIX.RaceType.TimeKeeper, FIX.JobClass.TimeKeeper, 0, 0);
                 OtherList.Add(current);
                 AllList.Add(current);
                 counter++;
 
                 // ユニット配置
-                int[] objList = DAT.OBJECT_1_1;
                 int COLUMN = DAT.COLUMN_1_1;
                 int unitNumber = 0;
-                for (int ii = 0; ii < objList.Length; ii++)
+                for (int ii = 0; ii < objectList.Count; ii++)
                 {
-                    if (objList[ii] > 0)
+                    if (objectList[ii] > 0)
                     {
-                        Unit prefab = null;
-                        switch (ONE.UnitList[unitNumber].Job)
+                        switch (objectList[ii])
                         {
-                            case FIX.JobClass.Fighter:
-                                Debug.Log("Fighter choice");
-                                prefab = prefab_Fighter;
+                            case 0:
+                                // no action
                                 break;
-                            case FIX.JobClass.Ranger:
-                                Debug.Log("Ranger choice");
-                                prefab = prefab_Archer;
-                                break;
-                            case FIX.JobClass.Magician:
-                                Debug.Log("Magician choice");
-                                prefab = prefab_Magician;
-                                break;
-                            default:
-                                Debug.Log("default choice");
-                                prefab = prefab_Fighter;
-                                break;
-                        }
-                        float x = ii % COLUMN;
-                        float y = ii / COLUMN;
-                        x = x * FIX.HEX_MOVE_X;
-                        y = y * FIX.HEX_MOVE_Z;
 
-                        current = Instantiate(prefab, new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f), Quaternion.identity) as Unit;
-                        current.FullName = ONE.UnitList[unitNumber].FullName;
-                        current.Level = ONE.UnitList[unitNumber].Level;
-                        current.Job = ONE.UnitList[unitNumber].Job;
-                        current.Race = ONE.UnitList[unitNumber].Race;
-                        current.BaseStrength = ONE.UnitList[unitNumber].BaseStrength;
-                        current.BaseAgility = ONE.UnitList[unitNumber].BaseAgility;
-                        current.BaseIntelligence = ONE.UnitList[unitNumber].BaseIntelligence;
-                        current.BaseStamina = ONE.UnitList[unitNumber].BaseStamina;
-                        current.BaseMind = ONE.UnitList[unitNumber].BaseMind;
-                        current.MainWeapon = ONE.UnitList[unitNumber].MainWeapon;
-                        current.SubWeapon = ONE.UnitList[unitNumber].SubWeapon;
-                        current.MainArmor = ONE.UnitList[unitNumber].MainArmor;
-                        current.Accessory = ONE.UnitList[unitNumber].Accessory;
-                        current.Accessory2 = ONE.UnitList[unitNumber].Accessory2;
-                        current.Accessory3 = ONE.UnitList[unitNumber].Accessory3;
-                        current.Stone = ONE.UnitList[unitNumber].Stone;
-                        current.ObsidianStone = ONE.UnitList[unitNumber].ObsidianStone;
-                        for (int jj = 0; jj < ONE.UnitList[unitNumber].ActionButtonCommand.Count; jj++)
-                        {
-                            current.ActionButtonCommand.Add(ONE.UnitList[unitNumber].ActionButtonCommand[jj]);
+                            case 1:
+                                // treasure
+                                GameObject obj = Instantiate(prefab_Treasure, new Vector3(ii % COLUMN, ii / COLUMN, -0.5f), Quaternion.identity) as GameObject;
+                                obj.transform.Rotate(new Vector3(-90, 0, 0));
+                                obj.SetActive(true);
+                                TreasureList.Add(obj);
+                                TreasureGetList.Add(false);
+                                break;
+
+                            case 2:
+                                // info-board
+                                break;
+
+                            case 3:
+                                // upstair
+                                currentObj = Instantiate(prefab_ArrowLeft, new Vector3(ii % COLUMN, ii / COLUMN, -0.6f), Quaternion.identity) as GameObject;
+                                currentObj.SetActive(true);
+                                break;
+
+                            case 4:
+                                // downstair
+                                currentObj = Instantiate(prefab_ArrowRight, new Vector3(ii % COLUMN, ii / COLUMN, -0.6f), Quaternion.identity) as GameObject;
+                                currentObj.SetActive(true);
+                                GoalList.Add(currentObj);
+                                break;
+
+                            case 5:
+                                // mirror
+                                break;
+
+                            case 6:
+                                // blue-orb
+                                break;
+
+                            case 7:
+                                // fountain
+                                break;
+
+                            case 8:
+                                // enemy
+                                current = SetupUnitEnemy(counter, FIX.ENEMY_HIYOWA_BEATLE, ii % COLUMN, ii / COLUMN);
+                                EnemyList.Add(current);
+                                AllList.Add(current);
+                                counter++;
+                                break;
+
+                            case 9:
+                                // soul-fragment
+                                break;
+
+                            case 10:
+                                // player
+                                Unit prefab = null;
+                                switch (ONE.UnitList[unitNumber].Job)
+                                {
+                                    case FIX.JobClass.Fighter:
+                                        Debug.Log("Fighter choice");
+                                        prefab = prefab_Fighter;
+                                        break;
+                                    case FIX.JobClass.Ranger:
+                                        Debug.Log("Ranger choice");
+                                        prefab = prefab_Archer;
+                                        break;
+                                    case FIX.JobClass.Magician:
+                                        Debug.Log("Magician choice");
+                                        prefab = prefab_Magician;
+                                        break;
+                                    default:
+                                        Debug.Log("default choice");
+                                        prefab = prefab_Fighter;
+                                        break;
+                                }
+                                float x = ii % COLUMN;
+                                float y = ii / COLUMN;
+                                x = x * FIX.HEX_MOVE_X;
+                                y = y * FIX.HEX_MOVE_Z;
+
+                                current = Instantiate(prefab, new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f), Quaternion.identity) as Unit;
+                                current.FullName = ONE.UnitList[unitNumber].FullName;
+                                current.Level = ONE.UnitList[unitNumber].Level;
+                                current.Job = ONE.UnitList[unitNumber].Job;
+                                current.Race = ONE.UnitList[unitNumber].Race;
+                                current.BaseStrength = ONE.UnitList[unitNumber].BaseStrength;
+                                current.BaseAgility = ONE.UnitList[unitNumber].BaseAgility;
+                                current.BaseIntelligence = ONE.UnitList[unitNumber].BaseIntelligence;
+                                current.BaseStamina = ONE.UnitList[unitNumber].BaseStamina;
+                                current.BaseMind = ONE.UnitList[unitNumber].BaseMind;
+                                current.MainWeapon = ONE.UnitList[unitNumber].MainWeapon;
+                                current.SubWeapon = ONE.UnitList[unitNumber].SubWeapon;
+                                current.MainArmor = ONE.UnitList[unitNumber].MainArmor;
+                                current.Accessory = ONE.UnitList[unitNumber].Accessory;
+                                current.Accessory2 = ONE.UnitList[unitNumber].Accessory2;
+                                current.Accessory3 = ONE.UnitList[unitNumber].Accessory3;
+                                current.Stone = ONE.UnitList[unitNumber].Stone;
+                                current.ObsidianStone = ONE.UnitList[unitNumber].ObsidianStone;
+                                for (int jj = 0; jj < ONE.UnitList[unitNumber].ActionButtonCommand.Count; jj++)
+                                {
+                                    current.ActionButtonCommand.Add(ONE.UnitList[unitNumber].ActionButtonCommand[jj]);
+                                }
+                                current.Initialize(current.FullName, current.Race, current.Job, Unit.Ally.Ally);
+                                current.name = current.FullName + "_" + counter.ToString();
+                                current.gameObject.SetActive(true);
+                                AddUnitWithAdjustTime(current);
+                                AllyList.Add(current);
+                                AllList.Add(current);
+                                counter++;
+                                unitNumber++;
+                                Debug.Log("unitNumber: " + unitNumber.ToString());
+                                break;
+
+                            default:
+                                // no action
+                                break;
                         }
-                        current.Initialize(current.Race, current.Job, Unit.Ally.Ally);
-                        current.name = current.FullName;
-                        current.gameObject.SetActive(true);
-                        AddUnitWithAdjustTime(current);
-                        AllyList.Add(current);
-                        AllList.Add(current);
-                        counter++;
-                        unitNumber++;
-                    }
-                }
-                int[] enemyList = DAT.ENENMY_1_1;
-                for (int ii = 0; ii < enemyList.Length; ii++)
-                {
-                    if (enemyList[ii] > 0)
-                    {
-                        current = SetupUnit(counter, Unit.Ally.Enemy, FIX.RaceType.Monster, (FIX.JobClass)(Enum.ToObject(typeof(FIX.JobClass), enemyList[ii])), ii % COLUMN, ii / COLUMN);
-                        EnemyList.Add(current);
-                        AllList.Add(current);
-                        counter++;
                     }
                 }
             }
             #endregion
 
-            CameraView.transform.localPosition = new Vector3(5, 5, CameraView.transform.localPosition.z);
+            // オーナーキャラクターを設定
+            this.OwnerUnit = AllyList[0];
 
-            // 通常移動モードでは、常にプレイヤ－１を選択する。
+            // 初期設定では、常にプレイヤ－１を選択する。
             for (int ii = 0; ii < AllyList.Count; ii++)
             {
                 this.AllyList[ii].CleanUp();
             }
             this.CurrentUnit = AllyList[0];
-            this.OwnerUnit = AllyList[0];
+
+            // ターゲットの初期設定
+            for (int ii = 0; ii < AllyList.Count; ii++)
+            {
+                this.AllyList[ii].CurrentTarget = EnemyList[0];
+            }
+            for (int ii = 0; ii < EnemyList.Count; ii++)
+            {
+                this.EnemyList[ii].CurrentTarget = AllyList[0];
+            }
+
+            CameraView.transform.localPosition = new Vector3(AllyList[0].transform.localPosition.x, AllyList[0].transform.localPosition.y, CameraView.transform.localPosition.z);
+        }
+
+        private void ConstructStringTile(ref List<string> list, string[] src)
+        {
+            for (int ii = 0; ii < src.Length; ii++)
+            {
+                list.Add(src[ii]);
+            }
+        }
+        private void ConstructIntTile(ref List<int> list, int[] src)
+        {
+            for (int ii = 0; ii < src.Length; ii++)
+            {
+                list.Add(src[ii]);
+            }
         }
 
         int counter1 = 0;
@@ -534,7 +670,6 @@ namespace ObsidianPortal
             }
             #endregion
 
-            // this.Phase == ActionPhase.SelectFirst
             if (CurrentUnit == null)
             {
                 for (int ii = 0; ii < objActionButton.Count; ii++)
@@ -594,9 +729,11 @@ namespace ObsidianPortal
             // カーソル移動
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            GameObject hitObject = null;
             if (Physics.Raycast(ray, out hit, 100))
             {
                 GameObject obj = hit.collider.gameObject;
+                hitObject = hit.collider.gameObject;
                 // フィールド操作
                 if (obj.layer == 11)
                 {
@@ -620,61 +757,62 @@ namespace ObsidianPortal
             }
 
             #region "カーソルとキー操作"
-            if (MoveMode == FieldMode.Move)
+            if (Input.GetKey(KeyCode.Keypad8) || Input.GetKey(KeyCode.UpArrow) || this.arrowUp)
             {
-                if (Input.GetKey(KeyCode.Keypad8) || Input.GetKey(KeyCode.UpArrow) || this.arrowUp)
-                {
-                    this.keyUp = true;
-                    this.keyDown = false;
-                    movementTimer_Tick(this.OwnerUnit);
-                }
-                else if (Input.GetKey(KeyCode.Keypad2) || Input.GetKey(KeyCode.DownArrow) || this.arrowDown)
-                {
-                    this.keyDown = true;
-                    this.keyUp = false;
-                    movementTimer_Tick(this.OwnerUnit);
-                }
-                if (Input.GetKey(KeyCode.Keypad4) || Input.GetKey(KeyCode.LeftArrow) || this.arrowLeft)
-                {
-                    this.keyLeft = true;
-                    this.keyRight = false;
-                    movementTimer_Tick(this.OwnerUnit);
-                }
-                if (Input.GetKey(KeyCode.Keypad6) || Input.GetKey(KeyCode.RightArrow) || this.arrowRight)
-                {
-                    this.keyRight = true;
-                    this.keyLeft = false;
-                    movementTimer_Tick(this.OwnerUnit);
-                }
+                this.keyUp = true;
+                this.keyDown = false;
+                movementTimer_Tick(this.OwnerUnit);
+            }
+            else if (Input.GetKey(KeyCode.Keypad2) || Input.GetKey(KeyCode.DownArrow) || this.arrowDown)
+            {
+                this.keyDown = true;
+                this.keyUp = false;
+                movementTimer_Tick(this.OwnerUnit);
+            }
+            if (Input.GetKey(KeyCode.Keypad4) || Input.GetKey(KeyCode.LeftArrow) || this.arrowLeft)
+            {
+                this.keyLeft = true;
+                this.keyRight = false;
+                movementTimer_Tick(this.OwnerUnit);
+            }
+            if (Input.GetKey(KeyCode.Keypad6) || Input.GetKey(KeyCode.RightArrow) || this.arrowRight)
+            {
+                this.keyRight = true;
+                this.keyLeft = false;
+                movementTimer_Tick(this.OwnerUnit);
+            }
 
-                if (Input.GetKeyUp(KeyCode.Keypad8) || Input.GetKeyUp(KeyCode.UpArrow))
-                {
-                    this.keyUp = false;
-                    this.interval = MOVE_INTERVAL;
-                }
-                if (Input.GetKeyUp(KeyCode.Keypad4) || Input.GetKeyUp(KeyCode.LeftArrow))
-                {
-                    this.keyLeft = false;
-                    this.interval = MOVE_INTERVAL;
-                }
-                if (Input.GetKeyUp(KeyCode.Keypad6) || Input.GetKeyUp(KeyCode.RightArrow))
-                {
-                    this.keyRight = false;
-                    this.interval = MOVE_INTERVAL;
-                }
-                if (Input.GetKeyUp(KeyCode.Keypad2) || Input.GetKeyUp(KeyCode.DownArrow))
-                {
-                    this.keyDown = false;
-                    this.interval = MOVE_INTERVAL;
-                }
+            if (Input.GetKeyUp(KeyCode.Keypad8) || Input.GetKeyUp(KeyCode.UpArrow))
+            {
+                this.keyUp = false;
+                this.interval = MOVE_INTERVAL;
+            }
+            if (Input.GetKeyUp(KeyCode.Keypad4) || Input.GetKeyUp(KeyCode.LeftArrow))
+            {
+                this.keyLeft = false;
+                this.interval = MOVE_INTERVAL;
+            }
+            if (Input.GetKeyUp(KeyCode.Keypad6) || Input.GetKeyUp(KeyCode.RightArrow))
+            {
+                this.keyRight = false;
+                this.interval = MOVE_INTERVAL;
+            }
+            if (Input.GetKeyUp(KeyCode.Keypad2) || Input.GetKeyUp(KeyCode.DownArrow))
+            {
+                this.keyDown = false;
+                this.interval = MOVE_INTERVAL;
             }
             #endregion
 
-            #region "タイム進行とアクティブユニット探索"
-            if (this.Phase == ActionPhase.WaitActive)
+            if (this.fieldMode == FieldMode.Stop)
             {
-                Unit activePlayer = null;
+                return;
+            }
 
+            #region "タイム進行とアクティブユニット探索"
+            Unit activePlayer = null;
+            if (this.fieldMode == FieldMode.Move)
+            {
                 // タイマー０ですでに順番が来ている場合、アクティブプレイヤーにする。(TimeKeeper -> Ally -> Enemyの順序)
                 if (activePlayer == null)
                 {
@@ -751,10 +889,10 @@ namespace ObsidianPortal
 
                 if (activePlayer != null)
                 {
-                    Debug.Log("ActivePlayer is " + activePlayer.UnitName);
+                    //Debug.Log("ActivePlayer is " + activePlayer.UnitName);
                     TimeComparer comp = new TimeComparer();
                     AllList.Sort(comp);
-                    Debug.Log("AllList count: " + AllList.Count.ToString());
+                    //Debug.Log("AllList count: " + AllList.Count.ToString());
 
                     UnitTimeSort();
                     //for (int ii = 0; ii < 12; ii++)
@@ -790,9 +928,7 @@ namespace ObsidianPortal
                     //    OrderList[ii].GetComponent<Image>().sprite = sprite;
                     //}
 
-                    FocusCursor.transform.localPosition = new Vector3(activePlayer.transform.localPosition.x,
-                                                                 activePlayer.transform.localPosition.y,
-                                                                 -0.51f);
+                    FocusCursor.transform.localPosition = new Vector3(activePlayer.transform.localPosition.x, activePlayer.transform.localPosition.y, -0.51f);
 
                     if (activePlayer.Race == FIX.RaceType.TimeKeeper)
                     {
@@ -802,13 +938,13 @@ namespace ObsidianPortal
                         }
                     }
                     activePlayer.CurrentAP += 1;
-                    UpdateUnitStatus(activePlayer);
-                    UpdateUnitStatusMini(activePlayer);
+                    //UpdateUnitStatus(activePlayer);
+                    //UpdateUnitStatusMini(activePlayer);
                     UpdateUnitAP(ActionPoint, activePlayer);
-                    this.groupAP.SetActive(true);
+                    //this.groupAP.SetActive(true);
                     this.CurrentUnit = activePlayer;
                     this.Phase = ActionPhase.UntapStep;
-                    MoveMode = FieldMode.Battle;
+                    this.fieldMode = FieldMode.Action;
                 }
             }
             #endregion
@@ -817,12 +953,7 @@ namespace ObsidianPortal
             #region "TimeKeeperフェーズ"
             if (this.CurrentUnit != null && this.CurrentUnit.Race == FIX.RaceType.TimeKeeper)
             {
-                if (this.Phase == ActionPhase.End)
-                {
-                    Debug.Log("TimeKeeper End");
-                    UnitEnd();
-                }
-                else if (this.Phase == ActionPhase.UntapStep)
+                if (this.Phase == ActionPhase.UntapStep)
                 {
                     bool detect = false;
                     #region "各ユニットにかかっているエフェクトの経過ターンを更新させる"
@@ -905,201 +1036,464 @@ namespace ObsidianPortal
                         this.Phase = ActionPhase.End;
                     }
                 }
+                else if (this.Phase == ActionPhase.End)
+                {
+                    Debug.Log("TimeKeeper End");
+                    UnitEnd();
+                    this.fieldMode = FieldMode.Move;
+                }
                 return;
             }
             #endregion
             #region "敵フェーズ"
-            if (this.CurrentUnit != null && this.CurrentUnit.IsAlly == false)
+            if (this.fieldMode == FieldMode.Action && this.CurrentUnit != null && this.CurrentUnit.IsEnemy)
             {
-                if (this.Phase == ActionPhase.End)
+                switch (this.Phase)
                 {
-                    Debug.Log("EnemyUnit End");
-                    UnitEnd();
-                }
-                if (this.Phase == ActionPhase.UntapStep)
-                {
-                    Debug.Log("ActionPhase.UntapStep");
-                    System.Threading.Thread.Sleep(300);
+                    case ActionPhase.UntapStep:
+                        Debug.Log("Enemy ActionPhase.UntapStep");
+                        this.Phase = ActionPhase.MainAction;
+                        break;
 
-                    this.Phase = ActionPhase.SelectFirst;
-                }
-                if (Phase == ActionPhase.SelectFirst)
-                {
-                    Debug.Log("ActionPhase.SelectFirst");
-                    System.Threading.Thread.Sleep(500);
-                    UpdateUnitStatus(this.CurrentUnit);
-                    UpdateUnitStatusMini(this.CurrentUnit);
-                    OpenMoveable(this.CurrentUnit);
-                    counter1++;
-                    Talos.TraceOpponent(AllList, fieldTile, AllyList[0]);
-                    this.Phase = ActionPhase.SelectMove;
-                }
-                else if (this.Phase == ActionPhase.SelectMove)
-                {
-                    Debug.Log("ActionPhase.SelectMove");
-                    System.Threading.Thread.Sleep(100);
+                    case ActionPhase.MainAction:
+                        Debug.Log("Enemy ActionPhase.MainAction");
+                        bool detect = false;
+                        for (int ii = 0; ii < AllyList.Count; ii++)
+                        {
+                            int distance = UnitDistance(this.CurrentUnit.transform.localPosition, AllyList[ii].transform.localPosition);
+                            if (distance <= 1 && AllyList[ii].Dead == false)
+                            {
+                                detect = true;
+                                this.CurrentUnit.NowBattle = true;
+                                CommandResult result = ExecCommand(this.CurrentUnit, AllyList[ii]);
+                                if (result == CommandResult.Complete)
+                                {
+                                    Debug.Log("Enemy ExecCommand detect Complete.");
+                                    CurrentUnit.CurrentAP -= 2;
+                                    UpdateUnitAP(ActionPoint, CurrentUnit);
+                                    this.Phase = ActionPhase.ExecAnimation;
+                                }
+                                else if (result == CommandResult.Fail)
+                                {
+                                    Debug.Log("Enemy ExecCommand fail.");
+                                    this.Phase = ActionPhase.End;
+                                }
+                                else
+                                {
+                                    Debug.Log("Enemy Unknown command.");
+                                    this.Phase = ActionPhase.End;
+                                }
+                                break;
+                            }
+                        }
 
-                    // 移動不可の場合、即座に終了する。
-                    if (CurrentUnit.CurrentBind > 0)
-                    {
-                        this.Phase = ActionPhase.End;
-                        ClearTile(MoveTile);
-                        return;
-                    }
-
-                    // 目標地点に向かって移動する。
-                    AreaInformation currentArea = ExistAreaFromLocation(CurrentUnit.transform.localPosition);
-                    if (currentArea == null)
-                    {
-                        this.Phase = ActionPhase.End;
-                        ClearTile(MoveTile);
-                        return;
-                    }
-                    if (currentArea.toGoal != null)
-                    {
-                        Debug.Log("currentArea.togoal: " + currentArea.toGoal.cost.ToString());
-                    }
-                    // 次の地点が目標ポイントの場合、そこで止まる。
-                    if (currentArea.toGoal != null && currentArea.toGoal.cost <= CurrentUnit.AttackRange - 1)
-                    {
-                        this.Phase = ActionPhase.SelectCommand;
-                        ClearTile(MoveTile);
-                        OpenAttackable(CurrentUnit, CurrentUnit.AttackRange, false);
-                        return;
-                    }
-                    // 次の地点へ移動する。
-                    if (currentArea.toGoal != null && CurrentUnit.CurrentMovePoint >= currentArea.toGoal.MoveCost)
-                    {
-                        CurrentUnit.CurrentMovePoint -= currentArea.toGoal.MoveCost;
-                        JumpToLocation(CurrentUnit, (int)(currentArea.toGoal.transform.localPosition.x), (int)(currentArea.toGoal.transform.localPosition.y));
-                    }
-                    // 移動コストがなければ、終了する。
-                    else
-                    {
-                        this.Phase = ActionPhase.End;
-                        ClearTile(MoveTile);
-                    }
-                }
-                else if (this.Phase == ActionPhase.SelectCommand)
-                {
-                    System.Threading.Thread.Sleep(100);
-                    AreaInformation currentArea = ExistAreaFromLocation(CurrentUnit.transform.localPosition);
-                    if (currentArea == null)
-                    {
-                        this.Phase = ActionPhase.End;
-                        ClearTile(MoveTile);
-                        return;
-                    }
-                    if (currentArea.toGoal != null)
-                    {
-                        Unit target = null;
-                        #region "芋プログラミングだが良しとする。"
-                        if (CurrentUnit.AttackRange == 0)
-                        {
-                            target = ExistUnitFromLocation(currentArea.transform.localPosition);
-                        }
-                        else if (CurrentUnit.AttackRange == 1)
-                        {
-                            target = ExistUnitFromLocation(currentArea.toGoal.transform.localPosition);
-                        }
-                        else if (CurrentUnit.AttackRange == 2)
-                        {
-                            target = ExistUnitFromLocation(currentArea.toGoal.toGoal.transform.localPosition);
-                        }
-                        else if (CurrentUnit.AttackRange == 3)
-                        {
-                            target = ExistUnitFromLocation(currentArea.toGoal.toGoal.toGoal.transform.localPosition);
-                        }
-                        #endregion
-
-                        if (target == null)
+                        if (detect == false)
                         {
                             this.Phase = ActionPhase.End;
-                            ClearTile(MoveTile);
-                            return;
                         }
+                        break;
 
-                        if (CurrentUnit.Job == FIX.JobClass.MonsterA)
+                    case ActionPhase.ExecAnimation:
+                        //Debug.Log("Enemy ActionPhase.ExecAnimation");
+                        ExecAnimationDamage();
+                        if (WaitAnimation()) { return; }
+                        this.Phase = ActionPhase.ExecEnd;
+                        break;
+
+                    case ActionPhase.ExecEnd:
+                        Debug.Log("Enemy ActionPhase.ExecEnd");
+                        JudgeUnitDead();
+                        JudgeGameEnd();
+                        if (this.GameEnd == false)
                         {
-                            this.currentCommand = FIX.VENOM_SLASH;
+                            this.Phase = ActionPhase.End;
                         }
-                        else if (CurrentUnit.Job == FIX.JobClass.MonsterB)
+                        break;
+
+                    case ActionPhase.End:
+                        Debug.Log("Enemy ActionPhase.End");
+                        UnitEnd();
+                        this.fieldMode = FieldMode.Move;
+                        break;
+                }
+            }
+
+            //    if (Phase == ActionPhase.SelectFirst)
+            //    {
+            //        Debug.Log("ActionPhase.SelectFirst");
+            //        System.Threading.Thread.Sleep(500);
+            //        UpdateUnitStatus(this.CurrentUnit);
+            //        UpdateUnitStatusMini(this.CurrentUnit);
+            //        OpenMoveable(this.CurrentUnit);
+            //        counter1++;
+            //        Talos.TraceOpponent(AllList, fieldTile, this.CurrentUnit, AllyList[0].gameObject);
+            //        this.Phase = ActionPhase.SelectMove;
+            //    }
+            //    else if (this.Phase == ActionPhase.SelectMove)
+            //    {
+            //        Debug.Log("ActionPhase.SelectMove");
+            //        System.Threading.Thread.Sleep(100);
+
+            //        // 移動不可の場合、即座に終了する。
+            //        if (CurrentUnit.CurrentBind > 0)
+            //        {
+            //            this.Phase = ActionPhase.End;
+            //            ClearTile(MoveTile);
+            //            return;
+            //        }
+
+            //        // 目標地点に向かって移動する。
+            //        AreaInformation currentArea = ExistAreaFromLocation(CurrentUnit.transform.localPosition);
+            //        if (currentArea == null)
+            //        {
+            //            this.Phase = ActionPhase.End;
+            //            ClearTile(MoveTile);
+            //            return;
+            //        }
+            //        if (currentArea.toGoal != null)
+            //        {
+            //            Debug.Log("currentArea.togoal: " + currentArea.toGoal.cost.ToString());
+            //        }
+            //        // 次の地点が目標ポイントの場合、そこで止まる。
+            //        if (currentArea.toGoal != null && currentArea.toGoal.cost <= CurrentUnit.AttackRange - 1)
+            //        {
+            //            this.Phase = ActionPhase.SelectCommand;
+            //            ClearTile(MoveTile);
+            //            OpenAttackable(CurrentUnit, CurrentUnit.AttackRange, false);
+            //            return;
+            //        }
+            //        // 次の地点へ移動する。
+            //        if (currentArea.toGoal != null && CurrentUnit.CurrentMovePoint >= currentArea.toGoal.MoveCost)
+            //        {
+            //            CurrentUnit.CurrentMovePoint -= currentArea.toGoal.MoveCost;
+            //            JumpToLocation(CurrentUnit, (int)(currentArea.toGoal.transform.localPosition.x), (int)(currentArea.toGoal.transform.localPosition.y));
+            //        }
+            //        // 移動コストがなければ、終了する。
+            //        else
+            //        {
+            //            this.Phase = ActionPhase.End;
+            //            ClearTile(MoveTile);
+            //        }
+            //    }
+            //    else if (this.Phase == ActionPhase.SelectCommand)
+            //    {
+            //        System.Threading.Thread.Sleep(100);
+            //        AreaInformation currentArea = ExistAreaFromLocation(CurrentUnit.transform.localPosition);
+            //        if (currentArea == null)
+            //        {
+            //            this.Phase = ActionPhase.End;
+            //            ClearTile(MoveTile);
+            //            return;
+            //        }
+            //        if (currentArea.toGoal != null)
+            //        {
+            //            Unit target = null;
+            //            #region "芋プログラミングだが良しとする。"
+            //            if (CurrentUnit.AttackRange == 0)
+            //            {
+            //                target = ExistUnitFromLocation(currentArea.transform.localPosition);
+            //            }
+            //            else if (CurrentUnit.AttackRange == 1)
+            //            {
+            //                target = ExistUnitFromLocation(currentArea.toGoal.transform.localPosition);
+            //            }
+            //            else if (CurrentUnit.AttackRange == 2)
+            //            {
+            //                target = ExistUnitFromLocation(currentArea.toGoal.toGoal.transform.localPosition);
+            //            }
+            //            else if (CurrentUnit.AttackRange == 3)
+            //            {
+            //                target = ExistUnitFromLocation(currentArea.toGoal.toGoal.toGoal.transform.localPosition);
+            //            }
+            //            #endregion
+
+            //            if (target == null)
+            //            {
+            //                this.Phase = ActionPhase.End;
+            //                ClearTile(MoveTile);
+            //                return;
+            //            }
+
+            //            if (CurrentUnit.Job == FIX.JobClass.MonsterA)
+            //            {
+            //                this.currentCommand = FIX.VENOM_SLASH;
+            //            }
+            //            else if (CurrentUnit.Job == FIX.JobClass.MonsterB)
+            //            {
+            //                this.currentCommand = FIX.NORMAL_ATTACK;
+            //            }
+            //            else
+            //            {
+            //                this.currentCommand = FIX.NORMAL_ATTACK;
+            //            }
+
+            //            this.CurrentTarget = target;
+
+            //            CurrentUnit.CurrentAP -= ActionCommand.UsedAP(currentCommand);
+            //            UpdateUnitAP(ActionPoint, CurrentUnit);
+
+            //            // タイルクリアする。
+            //            ClearTile(MoveTile);
+            //            ClearTile(AttackTile);
+            //            ClearTile(HealTile);
+            //            ClearTile(AllyEffectTile);
+            //            this.Phase = ActionPhase.ExecCommand;
+            //        }
+            //    }
+            #endregion
+            #region "味方フェーズ"
+            #region "自由移動"
+            // 目標地点に向かって移動する。
+            if (this.animationDstPoint != null)
+            {
+                System.Threading.Thread.Sleep(100);
+                AreaInformation currentArea = ExistAreaFromLocation(this.OwnerUnit.transform.localPosition);
+                if (currentArea == null)
+                {
+                    this.animationDstPoint = null;
+                    Talos.ClearTrace(fieldTile);
+                    Debug.Log("SelectFirst: currentArea null");
+                    return;
+                }
+
+                // 次の目標ポイントがない場合、そこで止まる。
+                if (currentArea.toGoal == null)
+                {
+                    this.animationDstPoint = null;
+                    Talos.ClearTrace(fieldTile);
+                    Debug.Log("SelectFirst: currentArea.toGoal null");
+                    return;
+                }
+
+                // 次の地点へ移動する。
+                if (currentArea.toGoal != null && currentArea.toGoal.MoveCost > 0)
+                {
+                    Unit opponent = ExistUnitFromLocation(currentArea.toGoal.transform.localPosition);
+                    if (opponent != null && opponent.IsEnemy && opponent.Dead == false)
+                    {
+                        Debug.Log("SelectFirst: opponent exist");
+                        this.animationDstPoint = null;
+                        Talos.ClearTrace(fieldTile);
+                        return;
+                    }
+                    Debug.Log("SelectFirst: toGoal: " + currentArea.toGoal.cost.ToString());
+                    if (currentArea.toGoal.cost >= 999)
+                    {
+                        Debug.Log("SelectFirst: cannot find standard route.");
+                        UpdateMssage("Cannot move this point.");
+                        this.animationDstPoint = null;
+                        Talos.ClearTrace(fieldTile);
+                        return;
+                    }
+                    JumpToLocation(this.OwnerUnit, (int)(currentArea.toGoal.transform.localPosition.x), (int)(currentArea.toGoal.transform.localPosition.y));
+
+                    // 宝箱などのイベント検出
+                    for (int ii = 0; ii < TreasureList.Count; ii++)
+                    {
+                        if (ContainPositionX(OwnerUnit.transform.localPosition.x, TreasureList[ii].transform.localPosition.x) &&
+                            ContainPositionY(OwnerUnit.transform.localPosition.y, TreasureList[ii].transform.localPosition.y) &&
+                            TreasureGetList[ii] == false)
                         {
-                            this.currentCommand = FIX.NORMAL_ATTACK;
+                            Item current = new Item(Method.GetNewItem(Method.NewItemCategory.Lottery_L1));
+                            UpdateMssage("get item: " + current.ItemName);
+                            OwnerUnit.AddBackPack(current, 1);
+                            TreasureGetList[ii] = true;
+                        }
+                    }
+                }
+                // 移動コストがなければ、終了する。
+                else
+                {
+                    Debug.Log("SelectFirst: animationDstPoint(E)");
+                    this.animationDstPoint = null;
+                    Talos.ClearTrace(fieldTile);
+                    return;
+                }
+            }
+            #endregion
+
+            if (this.fieldMode == FieldMode.Action && this.CurrentUnit != null && this.CurrentUnit.IsAlly)
+            {
+                if (this.Phase == ActionPhase.UntapStep)
+                {
+                    Debug.Log("Ally ActionPhase.UntapStep");
+                    for (int ii = 0; ii < CurrentUnit.ActionButtonCommand.Count; ii++)
+                    {
+                        SetupActionButton(objActionButton[ii], CurrentUnit.ActionButtonCommand[ii]);
+                    }
+
+                    this.Phase = ActionPhase.MainAction;
+                }
+                else if (this.Phase == ActionPhase.MainAction)
+                {
+                    Debug.Log("Ally ActionPhase.MainAction");
+
+                    bool detect = false;
+                    for (int ii = 0; ii < EnemyList.Count; ii++)
+                    {
+                        int distance = UnitDistance(this.CurrentUnit.transform.localPosition, EnemyList[ii].transform.localPosition);
+                        if (distance <= 1 && EnemyList[ii].Dead == false)
+                        {
+                            detect = true;
+                            CommandResult result = ExecCommand(this.CurrentUnit, EnemyList[ii]);
+                            if (result == CommandResult.Complete)
+                            {
+                                Debug.Log("Ally ExecCommand detect Complete.");
+                                GetTacticsPoint(this.CurrentUnit);
+                                CurrentUnit.CurrentAP -= 2;
+                                UpdateUnitAP(ActionPoint, CurrentUnit);
+                                this.Phase = ActionPhase.ExecAnimation;
+                            }
+                            else if (result == CommandResult.Fail)
+                            {
+                                Debug.Log("Ally ExecCommand fail.");
+                                UnitEnd();
+                                this.Phase = ActionPhase.End;
+                            }
+                            else
+                            {
+                                Debug.Log("Ally Unknown command.");
+                                this.Phase = ActionPhase.End;
+                            }
+                            break;
+                        }
+                    }
+
+                    if (detect == false)
+                    {
+                        this.Phase = ActionPhase.End;
+                    }
+                }
+                // 移動先を選択
+                else if (this.Phase == ActionPhase.SelectMove)
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        Debug.Log("mousedown, now CheckMoveableArea: " + Cursor.transform.localPosition.ToString());
+                        if (CheckMoveableArea(Cursor.transform.localPosition))
+                        {
+                            Debug.Log("CheckMoveArea ok.");
+                            Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
+                            if (target != null && target.Equals(this.CurrentUnit) == false)
+                            {
+                                Debug.Log("already exist unit, then no action.");
+                                return;
+                            }
+
+                            JumpToLocation(CurrentUnit, (int)Cursor.transform.localPosition.x, (int)Cursor.transform.localPosition.y);
+                            ClearTile(MoveTile);
+
+                            CurrentUnit.CurrentAP--;
+                            UpdateUnitAP(ActionPoint, CurrentUnit);
+                            this.Phase = ActionPhase.MainAction;
                         }
                         else
                         {
-                            this.currentCommand = FIX.NORMAL_ATTACK;
+                            Debug.Log("CheckMoveArea: No exist.");
                         }
+                    }
+                }
+                // コマンド実行対象の選択
+                else if (this.Phase == ActionPhase.SelectTarget)
+                {
+#if UNITY_EDITOR
+                    if (EventSystem.current.IsPointerOverGameObject())
+                    {
+                        return;
+                    }
+#else
+            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) {
+                return;
+            }
+#endif
+                    else if (Input.GetMouseButtonDown(0))
+                    {
+                        Debug.Log("GetMouseButton(0)");
+                        ActionCommand.TargetType targetType = ActionCommand.GetTargetType(this.currentCommand);
+                        Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
 
+                        // 単一の敵対象
+                        if (targetType == ActionCommand.TargetType.Enemy)
+                        {
+                            if (CheckAttackableArea(Cursor.transform.localPosition) == false)
+                            {
+                                Debug.Log("CheckAttackableArea out of area, then no action.");
+                                return;
+                            }
+                            if (target == null)
+                            {
+                                Debug.Log("unit is not exist, then no action.");
+                                return;
+                            }
+                            if (target.IsAlly)
+                            {
+                                Debug.Log("unit is ally, then no action");
+                                return;
+                            }
+                            if (CurrentUnit.CurrentAP < 2)
+                            {
+                                Debug.Log("Not enough AP, then no action");
+                                return;
+                            }
+                            if (target.CurrentZeroImmunity > 0)
+                            {
+                                Debug.Log("Target has ZeroImmunity, then no action");
+                                return;
+                            }
+                        }
+                        // 単一の味方対象(効果/回復)
+                        else if (targetType == ActionCommand.TargetType.Ally)
+                        {
+                            Debug.Log("GetTargetType Ally routine.");
+
+                            if (ActionCommand.IsHeal(currentCommand) && CheckAllyEffectArea(Cursor.transform.localPosition, HealTile) == false)
+                            {
+                                Debug.Log("CheckAllyEffectArea(Heal) out of area, then no action.");
+                                return;
+                            }
+                            if (ActionCommand.IsHeal(currentCommand) == false && CheckAllyEffectArea(Cursor.transform.localPosition, AllyEffectTile) == false)
+                            {
+                                Debug.Log("CheckAllyEffectArea(Effect) out of area, then no action.");
+                                return;
+                            }
+                            if (target == null)
+                            {
+                                Debug.Log("unit is not exist, then no action.");
+                                return;
+                            }
+                            if (target.IsAlly == false)
+                            {
+                                Debug.Log("unit is enemy, then no action");
+                                return;
+                            }
+                        }
                         this.CurrentTarget = target;
-
-                        CurrentUnit.CurrentAP -= ActionCommand.UsedAP(currentCommand);
-                        UpdateUnitAP(ActionPoint, CurrentUnit);
-
-                        // タイルクリアする。
                         ClearTile(MoveTile);
                         ClearTile(AttackTile);
                         ClearTile(HealTile);
                         ClearTile(AllyEffectTile);
+                        JudgeGameEnd();
                         this.Phase = ActionPhase.ExecCommand;
                     }
                 }
                 else if (this.Phase == ActionPhase.ExecCommand)
                 {
-                    CommandResult result = ExecCommand(this.currentCommand, this.CurrentUnit, this.CurrentTarget);
+                    CommandResult result = ExecCommand(this.CurrentUnit, this.CurrentTarget);
                     if (result == CommandResult.Complete)
                     {
-                        Debug.Log("detectAction true.");
+                        Debug.Log("ExecCommand detect Complete.");
                         GetTacticsPoint(this.CurrentUnit);
                         CurrentUnit.CurrentAP -= 2;
-                        this.Phase = ActionPhase.ExecAnimation;
                     }
                     else if (result == CommandResult.Fail)
                     {
-                        Debug.Log("Command fail, then End.");
-                        this.Phase = ActionPhase.ExecAnimation;
+                        Debug.Log("ExecCommand fail.");
                     }
                     else
                     {
-                        Debug.Log("Unknown command, then End.");
-                        this.Phase = ActionPhase.ExecAnimation;
+                        Debug.Log("Unknown command.");
                     }
-                    //if (this.currentCommand == FIX.NORMAL_ATTACK)
-                    //{
-                    //    if (this.CurrentUnit.Type == Unit.UnitType.Magician)
-                    //    {
-                    //        ExecMagicAttack(CurrentUnit, CurrentTarget);
-                    //    }
-                    //    else
-                    //    {
-                    //        ExecNormalAttack(CurrentUnit, CurrentTarget);
-                    //    }
-                    //}
-                    //else if (this.currentCommand == FIX.AURA_OF_POWER)
-                    //{
-                    //    ExecAuraOfPower(CurrentUnit, CurrentTarget);
-                    //}
-                    //else if (this.currentCommand == FIX.HUNTER_SHOT)
-                    //{
-                    //    ExecHunterShot(CurrentUnit, CurrentTarget);
-                    //}
-                    //else if (this.currentCommand == FIX.VENOM_SLASH)
-                    //{
-                    //    ExecVenomSlash(CurrentUnit, CurrentTarget);
-                    //}
-                    //else if (this.currentCommand == FIX.FIRE_BOLT)
-                    //{
-                    //    ExecFireBolt(CurrentUnit, CurrentTarget);
-                    //}
-                    //else if (this.currentCommand == FIX.ZERO_IMMUNITY)
-                    //{
-                    //    ExecZeroImmunity(CurrentUnit, CurrentTarget);
-                    //}
-                    //else if (this.currentCommand == FIX.INVISIBLE_BIND)
-                    //{
-                    //    ExecInvisibleBind(CurrentUnit, CurrentTarget);
-                    //}
+                    UpdateUnitAP(ActionPoint, CurrentUnit);
                     this.Phase = ActionPhase.ExecAnimation;
                 }
                 // アニメーション実行
@@ -1107,269 +1501,66 @@ namespace ObsidianPortal
                 {
                     ExecAnimationDamage();
                     if (WaitAnimation()) { return; }
+
                     this.Phase = ActionPhase.ExecEnd;
                 }
                 // 実処理実行
                 else if (this.Phase == ActionPhase.ExecEnd)
                 {
                     Debug.Log("ExecEnd: " + this.currentCommand);
-
-                    if (this.currentCommand == FIX.DASH)
-                    {
-                        ExecDash(this.CurrentUnit, this.CurrentTarget);
-                    }
-                    else if (this.currentCommand == FIX.REACHABLETARGET)
-                    {
-                        ExecReachableTarget(this.CurrentUnit, this.CurrentTarget);
-                    }
-                    else if (this.currentCommand == FIX.EARTHBIND)
-                    {
-                        ExecEarthBind(this.CurrentUnit, this.CurrentTarget);
-                    }
-                    else if (this.currentCommand == FIX.POWERWORD)
-                    {
-                        ExecPowerWord(this.CurrentUnit, this.CurrentTarget);
-                    }
-                    else if (this.currentCommand == FIX.HEALINGWORD)
-                    {
-                        ExecHealingWord(this.CurrentUnit, this.CurrentTarget);
-                    }
-                    else if (this.currentCommand == FIX.NEEDLESPEAR)
-                    {
-                        ExecNeedleSpear(this.CurrentUnit, this.CurrentTarget);
-                    }
-                    else if (this.currentCommand == FIX.SILVERARROW)
-                    {
-                        ExecSilverArrow(this.CurrentUnit, this.CurrentTarget);
-                    }
-                    else if (this.currentCommand == FIX.HOLYBULLET)
-                    {
-                        ExecHolyBullet(this.CurrentUnit);
-                    }
-                    else if (this.currentCommand == FIX.PROTECTION)
-                    {
-                        ExecProtection(this.CurrentUnit, this.CurrentTarget);
-                    }
-                    else if (this.currentCommand == FIX.FRESHHEAL)
-                    {
-                        ExecFreshHeal(this.CurrentUnit, this.CurrentTarget);
-                    }
-                    else if (this.currentCommand == FIX.FIREBLADE)
-                    {
-                        ExecFireBlade(this.CurrentUnit);
-                    }
-                    else if (this.currentCommand == FIX.LAVAWALL)
-                    {
-                        ExecLavaWall(this.CurrentUnit, currentDirection);
-                    }
-                    else if (this.currentCommand == FIX.BLAZE)
-                    {
-                        ExecBlaze(this.CurrentUnit, this.currentDirection);
-                    }
-                    else if (this.currentCommand == FIX.HEATBOOST)
-                    {
-                        ExecHeatBoost(this.CurrentUnit, this.CurrentTarget);
-                    }
-                    else if (this.currentCommand == FIX.EXPLOSION)
-                    {
-                        ExecExplosion(this.CurrentUnit, this.CurrentTarget);
-                    }
                     JudgeUnitDead();
                     JudgeGameEnd();
                     if (this.GameEnd == false)
                     {
                         this.Phase = ActionPhase.End;
-                        ClearTile(MoveTile);
                     }
                 }
-                return;
-            }
-            #endregion
-            #region "味方フェーズ"
-            if (this.Phase == ActionPhase.UntapStep)
-            {
-                for (int ii = 0; ii < CurrentUnit.ActionButtonCommand.Count; ii++)
+                // 終了
+                else if (this.Phase == ActionPhase.End)
                 {
-                    SetupActionButton(objActionButton[ii], CurrentUnit.ActionButtonCommand[ii]);
+                    UnitEnd();
+                    this.fieldMode = FieldMode.Move;
                 }
-
-                this.Phase = ActionPhase.SelectFirst;
-            }
-            // 移動先を選択
-            if (this.Phase == ActionPhase.SelectMove)
-            {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    Debug.Log("mousedown, now CheckMoveableArea: " + Cursor.transform.localPosition.ToString());
-                    if (CheckMoveableArea(Cursor.transform.localPosition))
-                    {
-                        Debug.Log("CheckMoveArea ok.");
-                        Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
-                        if (target != null && target.Equals(this.CurrentUnit) == false)
-                        {
-                            Debug.Log("already exist unit, then no action.");
-                            return;
-                        }
-
-                        JumpToLocation(CurrentUnit, (int)Cursor.transform.localPosition.x, (int)Cursor.transform.localPosition.y);
-                        ClearTile(MoveTile);
-
-                        CurrentUnit.CurrentAP--;
-                        UpdateUnitAP(ActionPoint, CurrentUnit);
-                        this.Phase = ActionPhase.SelectFirst;
-                    }
-                    else
-                    {
-                        Debug.Log("CheckMoveArea: No exist.");
-                    }
-                }
-            }
-            // コマンド実行対象の選択
-            else if (this.Phase == ActionPhase.SelectTarget)
-            {
-#if UNITY_EDITOR
-                if (EventSystem.current.IsPointerOverGameObject())
-                {
-                    return;
-                }
-#else 
-                if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) {
-                    return;
-                }
-#endif
-                else if (Input.GetMouseButtonDown(0))
-                {
-                    Debug.Log("GetMouseButton(0)");
-                    ActionCommand.TargetType targetType = ActionCommand.GetTargetType(this.currentCommand);
-                    Unit target = ExistUnitFromLocation(Cursor.transform.localPosition);
-
-                    // 単一の敵対象
-                    if (targetType == ActionCommand.TargetType.Enemy)
-                    {
-                        if (CheckAttackableArea(Cursor.transform.localPosition) == false)
-                        {
-                            Debug.Log("CheckAttackableArea out of area, then no action.");
-                            return;
-                        }
-                        if (target == null)
-                        {
-                            Debug.Log("unit is not exist, then no action.");
-                            return;
-                        }
-                        if (target.IsAlly)
-                        {
-                            Debug.Log("unit is ally, then no action");
-                            return;
-                        }
-                        if (CurrentUnit.CurrentAP < 2)
-                        {
-                            Debug.Log("Not enough AP, then no action");
-                            return;
-                        }
-                        if (target.CurrentZeroImmunity > 0)
-                        {
-                            Debug.Log("Target has ZeroImmunity, then no action");
-                            return;
-                        }
-                    }
-                    // 単一の味方対象(効果/回復)
-                    else if (targetType == ActionCommand.TargetType.Ally)
-                    {
-                        Debug.Log("GetTargetType Ally routine.");
-
-                        if (ActionCommand.IsHeal(currentCommand) && CheckAllyEffectArea(Cursor.transform.localPosition, HealTile) == false)
-                        {
-                            Debug.Log("CheckAllyEffectArea(Heal) out of area, then no action.");
-                            return;
-                        }
-                        if (ActionCommand.IsHeal(currentCommand) == false && CheckAllyEffectArea(Cursor.transform.localPosition, AllyEffectTile) == false)
-                        {
-                            Debug.Log("CheckAllyEffectArea(Effect) out of area, then no action.");
-                            return;
-                        }
-                        if (target == null)
-                        {
-                            Debug.Log("unit is not exist, then no action.");
-                            return;
-                        }
-                        if (target.IsAlly == false)
-                        {
-                            Debug.Log("unit is enemy, then no action");
-                            return;
-                        }
-                    }
-                    this.CurrentTarget = target;
-                    ClearTile(MoveTile);
-                    ClearTile(AttackTile);
-                    ClearTile(HealTile);
-                    ClearTile(AllyEffectTile);
-                    JudgeGameEnd();
-                    this.Phase = ActionPhase.ExecCommand;
-                }
-            }
-            else if (this.Phase == ActionPhase.ExecCommand)
-            {
-                CommandResult result = ExecCommand(this.currentCommand, this.CurrentUnit, this.CurrentTarget);
-                if (result == CommandResult.Complete)
-                {
-                    Debug.Log("ExecCommand detect Complete.");
-                    GetTacticsPoint(this.CurrentUnit);
-                    CurrentUnit.CurrentAP -= 2;
-                }
-                else if (result == CommandResult.Fail)
-                {
-                    Debug.Log("ExecCommand fail.");
-                }
-                else
-                {
-                    Debug.Log("Unknown command.");
-                }
-                UpdateUnitAP(ActionPoint, CurrentUnit);
-                this.Phase = ActionPhase.ExecAnimation;
-            }
-            // アニメーション実行
-            else if (this.Phase == ActionPhase.ExecAnimation)
-            {
-                ExecAnimationDamage();
-                if (WaitAnimation()) { return; }
-
-                this.Phase = ActionPhase.ExecEnd;
-            }
-            // 実処理実行
-            else if (this.Phase == ActionPhase.ExecEnd)
-            {
-                Debug.Log("ExecEnd: " + this.currentCommand);
-
-                JudgeUnitDead();
-                JudgeGameEnd();
-                if (this.GameEnd == false)
-                {
-                    this.Phase = ActionPhase.End;
-                }
-            }
-            // 終了
-            else if (this.Phase == ActionPhase.End)
-            {
-                UnitEnd();
             }
             #endregion
             #endregion
+
+            // コマンド実行が何もなく、かつ、移動先ポイントが決まってない場合、移動を開始する。
+            if (Input.GetMouseButtonDown(0) && this.animationDstPoint == null && hit.collider != null)
+            {
+                hitObject = hit.collider.gameObject;
+                Debug.Log("SelectFirst: GetMouseButtonDown: " + hitObject.layer.ToString());
+                AreaInformation currentArea = ExistAreaFromLocation(hitObject.transform.localPosition);
+
+                // フィールド操作
+                if (hitObject.layer == 11 && currentArea != null && currentArea.transform.localPosition.z >= 0.0f)
+                {
+                    this.animationDstPoint = currentArea;
+                    Debug.Log("this.animationDstPoint: " + this.animationDstPoint.transform.localPosition.ToString());
+                    Talos.TraceOpponent(AllList, fieldTile, this.OwnerUnit, this.animationDstPoint.gameObject);
+                }
+            }
         }
 
-        private CommandResult ExecCommand(string command, Unit player, Unit target)
+        private void UpdateMssage(string message)
+        {
+            txtMessage.text = txtMessage.text.Insert(0, "\r\n" + message);
+        }
+
+        private CommandResult ExecCommand(Unit player, Unit target)
         {
             Debug.Log(MethodBase.GetCurrentMethod().Name + "(S)");
 
-            ActionCommand.TargetType targetType = ActionCommand.GetTargetType(command);
+            ActionCommand.TargetType targetType = ActionCommand.GetTargetType(player.CurrentCommand);
 
             // スペル属性で、沈黙状態のときは詠唱できない。
-            if (ActionCommand.GetAttribute(command) == ActionCommand.Attribute.Spell && player.CurrentSilence > 0)
+            if (ActionCommand.GetAttribute(player.CurrentCommand) == ActionCommand.Attribute.Spell && player.CurrentSilence > 0)
             {
                 StartAnimation(player, FIX.STRING_MISS, new Color(1.0f, 1.0f, 1.0f));
                 return CommandResult.Fail;
             }
             // スキル属性で、封技状態のときは技を使えない。
-            if (ActionCommand.GetAttribute(command) == ActionCommand.Attribute.Skill && player.CurrentSeal > 0)
+            if (ActionCommand.GetAttribute(player.CurrentCommand) == ActionCommand.Attribute.Skill && player.CurrentSeal > 0)
             {
                 StartAnimation(player, FIX.STRING_MISS, new Color(1.0f, 1.0f, 1.0f));
                 return CommandResult.Fail;
@@ -1384,11 +1575,17 @@ namespace ObsidianPortal
                     Debug.Log("unit is not exist, then no action.");
                     return CommandResult.Fail;
                 }
-                if ((player.IsAlly && target.IsAlly) || (player.IsEnemy && target.IsEnemy))
+                if (player.IsAlly && target.IsAlly)
                 {
-                    Debug.Log("unit is ally -> ally or enemy -> enemy, then no action");
+                    Debug.Log("unit is ally -> ally, then no action");
                     return CommandResult.Fail;
                 }
+                if (player.IsEnemy && target.IsEnemy)
+                {
+                    Debug.Log("unit is enemy -> enemy, then no action");
+                    return CommandResult.Fail;
+                }
+
                 // ターゲット選定後、ターゲット不可の場合
                 if (target.CurrentZeroImmunity > 0)
                 {
@@ -1426,7 +1623,7 @@ namespace ObsidianPortal
             }
 
             // コマンド実行
-            if (command == FIX.NORMAL_ATTACK)
+            if (player.CurrentCommand == FIX.NORMAL_ATTACK)
             {
                 if (player.Job == FIX.JobClass.Magician)
                 {
@@ -1437,51 +1634,51 @@ namespace ObsidianPortal
                     ExecNormalAttack(player, target);
                 }
             }
-            else if (command == FIX.VENOM_SLASH)
+            else if (player.CurrentCommand ==FIX.VENOM_SLASH)
             {
                 ExecVenomSlash(player, target);
             }
-            else if (command == FIX.DOUBLE_SLASH)
+            else if (player.CurrentCommand ==FIX.DOUBLE_SLASH)
             {
                 ExecDoubleSlash(player, target);
             }
-            else if (command == FIX.STANCE_OF_THE_BLADE)
+            else if (player.CurrentCommand ==FIX.STANCE_OF_THE_BLADE)
             {
                 ExecStanceOfBlade(player, target);
             }
-            else if (command == FIX.STANCE_OF_THE_GUARD)
+            else if (player.CurrentCommand ==FIX.STANCE_OF_THE_GUARD)
             {
                 ExecStanceOfGuard(player, target);
             }
-            else if (command == FIX.STRAIGHT_SMASH)
+            else if (player.CurrentCommand ==FIX.STRAIGHT_SMASH)
             {
                 ExecStraightSmash(player, target);
             }
-            else if (command == FIX.FIRE_BOLT)
+            else if (player.CurrentCommand ==FIX.FIRE_BOLT)
             {
                 ExecFireBolt(player, target);
             }
-            else if (command == FIX.VENOM_SLASH)
+            else if (player.CurrentCommand ==FIX.VENOM_SLASH)
             {
                 ExecVenomSlash(player, target);
             }
-            else if (command == FIX.SHADOW_BLAST)
+            else if (player.CurrentCommand ==FIX.SHADOW_BLAST)
             {
                 ExecShadowBlast(player, target);
             }
-            else if (command == FIX.HUNTER_SHOT)
+            else if (player.CurrentCommand ==FIX.HUNTER_SHOT)
             {
                 ExecHunterShot(player, target);
             }
-            else if (command == FIX.ICE_NEEDLE)
+            else if (player.CurrentCommand ==FIX.ICE_NEEDLE)
             {
                 ExecIceNeedle(player, target);
             }
-            else if (command == FIX.SHIELD_BASH)
+            else if (player.CurrentCommand ==FIX.SHIELD_BASH)
             {
                 ExecShieldBash(player, target);
             }
-            else if (command == FIX.DASH)
+            else if (player.CurrentCommand ==FIX.DASH)
             {
                 int move = 0;
                 FIX.Direction direction = ExistAttackableUnitLinerGroup(ref move, player, target, player.EffectRange);
@@ -1496,44 +1693,44 @@ namespace ObsidianPortal
 
                 StartAnimation(target, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
             }
-            else if (command == FIX.NEEDLESPEAR)
+            else if (player.CurrentCommand ==FIX.NEEDLESPEAR)
             {
                 int damage = (int)(PrimaryLogic.PhysicalAttack(player, PrimaryLogic.NeedType.Random, 1.0F, 0.0F, 0.0F, 0.0F));
                 ExecNeedleSpear(player, target);
                 StartAnimation(target, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
             }
-            else if (command == FIX.SILVERARROW)
+            else if (player.CurrentCommand ==FIX.SILVERARROW)
             {
                 int damage = (int)(PrimaryLogic.MagicAttack(player, PrimaryLogic.NeedType.Random, 1.0F, 0.0F, 0.0F, 0.0F));
                 ExecSilverArrow(player, target);
                 StartAnimation(target, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
             }
-            else if (command == FIX.EARTHBIND)
+            else if (player.CurrentCommand ==FIX.EARTHBIND)
             {
                 ExecEarthBind(player, target);
                 StartAnimation(target, "BIND", new Color(1.0f, 0.3f, 0.3f));
             }
-            else if (command == FIX.EXPLOSION)
+            else if (player.CurrentCommand ==FIX.EXPLOSION)
             {
                 int damage = (int)(PrimaryLogic.MagicAttack(player, PrimaryLogic.NeedType.Random, 1.0F, 0.0F, 0.0F, 0.0F));
                 ExecExplosion(player, target);
                 StartAnimation(target, damage.ToString(), new Color(1.0f, 0.3f, 0.3f));
             }
-            else if (command == FIX.REACHABLETARGET)
+            else if (player.CurrentCommand ==FIX.REACHABLETARGET)
             {
                 ExecReachableTarget(player, target);
                 StartAnimation(target, "TARGET", new Color(1.0f, 0.3f, 0.3f));
             }
-            else if (command == FIX.BLOOD_SIGN)
+            else if (player.CurrentCommand ==FIX.BLOOD_SIGN)
             {
                 ExecBloodSign(player, target);
                 StartAnimation(target, FIX.BLOOD_SIGN, Color.black);
             }
-            else if (command == FIX.DISPEL_MAGIC)
+            else if (player.CurrentCommand ==FIX.DISPEL_MAGIC)
             {
                 ExecDispelMagic(player, target);
             }
-            else if (command == FIX.MULTIPLE_SHOT)
+            else if (player.CurrentCommand ==FIX.MULTIPLE_SHOT)
             {
                 List<Unit> targetList = new List<Unit>();
                 for (int ii = 0; ii < AttackTile.Count; ii++)
@@ -1546,68 +1743,68 @@ namespace ObsidianPortal
                 }
                 ExecMultipleShot(player, targetList);
             }
-            else if (command == FIX.FRESH_HEAL)
+            else if (player.CurrentCommand ==FIX.FRESH_HEAL)
             {
                 ExecFreshHeal(player, target);
-                StartAnimation(target, ActionCommand.EffectValue(command).ToString(), Color.yellow);
+                StartAnimation(target, ActionCommand.EffectValue(player.CurrentCommand).ToString(), Color.yellow);
             }
-            else if (command == FIX.HEALINGWORD)
+            else if (player.CurrentCommand ==FIX.HEALINGWORD)
             {
                 ExecHealingWord(player, target);
-                StartAnimation(target, ActionCommand.EffectValue(command).ToString(), Color.yellow);
+                StartAnimation(target, ActionCommand.EffectValue(player.CurrentCommand).ToString(), Color.yellow);
             }
-            else if (command == FIX.POWERWORD)
+            else if (player.CurrentCommand ==FIX.POWERWORD)
             {
                 ExecPowerWord(player, target);
-                StartAnimation(target, "STR +" + ActionCommand.EffectValue(command).ToString(), Color.yellow);
+                StartAnimation(target, "STR +" + ActionCommand.EffectValue(player.CurrentCommand).ToString(), Color.yellow);
             }
-            else if (command == FIX.PROTECTION)
+            else if (player.CurrentCommand ==FIX.PROTECTION)
             {
                 ExecProtection(player, target);
-                StartAnimation(target, "DEF +" + ActionCommand.EffectValue(command).ToString(), Color.yellow);
+                StartAnimation(target, "DEF +" + ActionCommand.EffectValue(player.CurrentCommand).ToString(), Color.yellow);
             }
-            else if (command == FIX.HEATBOOST)
+            else if (player.CurrentCommand ==FIX.HEATBOOST)
             {
                 ExecHeatBoost(player, target);
-                StartAnimation(target, "SPD +" + ActionCommand.EffectValue(command).ToString(), Color.yellow);
+                StartAnimation(target, "SPD +" + ActionCommand.EffectValue(player.CurrentCommand).ToString(), Color.yellow);
             }
-            else if (command == FIX.AURA_OF_POWER)
+            else if (player.CurrentCommand ==FIX.AURA_OF_POWER)
             {
                 ExecAuraOfPower(player, target);
             }
-            else if (command == FIX.HEART_OF_THE_LIFE)
+            else if (player.CurrentCommand ==FIX.HEART_OF_THE_LIFE)
             {
                 ExecHeartOfTheLife(player, target);
             }
-            else if (command == FIX.ORACLE_COMMAND)
+            else if (player.CurrentCommand ==FIX.ORACLE_COMMAND)
             {
                 ExecOracleCommand(player, target);
             }
-            else if (command == FIX.SKY_SHIELD)
+            else if (player.CurrentCommand ==FIX.SKY_SHIELD)
             {
                 ExecSkyShield(player, target);
             }
-            else if (command == FIX.FORTUNE_SPIRIT)
+            else if (player.CurrentCommand ==FIX.FORTUNE_SPIRIT)
             {
                 ExecFortuneSpirit(player, target);
             }
-            else if (command == FIX.FLAME_BLADE)
+            else if (player.CurrentCommand ==FIX.FLAME_BLADE)
             {
                 ExecFlameBlade(player, target);
             }
-            else if (command == FIX.STORM_ARMOR)
+            else if (player.CurrentCommand ==FIX.STORM_ARMOR)
             {
                 ExecStormArmor(player, target);
             }
-            else if (command == FIX.ZERO_IMMUNITY)
+            else if (player.CurrentCommand ==FIX.ZERO_IMMUNITY)
             {
                 ExecZeroImmunity(player, target);
             }
-            else if (command == FIX.PURE_PURIFICATION)
+            else if (player.CurrentCommand ==FIX.PURE_PURIFICATION)
             {
                 ExecPurePurification(player, target);
             }
-            else if (command == FIX.DIVINE_CIRCLE)
+            else if (player.CurrentCommand ==FIX.DIVINE_CIRCLE)
             {
                 List<Unit> targetList = new List<Unit>();
                 targetList.Add(target);
@@ -1625,7 +1822,7 @@ namespace ObsidianPortal
             {
                 Debug.Log("Unknown command, then End.");
                 Debug.Log("debug routine 1003");
-                Debug.Log("Unknown command: " + command);
+                Debug.Log("Unknown command: " + player.CurrentCommand);
                 return CommandResult.Fail;
             }
             Debug.Log(MethodBase.GetCurrentMethod().Name + "(E)");
@@ -1640,7 +1837,7 @@ namespace ObsidianPortal
                 AdjustTime(this.CurrentUnit);
             }
             JudgeGameEnd();
-            this.groupAP.SetActive(false);
+            //this.groupAP.SetActive(false);
             this.currentCommand = String.Empty;
             this.currentDirection = FIX.Direction.None;
             this.currentDistance = 0;
@@ -1667,7 +1864,21 @@ namespace ObsidianPortal
         }
         public void TapEnd()
         {
+            Debug.Log(MethodBase.GetCurrentMethod() + "(S)");
             this.Phase = ActionPhase.End;
+        }
+        public void TapStop()
+        {
+            if (this.fieldMode != FieldMode.Stop)
+            {
+                this.shadowFieldMode = this.fieldMode;
+                this.fieldMode = FieldMode.Stop;
+            }
+            else
+            {
+                this.fieldMode = this.shadowFieldMode;
+                this.shadowFieldMode = FieldMode.None;
+            }
         }
 
         public void tapCommand(int number)
@@ -1720,7 +1931,7 @@ namespace ObsidianPortal
                     case ActionCommand.TargetType.AllMember:
                         break;
                     case ActionCommand.TargetType.Own:
-                        ExecCommand(currentCommand, CurrentUnit, CurrentUnit);
+                        ExecCommand(CurrentUnit, CurrentUnit);
                         break;
                     case ActionCommand.TargetType.InstantTarget:
                         break;
@@ -1893,6 +2104,9 @@ namespace ObsidianPortal
         {
             if (player != null)
             {
+                //player.transform.localPosition = new Vector3(player.transform.localPosition.x + 0.2f,
+                //                                             player.transform.localPosition.y + 0.0f,
+                //                                             ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f);
                 player.transform.localPosition = new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f);
             }
         }

@@ -655,7 +655,6 @@ namespace ObsidianPortal
         public void TapAccept()
         {
             ONE.UnitList[0].FullName = txtName.text;
-            ONE.UnitList[0].Gender = txtGender.text;
             ONE.UnitList[0].Personality = txtPersonality.text;
             ONE.UnitList[0].MainColor = txtMainColor.text;
             ONE.UnitList[0].BaseStrength = CurrentAttributePoint[0];
@@ -670,7 +669,6 @@ namespace ObsidianPortal
             ONE.UnitList[0].Ability_05 = CurrentWeaponPoint[4];
             ONE.UnitList[0].Ability_06 = CurrentSkillPoint[0];
             ONE.UnitList[0].Ability_07 = CurrentSkillPoint[1];
-            ONE.UnitList[0].Ability_08 = CurrentSkillPoint[2];
             ONE.UnitList[0].Ability_09 = CurrentSkillPoint[3];
             ONE.UnitList[0].Ability_10 = CurrentSkillPoint[4];
             ONE.UnitList[0].Ability_11 = CurrentSkillPoint[5];
@@ -827,7 +825,7 @@ namespace ObsidianPortal
         private void UpdateItemDetail(Item item)
         {
             Method.UpdateItemImage(item, ItemDetailImage);
-            ItemDetailTitle.text = item.Name;
+            ItemDetailTitle.text = item.ItemName;
             ItemDetailDesc.text = item.Description;
             ItemDetailSpecial.text = item.UseSpecialAbility.ToString();
 
@@ -937,7 +935,7 @@ namespace ObsidianPortal
                     {
                         if (ONE.UnitList[ii].MainWeapon != null)
                         {
-                            txtField[jj].text = ONE.UnitList[ii].MainWeapon.Name;
+                            txtField[jj].text = ONE.UnitList[ii].MainWeapon.ItemName;
                             Image current = txtField[jj].GetComponentInParent<Image>();
                             if (current == null) { Debug.Log("current image is null?"); }
                             else
@@ -994,9 +992,9 @@ namespace ObsidianPortal
             for (int jj = 0; jj < list.Count; jj++)
             {
                 if (list[jj] == null) { continue; }
-                if (list[jj].Name == "" || list[jj].Name == String.Empty) { continue; }
+                if (list[jj].ItemName == "" || list[jj].ItemName == String.Empty) { continue; }
 
-                Debug.Log("list " + jj.ToString() + " " + list[jj].Name);
+                Debug.Log("list " + jj.ToString() + " " + list[jj].ItemName);
 
                 // 個数に応じて、コンテンツ長さを延長する。
                 rect.sizeDelta = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y + HEIGHT);
@@ -1011,7 +1009,7 @@ namespace ObsidianPortal
                 Text txtColorFieldNum = null;
                 for (int kk = 0; kk < txtField.Length; kk++)
                 {
-                    if (txtField[kk].name == "txtItem") { txtField[kk].text = list[jj].Name; txtColorField = txtField[kk]; }
+                    if (txtField[kk].name == "txtItem") { txtField[kk].text = list[jj].ItemName; txtColorField = txtField[kk]; }
                     if (txtField[kk].name == "txtItemNumber") { txtField[kk].text = "x " + list[jj].StackValue.ToString(); txtColorFieldNum = txtField[kk]; }
                 }
 

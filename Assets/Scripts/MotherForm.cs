@@ -9,8 +9,6 @@ namespace ObsidianPortal
 {
     public class MotherForm : MonoBehaviour
     {
-        public GameObject Background;
-
         public virtual void Start()
         {
             Debug.Log("MotherForm initialize");

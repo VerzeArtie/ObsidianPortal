@@ -7,13 +7,22 @@ using UnityEngine.UI;
 
 namespace ObsidianPortal
 {
-    public class Unit : MonoBehaviour
+    public partial class Unit : MonoBehaviour
     {
         public enum Ally
         {
             Ally = 0,
             Enemy = 1,
             TimerKeeper = 2,
+        }
+
+        public enum GenderType
+        {
+            None,
+            Male,
+            Female,
+            TransGender,
+            Agender,
         }
 
         // basic parameter
@@ -23,15 +32,14 @@ namespace ObsidianPortal
         public int Gold = 0;
 
         // core parameter
-        public int BaseStrength = 10;
-        public int BaseAgility  = 10;
-        public int BaseIntelligence = 10;
-        public int BaseStamina = 10;
-        public int BaseMind = 10;
+        public int BaseStrength = 1;
+        public int BaseAgility  = 1;
+        public int BaseIntelligence = 1;
+        public int BaseStamina = 1;
+        public int BaseMind = 1;
 
         // appearance
         public string FullName = string.Empty;
-        public string Gender = String.Empty;
         public string Personality = String.Empty;
         public string MainColor = String.Empty;
 
@@ -53,6 +61,14 @@ namespace ObsidianPortal
         public int Ability_15 = 0; // skill-10
         public int Ability_16 = 0; // skill-11
         public int Ability_17 = 0; // skill-12
+
+        // current-status
+        public int ActivePoint = 100;
+
+        // Available List
+        public List<string> AvailableCommandName = new List<string>();
+        public List<int> AvailableCommandLv = new List<int>();
+        public List<string> AvailableCommandValue = new List<string>();
 
         // equipment
         public Item mainWeapon = null;
@@ -90,7 +106,7 @@ namespace ObsidianPortal
             get
             {
                 int result = this.BaseLife;
-                result += TotalStamina;
+                result += TotalStamina * 10;
                 return result;
             }
         }
@@ -156,13 +172,11 @@ namespace ObsidianPortal
         protected int buffMind_Stone1 = 0;
 
         // ユニット属性値
-        public string UnitName = ""; // 名前
         public int MovePoint = 1; // 移動力
         public int AttackRange = 1; // 攻撃範囲
         public int HealRange = 1; // 回復範囲
         public int EffectRange = 1; // 味方効果範囲
         public string SkillName = "";
-        private int Speed = 1; // 速度
         public int Cost = 999; // コスト
         public bool ActionComplete = false; // 行動完了フラグ
         public Ally ally = Ally.Ally; // 陣営タイプ
@@ -323,6 +337,9 @@ namespace ObsidianPortal
         // Upkeep Check Flag
         public bool UpkeepCheck = false;
 
+        public string CurrentCommand = FIX.NORMAL_ATTACK;
+        public Unit CurrentTarget = null;
+
         // Gauge
         public List<GameObject> objAP = new List<GameObject>(10);
 
@@ -331,6 +348,9 @@ namespace ObsidianPortal
         public GameObject BuffPanel = null;
         public int BuffNumber = 0;
         public TruthImage[] BuffElement = null; // 「警告」：後編ではこれでBUFF並びを整列する。最終的には個別BUFFのTruthImageは全て不要になる。
+
+        // Enemy-Only
+        public bool NowBattle = false;
 
         public Sprite UnitImage = null;
         protected bool dead = false;
@@ -661,7 +681,7 @@ namespace ObsidianPortal
             // バックパックを検索し、新しいアイテムとして追加するかどうか確認する。
             for (int ii = 0; ii < list.Count; ii++)
             {
-                if (list[ii].Name == item.Name)
+                if (list[ii].ItemName == item.ItemName)
                 {
                     // スタック上限に指定した数のぶんだけ追加で間に合う場合は、スタック数を追加して終わり。
                     if (list[ii].StackValue + addValue <= item.LimitValue)
@@ -705,7 +725,7 @@ namespace ObsidianPortal
             {
                 if (list[ii] != null)
                 {
-                    if (list[ii].Name == item.Name)
+                    if (list[ii].ItemName == item.ItemName)
                     {
                         // スタック量が正値の場合、指定されたスタック量を減らす。
                         list[ii].StackValue -= deleteValue;
@@ -749,7 +769,7 @@ namespace ObsidianPortal
         {
             if (list[ii] != null)
             {
-                if (list[ii].Name == item.Name)
+                if (list[ii].ItemName == item.ItemName)
                 {
                     return list[ii].StackValue;
                 }
@@ -774,7 +794,7 @@ namespace ObsidianPortal
         {
             for (int ii = 0; ii < list.Count; ii++)
             {
-                if (list[ii] != null && list[ii].Name == itemName)
+                if (list[ii] != null && list[ii].ItemName == itemName)
                 {
                     return true;
                 }
@@ -1058,67 +1078,6 @@ namespace ObsidianPortal
             get { return 100; }
         }
 
-        public void Initialize(FIX.RaceType race, FIX.JobClass jobType, Ally ally)
-        {
-            Debug.Log(MethodBase.GetCurrentMethod().Name + "(S)");
-            this.job = jobType;
-            this.ally = ally;
-
-            // 人間族                                                                                                                   L,STR,AGL,INT,MND,MOV,AR,HR,ER,  C, SKILL 
-            if (race == FIX.RaceType.Human && jobType == FIX.JobClass.Fighter)     { SetupProperty(race, jobType, FIX.HUMAN_FIGHTER,   20,  9,  6,  2,  2,  3, 1, 0, 2, 10, FIX.DASH); }
-            if (race == FIX.RaceType.Human && jobType == FIX.JobClass.Ranger)      { SetupProperty(race, jobType, FIX.HUMAN_ARCHER,    16,  7,  9,  4,  2,  3, 2, 0, 3, 10, FIX.REACHABLETARGET); }
-            if (race == FIX.RaceType.Human && jobType == FIX.JobClass.Magician)    { SetupProperty(race, jobType, FIX.HUMAN_MAGICIAN,  13,  3,  7,  7,  2,  3, 2, 0, 2, 10, FIX.EARTHBIND); }
-            //if (race == RaceType.Human && type == UnitType.Sorcerer)  { SetupProperty(race, type, FIX.HUMAN_SORCERER,  13,  3, 1,  9, 10,  3, 3, 2,  0,  2, 10, FIX.EARTHBIND); }
-            //if (race == RaceType.Human && type == UnitType.Enchanter) { SetupProperty(race, type, FIX.HUMAN_ENCHANTER, 11,  5, 2,  6,  8,  2, 3, 1,  0,  1, 10, FIX.POWERWORD); }
-            //if (race == RaceType.Human && type == UnitType.Priest)    { SetupProperty(race, type, FIX.HUMAN_PRIEST,    10,  1, 1,  5,  6,  2, 3, 1,  2,  2, 10, FIX.HEALINGWORD); }
-            //// 天使族
-            //if (race == RaceType.Angel && type == UnitType.Fighter)   { SetupProperty(race, type, FIX.ANGEL_DOMINION,  19, 11, 3,  7,  3,  2, 3, 1,  0,  1, 10, FIX.NEEDLESPEAR); }
-            //if (race == RaceType.Angel && type == UnitType.Archer)    { SetupProperty(race, type, FIX.ANGEL_VALKYRIE,  16,  7, 2, 12,  7,  3, 3, 2,  0,  2, 10, FIX.SILVERARROW); }
-            //if (race == RaceType.Angel && type == UnitType.Sorcerer)  { SetupProperty(race, type, FIX.ANGEL_HOLYEYE,   14,  4, 1, 10,  9,  4, 3, 2,  0,  2, 10, FIX.HOLYBULLET); }
-            //if (race == RaceType.Angel && type == UnitType.Enchanter) { SetupProperty(race, type, FIX.ANGEL_QUPID,     10,  3, 1,  9,  6,  2, 3, 1,  0,  2, 10, FIX.PROTECTION); }
-            //if (race == RaceType.Angel && type == UnitType.Priest)    { SetupProperty(race, type, FIX.ANGEL_ANGEL,     12,  2, 1,  6,  8,  3, 3, 1,  2,  0, 10, FIX.FRESHHEAL); }
-            //// 炎霊族
-            //if (race == RaceType.Fire && type == UnitType.Fighter)    { SetupProperty(race, type, FIX.FIRE_SALAMANDER, 22, 13, 2,  7,  1,  1, 3, 1,  0,  0, 10, FIX.FIREBLADE); } 
-            //if (race == RaceType.Fire && type == UnitType.Archer)     { SetupProperty(race, type, FIX.FIRE_FLAMEBIRD,  18,  9, 1, 10,  1,  2, 3, 1,  0,  1, 10, FIX.LAVAWALL); }
-            //if (race == RaceType.Fire && type == UnitType.Sorcerer)   { SetupProperty(race, type, FIX.FIRE_EFREET,     14,  5, 1, 12, 12,  2, 3, 2,  0,  3, 10, FIX.BLAZE); }
-            //if (race == RaceType.Fire && type == UnitType.Enchanter)  { SetupProperty(race, type, FIX.FIRE_ELEMENTAL,  12,  8, 1,  8,  8,  1, 3, 2,  0,  1, 10, FIX.HEATBOOST); }
-            //if (race == RaceType.Fire && type == UnitType.Priest)     { SetupProperty(race, type, FIX.FIRE_REDBOMB,     8,  4, 1,  5,  4,  5, 3, 1,  0,  1, 10, FIX.EXPLOSION); }
-
-            //if (race == RaceType.Fire && type == UnitType.Wall)       { SetupProperty(race, type, FIX.OBJ_LAVAWALL,    99,  0, 0,  0,  0,  0, 0, 0,  0,  0,  0, FIX.NONE); }
-
-            // モンスター                                                                                                        L,STR,AGL,INT,MND,MOV,AR,HR,ER,  C, SKILL 
-            if (race == FIX.RaceType.Monster && jobType == FIX.JobClass.MonsterA) { SetupProperty(race, jobType, FIX.MONSTER,   16,  6,  1, 1,   2,  3, 1, 0, 0, 10, FIX.NONE); }
-            if (race == FIX.RaceType.Monster && jobType == FIX.JobClass.MonsterB) { SetupProperty(race, jobType, FIX.MONSTER_B, 16,  6,  1, 1,   2,  3, 2, 0, 0, 10, FIX.NONE); }
-            // タイム・キーパー
-            if (race == FIX.RaceType.TimeKeeper && jobType == FIX.JobClass.TimeKeeper) { SetupProperty(race, jobType, FIX.TIME_KEEPER, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, FIX.NONE); }
-            Debug.Log(MethodBase.GetCurrentMethod().Name + "(E)");
-        }
-
-        private void SetupProperty(FIX.RaceType race, FIX.JobClass jobType, string unitName, int maxLife, int strength, int agility, int intelligence, int mind, int move, int range, int healRange, int effectRange, int cost, string skill)
-        {
-            Debug.Log(MethodBase.GetCurrentMethod().Name + "(S)");
-            this.Race = race;
-            this.job = jobType;
-            this.UnitName = unitName;
-            //this.MaxLife = maxLife;
-            this.BaseStrength = strength;
-            this.Speed = agility;
-            this.BaseAgility = agility;
-            this.BaseIntelligence = intelligence;
-            this.AttackRange = range;
-            this.EffectRange = effectRange;
-            this.HealRange = healRange;
-            this.MovePoint = move;
-            this.Cost = cost;
-            this.SkillName = skill;
-
-            this.CurrentLife = this.MaxLife;
-            this.CurrentTime = FIX.MAX_TIME;
-            this.CurrentMovePoint = this.MovePoint;
-            this.Dead = false;
-            Debug.Log(MethodBase.GetCurrentMethod().Name + "(E)");
-        }
-
         public void Completed()
         {
             this.CurrentTime = FIX.MAX_TIME;
@@ -1243,7 +1202,7 @@ namespace ObsidianPortal
 
         public void DeadUnit()
         {
-            Debug.Log("DeadUnit: " + this.UnitName);
+            Debug.Log("DeadUnit: " + this.FullName);
             this.CurrentLife = 0;
             this.Dead = true;
             this.Completed();

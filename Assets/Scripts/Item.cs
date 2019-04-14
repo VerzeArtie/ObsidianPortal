@@ -7,7 +7,6 @@ namespace ObsidianPortal
 {
     public class Item
     {
-
         public enum ItemType
         {
             None,
@@ -17,6 +16,12 @@ namespace ObsidianPortal
             Weapon_TwoHand,
             Weapon_Rod,
             Weapon_Bow,
+            Weapon_Lance,
+            Weapon_Axe,
+            Weapon_Staff,
+            Weapon_Book,
+            Weapon_Shield,
+            Weapon_Orb,
             Armor_Light,
             Armor_Middle,
             Armor_Heavy,
@@ -51,7 +56,7 @@ namespace ObsidianPortal
 
         public Item(string createName)
         {
-            this.Name = createName;
+            this.ItemName = createName;
 
             switch (createName)
             {
@@ -1190,15 +1195,95 @@ namespace ObsidianPortal
 
                 // 武器：Common
                 case FIX.COMMON_FINE_SWORD: // １階：エリア１：ランダムドロップ
-                    Debug.Log("Detect Item: FIne_Sword");
-                    description = "そつなく使える剣。物理攻撃５～８";
+                    description = "標準的な剣。物理攻撃５～８";
                     PhysicalAttackMinValue = 5;
                     PhysicalAttackMaxValue = 8;
-                    cost = 560;
+                    cost = 580;
                     AdditionalDescription(ItemType.Weapon_Heavy);
                     rareLevel = RareLevel.Common;
                     limitValue = EQUIP_ITEM_STACK_SIZE;
                     break;
+
+                case FIX.COMMON_FINE_LANCE:
+                    description = "標準的な槍。バランス良く突き刺す事ができる。物理攻撃６～７";
+                    PhysicalAttackMinValue = 6;
+                    PhysicalAttackMaxValue = 7;
+                    cost = 570;
+                    AdditionalDescription(ItemType.Weapon_Lance);
+                    rareLevel = RareLevel.Common;
+                    limitValue = USING_ITEM_STACK_SIZE;
+                    break;
+
+                case FIX.COMMON_FINE_CLAW:
+                    description = "標準的な爪。バランス良く殴る事ができる。物理攻撃４～６";
+                    PhysicalAttackMinValue = 4;
+                    PhysicalAttackMaxValue = 6;
+                    cost = 560;
+                    AdditionalDescription(ItemType.Weapon_Lance);
+                    rareLevel = RareLevel.Common;
+                    limitValue = USING_ITEM_STACK_SIZE;
+                    break;
+
+                case FIX.COMMON_FINE_AXE:
+                    description = "標準的な斧。バランス良く振り回す事ができる。物理攻撃３～１０";
+                    PhysicalAttackMinValue = 3;
+                    PhysicalAttackMaxValue = 10;
+                    cost = 600;
+                    AdditionalDescription(ItemType.Weapon_Axe);
+                    rareLevel = RareLevel.Common;
+                    limitValue = USING_ITEM_STACK_SIZE;
+                    break;
+
+                case FIX.COMMON_FINE_BOW:
+                    description = "標準的な弓。バランス良く矢が当たる。物理攻撃３～５";
+                    PhysicalAttackMinValue = 3;
+                    PhysicalAttackMaxValue = 5;
+                    cost = 550;
+                    AdditionalDescription(ItemType.Weapon_Bow);
+                    rareLevel = RareLevel.Common;
+                    limitValue = USING_ITEM_STACK_SIZE;
+                    break;
+
+                case FIX.COMMON_FINE_ROD:
+                    description = "標準的な杖。バランス良く魔法が打てる。魔法攻撃４～８";
+                    MagicAttackMinValue = 4;
+                    MagicAttackMaxValue = 8;
+                    cost = 580;
+                    AdditionalDescription(ItemType.Weapon_Staff);
+                    rareLevel = RareLevel.Common;
+                    limitValue = USING_ITEM_STACK_SIZE;
+                    break;
+
+                case FIX.COMMON_FINE_BOOK:
+                    description = "標準的な魔導書。バランス良く魔法が詠唱できる。魔法攻撃６～７";
+                    MagicAttackMinValue = 6;
+                    MagicAttackMaxValue = 7;
+                    cost = 570;
+                    AdditionalDescription(ItemType.Weapon_Staff);
+                    rareLevel = RareLevel.Common;
+                    limitValue = USING_ITEM_STACK_SIZE;
+                    break;
+
+                case FIX.COMMON_FINE_SHIELD:
+                    description = "標準的な盾。バランス良く防ぐ事ができる。物理防御２～４";
+                    PhysicalDefenseMinValue = 2;
+                    PhysicalDefenseMaxValue = 4;
+                    cost = 540;
+                    AdditionalDescription(ItemType.Weapon_Shield);
+                    rareLevel = RareLevel.Common;
+                    limitValue = USING_ITEM_STACK_SIZE;
+                    break;
+
+                case FIX.COMMON_FINE_ORB:
+                    description = "標準的なオーブ。バランス良く魔法を弾く事ができる。魔法防御２～４";
+                    MagicDefenseMinValue = 2;
+                    MagicDefenseMaxValue = 4;
+                    cost = 540;
+                    AdditionalDescription(ItemType.Weapon_Orb);
+                    rareLevel = RareLevel.Common;
+                    limitValue = USING_ITEM_STACK_SIZE;
+                    break;
+
                 case FIX.COMMON_TWEI_SWORD: // １階：エリア１：ランダムドロップ
                     description = "両手剣専用。重量感があり、振り方に一工夫が必要。物理攻撃３～１８";
                     PhysicalAttackMinValue = 3;
@@ -1281,16 +1366,6 @@ namespace ObsidianPortal
                     limitValue = EQUIP_ITEM_STACK_SIZE;
                     break;
 
-                // 盾(Common)
-                case FIX.COMMON_FINE_SHIELD: // １階：エリア１：ランダムドロップ
-                    description = "そつなく使える盾。物理防御３～４";
-                    PhysicalDefenseMinValue = 3;
-                    PhysicalDefenseMaxValue = 4;
-                    cost = 550;
-                    AdditionalDescription(ItemType.Shield);
-                    rareLevel = RareLevel.Common;
-                    limitValue = EQUIP_ITEM_STACK_SIZE;
-                    break;
                 case FIX.COMMON_GRIPPING_SHIELD: // １階：エリア１：ランダムドロップ
                     description = "攻撃に備えた体制で持たないと、使いにくさが残る盾。物理防御２～６";
                     PhysicalDefenseMinValue = 2;
@@ -7521,20 +7596,10 @@ namespace ObsidianPortal
                     break;
                 #endregion
                 #endregion
-
-                case FIX.COMMON_FINE_BOW:
-                    description = "標準的な弓。バランス良く矢が当たる。物理攻撃４～６";
-                    PhysicalAttackMinValue = 4;
-                    PhysicalAttackMaxValue = 6;
-                    cost = 600;
-                    AdditionalDescription(ItemType.Weapon_Bow);
-                    rareLevel = RareLevel.Common;
-                    limitValue = USING_ITEM_STACK_SIZE;
-                    break;
             }
         }
 
-        protected string name = string.Empty;
+        protected string itemName = string.Empty;
         protected string description = string.Empty;
         public int PhysicalAttackMinValue = 0;
         public int PhysicalAttackMaxValue = 0;
@@ -7586,10 +7651,10 @@ namespace ObsidianPortal
         protected string imprintCommand = string.Empty; // 悪魔封じの壺により、キャンセル対象魔法の名前を覚えるために用意した
         protected bool effectStatus = false; // 玉手箱『秋玉』により、死亡時一度だけ蘇生するために用意したフラグ
 
-        public string Name
+        public string ItemName
         {
-            get { return name; }
-            set { name = value; }
+            get { return itemName; }
+            set { itemName = value; }
         }
         public string Description
         {
@@ -7612,6 +7677,7 @@ namespace ObsidianPortal
             get { return cost; }
             set { cost = value; }
         }
+
         public ItemType Type
         {
             get { return type; }

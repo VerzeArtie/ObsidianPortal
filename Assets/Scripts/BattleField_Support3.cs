@@ -14,7 +14,7 @@ namespace ObsidianPortal
             {
                 ONE.BattleHealingDone += value;
             }
-            UpdateLife(target, UnitLifeText, UnitLifeMeter);
+            UpdateUnitStatus(target);
         }
         private void ExecDamage(Unit player, Unit target, int value)
         {
@@ -24,7 +24,7 @@ namespace ObsidianPortal
             {
                 ONE.BattleDamageDone += value;
             }
-            UpdateLife(target, UnitLifeText, UnitLifeMeter);
+            UpdateUnitStatus(target);
         }
 
         private void GetTacticsPoint(Unit player)
@@ -198,6 +198,7 @@ namespace ObsidianPortal
             {
                 result = result * player.CurrentAuraOfPowerValue;
             }
+            Debug.Log("playerNormalAttack: ATK " + result.ToString());
 
             // クリティカル判定
             if (PrimaryLogic.CriticalDetect(player))
@@ -223,6 +224,7 @@ namespace ObsidianPortal
             {
                 defense = defense * target.CurrentStanceOfGuardValue;
             }
+            Debug.Log("playerNormalAttack: DEF " + defense.ToString());
             result -= defense;
 
             // ０制限（負の値なし）

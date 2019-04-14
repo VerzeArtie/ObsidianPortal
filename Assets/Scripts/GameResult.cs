@@ -192,7 +192,7 @@ namespace ObsidianPortal
             {
                 if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
                 {
-                    SceneManager.LoadSceneAsync(FIX.SCENE_SINGLEPLAYMENU);
+                    SceneManager.LoadSceneAsync(FIX.SCENE_HOMETOWN);
                 }
             }
         }

@@ -15,7 +15,7 @@ namespace ObsidianPortal
         {
             if (unit != null)
             {
-                txtUnitName.GetComponent<Text>().text = unit.UnitName;
+                txtUnitName.GetComponent<Text>().text = unit.FullName;
                 txtStrength.text = unit.BaseStrength.ToString();
                 txtAgility.text = unit.BaseAgility.ToString();
                 txtIntelligence.text = unit.BaseIntelligence.ToString();
@@ -42,7 +42,7 @@ namespace ObsidianPortal
         {
             if (unit != null)
             {
-                txtUnitName_mini.GetComponent<Text>().text = unit.UnitName;
+                txtUnitName_mini.GetComponent<Text>().text = unit.FullName;
                 txtStrength_mini.text = unit.BaseStrength.ToString();
                 txtAgility_mini.text = unit.BaseAgility.ToString();
                 txtIntelligence_mini.text = unit.BaseIntelligence.ToString();
@@ -134,6 +134,20 @@ namespace ObsidianPortal
                 this.panelMessage.SetActive(true);
                 this.GameEnd = true;
             }
+
+            // ゴールポイントに到達していれば勝利とみなす。
+            for (int ii = 0; ii < GoalList.Count; ii++)
+            {
+                if (ContainPositionX(OwnerUnit.transform.localPosition.x, GoalList[ii].transform.localPosition.x) &&
+                    ContainPositionY(OwnerUnit.transform.localPosition.y, GoalList[ii].transform.localPosition.y))
+                {
+                    ONE.BattleWin = true;
+                    this.lblMessage.text = "VICTORY";
+                    this.panelMessage.SetActive(true);
+                    this.GameEnd = true;
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -141,7 +155,7 @@ namespace ObsidianPortal
         /// </summary>
         private void ExecCancel(Unit unit)
         {
-            this.Phase = ActionPhase.SelectFirst;
+            this.Phase = ActionPhase.MainAction;
             ClearTile(MoveTile);
             ClearTile(AttackTile);
             ClearTile(HealTile);
@@ -418,6 +432,16 @@ namespace ObsidianPortal
             //}
         }
 
+        private int UnitDistanceX(Vector3 src, Vector3 dst)
+        {
+            return (int)(dst.x - src.x);
+        }
+
+        private int UnitDistanceY(Vector3 src, Vector3 dst)
+        {
+            return (int)(src.y - dst.y);
+        }
+
         /// <summary>
         /// 地点AとBの距離を取得します。
         /// </summary>
@@ -605,7 +629,7 @@ namespace ObsidianPortal
 
             for (int ii = 0; ii < result.Count; ii++)
             {
-                Debug.Log("SearchAttackableUnit: " + result[ii].UnitName);
+                Debug.Log("SearchAttackableUnit: " + result[ii].FullName);
             }
             return result;
         }
@@ -787,7 +811,7 @@ namespace ObsidianPortal
         /// <param name="type"></param>
         /// <param name="x"></param>
         /// <param name="z"></param>
-        private Unit SetupUnit(int number, Unit.Ally ally, FIX.RaceType race, FIX.JobClass type, float x, float y)
+        private Unit SetupUnit(int number, string unitName, Unit.Ally ally, FIX.RaceType race, FIX.JobClass type, float x, float y)
         {
             Unit prefab = null;
             Unit unit = null;
@@ -798,8 +822,6 @@ namespace ObsidianPortal
             //else if (type == Unit.UnitType.Priest) { prefab = prefab_Priest; }
             //else if (type == Unit.UnitType.Enchanter) { prefab = prefab_Enchanter; }
             //else if (type == Unit.UnitType.Wall) { prefab = prefab_Wall; }
-            else if (type == FIX.JobClass.MonsterA) { prefab = prefab_MonsterA; }
-            else if (type == FIX.JobClass.MonsterB) { prefab = prefab_MonsterB; }
             else if (type == FIX.JobClass.TimeKeeper) { prefab = prefab_TimeKeeper; }
 
             x = x * FIX.HEX_MOVE_X;
@@ -807,8 +829,37 @@ namespace ObsidianPortal
 
             unit = Instantiate(prefab, new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f), Quaternion.identity) as Unit;
 
-            unit.Initialize(race, type, ally);
-            unit.name = type.ToString() + "_" + number.ToString();
+            unit.Initialize(unitName, race, type, ally);
+            unit.name = unitName + "_" + number.ToString();
+            //unit.ConstructUnit(objActionButton);
+            unit.gameObject.SetActive(true);
+
+            AddUnitWithAdjustTime(unit);
+            return unit;
+        }
+
+        /// <summary>
+        /// ユニット(敵)を生成します。
+        /// </summary>
+        /// <param name="number"></param>
+        /// <param name="unitName"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        private Unit SetupUnitEnemy(int number, string unitName, float x, float y)
+        {
+            Unit prefab = null;
+            Unit unit = null;
+
+            prefab = prefab_MonsterA;
+
+            x = x * FIX.HEX_MOVE_X;
+            y = y * FIX.HEX_MOVE_Z;
+
+            unit = Instantiate(prefab, new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f), Quaternion.identity) as Unit;
+
+            unit.InitializeEnemy(unitName);
+            unit.name = unitName + "_" + number.ToString();
             //unit.ConstructUnit(objActionButton);
             unit.gameObject.SetActive(true);
 

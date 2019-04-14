@@ -95,8 +95,8 @@ namespace ObsidianPortal
             factor = player.TotalStrength * pStr + player.TotalAgility * pAgl + player.TotalIntelligence * pInt;
 
             // 心係数で値を増幅する。
-            min = factor * Math.Log(Convert.ToInt32(player.TotalMind), Math.Exp(1)) / 2.00;
-            max = factor * Math.Log(Convert.ToInt32(player.TotalMind), Math.Exp(1)) / 2.00;
+            min = factor;// factor * Math.Log(Convert.ToInt32(player.TotalMind), Math.Exp(1));
+            max = factor;// factor * Math.Log(Convert.ToInt32(player.TotalMind), Math.Exp(1));
 
             // 物理系は物理UP効果を対象
             if (attr == DmgAttr.Physical)
@@ -280,8 +280,8 @@ namespace ObsidianPortal
             factor = player.TotalStrength * pStr + player.TotalAgility * pAgl + player.TotalIntelligence * pInt;
 
             // 心係数で値を増幅する。
-            min = factor * Math.Log(Convert.ToInt32(player.TotalMind), Math.Exp(1)) / 2.00;
-            max = factor * Math.Log(Convert.ToInt32(player.TotalMind), Math.Exp(1)) / 2.00;
+            min = factor;// factor * Math.Log(Convert.ToInt32(player.TotalMind), Math.Exp(1)) / 2.00;
+            max = factor;// factor * Math.Log(Convert.ToInt32(player.TotalMind), Math.Exp(1)) / 2.00;
 
             if (attr == DmgAttr.Physical)
             {
@@ -491,6 +491,9 @@ namespace ObsidianPortal
             {
                 result = 0;
             }
+
+            // 固定値100を加算
+            result = result + 100;
             return result;
         }
 

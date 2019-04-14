@@ -9,7 +9,20 @@ namespace ObsidianPortal
 {
     public static class Talos
     {
-        public static void TraceOpponent(List<Unit> allUnitList, List<AreaInformation> fieldTile, Unit dst)
+        public static void ClearTrace(List<AreaInformation> fieldTile)
+        {
+            for (int ii = 0; ii < fieldTile.Count; ii++)
+            {
+                fieldTile[ii].cost = -1;
+                fieldTile[ii].toGoal = null;
+                for (int jj = 0; jj < fieldTile[ii].connectNode.Count; jj++)
+                {
+                    fieldTile[ii].connectNode[jj].cost = -1;
+                }
+            }
+        }
+
+        public static void TraceOpponent(List<Unit> allUnitList, List<AreaInformation> fieldTile, Unit src, GameObject dst)
         {
             Debug.Log(MethodBase.GetCurrentMethod().Name +  "(S)");
             for (int ii = 0; ii < fieldTile.Count; ii++)
@@ -50,21 +63,40 @@ namespace ObsidianPortal
 
                         for (int kk = 0; kk < allUnitList.Count; kk++)
                         {
-                            // 敵軍ユニットから見て敵軍（つまりプレイヤー軍隊）がいた場合、コストを最大にする。
+                            // 敵軍ユニットから見て敵軍（つまりプレイヤー軍）がいて、死亡していない場合、コストを最大。
                             Unit unit = ExistUnitFromLocation(allUnitList, work1[ii].connectNode[jj].transform.localPosition);
-                            if (unit != null && unit.IsAlly)
+                            if (unit != null && src.IsEnemy && unit.IsAlly && unit.Dead == false)
+                            {
+                                nodeCost = 999;
+                                break;
+                            }
+                            // プレイヤー軍ユニットから見てプレイヤー軍（つまり敵軍）がいて、死亡していない場合、コストを最大。
+                            if (unit != null && src.IsAlly && unit.IsEnemy && unit.Dead == false)
                             {
                                 nodeCost = 999;
                                 break;
                             }
 
-                            // ターゲット近隣判定で、敵軍からみて自軍（つまり敵軍）がいた場合、
-                            if (ii == 0 && unit != null && unit.IsEnemy)
+                            // ターゲット近隣判定で、敵軍からみて自軍（つまり敵軍）がいて、死亡していない場合、コストを最大。
+                            if (ii == 0 && unit != null && src.IsEnemy && unit.IsEnemy && unit.Dead == false)
                             {
                                 nodeCost = 999;
                                 break;
                             }
+                            //if (ii == 0 && unit != null && src.IsAlly && unit.IsAlly)
+                            //{
+                            //    nodeCost = 999;
+                            //    break;
+                            //}
                         }
+
+                        // タイル高さが一定以上の場合、対象外
+                        if (work1[ii].connectNode[jj].transform.localPosition.z <= -0.5f)
+                        {
+                            //Debug.Log("Talos:connectNode z is less than -0.5f");
+                            nodeCost = 999;
+                        }
+
                         if (work1[ii].connectNode[jj].cost <= -1 || nodeCost < work1[ii].connectNode[jj].cost)
                         {
                             //未探索ノードあるいは最短ルートを更新できる場合

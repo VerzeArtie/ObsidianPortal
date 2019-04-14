@@ -20,7 +20,15 @@ namespace ObsidianPortal
         public static bool AlreadyInitialize = false; // 既に一度InitializeGroundOneを呼んだかどうか
         public static bool SupportLog = true;
 
-        public static FIX.PortalArea CurrentArea = FIX.PortalArea.Area_Human;
+        // HomeTown
+        public static int Day = 0;
+        public static string HomeTownArea = string.Empty;
+        public static int Gold = 0;
+        public static int SoulFragment = 0;
+        public static int ObsidianStone = 0;
+
+        // BattleField
+        public static FIX.PortalArea CurrentArea = FIX.PortalArea.Area_Esmilia;
         public static FIX.Stage CurrentStage = FIX.Stage.Stage1_1;
         public static bool BattleWin = false;
         public static int BattleElimination = 0;
@@ -55,23 +63,59 @@ namespace ObsidianPortal
             obj.BaseIntelligence = FIX.BILLY_RAKI_INIT_INT;
             obj.BaseStamina = FIX.BILLY_RAKI_INIT_STM;
             obj.BaseMind = FIX.BILLY_RAKI_INIT_MND;
+            obj.BaseLife = FIX.BILLY_RAKI_INIT_BASELIFE;
+
+            obj.AvailableCommandName.Add(FIX.STRAIGHT_SMASH);
+            obj.AvailableCommandName.Add(FIX.STANCE_OF_THE_BLADE);
+            obj.AvailableCommandName.Add(FIX.DOUBLE_SLASH);
+            obj.AvailableCommandName.Add(FIX.WAR_SWING);
+            obj.AvailableCommandName.Add(FIX.KINETIC_SMASH);
+            obj.AvailableCommandName.Add(FIX.STANCE_OF_THE_IAI);
+            obj.AvailableCommandName.Add(FIX.DESTROYER_SMASH);
+            obj.AvailableCommandLv.Add(3);
+            obj.AvailableCommandLv.Add(6);
+            obj.AvailableCommandLv.Add(9);
+            obj.AvailableCommandLv.Add(12);
+            obj.AvailableCommandLv.Add(15);
+            obj.AvailableCommandLv.Add(18);
+            obj.AvailableCommandLv.Add(21);
+            obj.AvailableCommandValue.Add("Damage");
+            obj.AvailableCommandValue.Add("Turn");
+            obj.AvailableCommandValue.Add("Damage");
+            obj.AvailableCommandValue.Add("Range");
+            obj.AvailableCommandValue.Add("Damage");
+            obj.AvailableCommandValue.Add("Turn");
+            obj.AvailableCommandValue.Add("Damage");
+
             obj.MainWeapon = new Item(FIX.COMMON_FINE_SWORD);
+            obj.SubWeapon = new Item(FIX.COMMON_FINE_SHIELD);
+            obj.MainArmor = new Item(FIX.COMMON_FINE_ARMOR);
+            obj.Accessory = new Item(FIX.COMMON_RED_PENDANT);
+            obj.Accessory2 = new Item(FIX.COMMON_BLUE_AMULET);
+            obj.Accessory3 = new Item(FIX.COMMON_YELLOW_CHARM);
+
+            obj.AddBackPack(new Item(FIX.COMMON_GREEN_PENDANT), 1);
+            obj.AddBackPack(new Item(FIX.COMMON_BASTARD_SWORD), 1);
             obj.AddBackPack(new Item(FIX.COMMON_FINE_SWORD), 1);
             obj.AddBackPack(new Item(FIX.COMMON_FINE_ARMOR), 1);
-            obj.AddBackPack(new Item(FIX.COMMON_LARGE_RED_POTION), 3);
-            obj.AddBackPack(new Item(FIX.POOR_BLACK_MATERIAL3), 1);
+            //obj.AddBackPack(new Item(FIX.COMMON_LARGE_RED_POTION), 3);
+            obj.AddBackPack(new Item(FIX.RARE_STRONG_SERPENT_SHIELD), 1);
             obj.AddBackPack(new Item(FIX.RARE_ADERKER_FALSE_ROD), 1);
             obj.AddBackPack(new Item(FIX.EPIC_FLOW_FUNNEL_OF_THE_ZVELDOZE), 1);
-            obj.AddBackPack(new Item(FIX.COMMON_AOSAME_KENSHI), 1);
-            obj.AddBackPack(new Item(FIX.RARE_ANGEL_SILK), 1);
-            obj.AddBackPack(new Item(FIX.COMMON_LARGE_RED_POTION), 2);
+            //obj.AddBackPack(new Item(FIX.COMMON_AOSAME_KENSHI), 1);
+            obj.AddBackPack(new Item(FIX.COMMON_WOOD_ROD), 1);
+            //obj.AddBackPack(new Item(FIX.COMMON_LARGE_RED_POTION), 2);
             obj.AddBackPack(new Item(FIX.EPIC_SHEZL_MYSTIC_FORTUNE), 1);
+            obj.AddBackPack(new Item(FIX.COMMON_ONRYOU_HAKO), 1);
+            obj.AddBackPack(new Item(FIX.COMMON_EVERMIND_OMEN), 1);
+
             obj.AddValuables(new Item(FIX.RARE_EARRING_OF_LANA), 1);
             obj.ActionButtonCommand.Add(FIX.NORMAL_MOVE);
             obj.ActionButtonCommand.Add(FIX.NORMAL_ATTACK);
             obj.ActionButtonCommand.Add(FIX.STRAIGHT_SMASH);
             obj.ActionButtonCommand.Add(FIX.STRAIGHT_SMASH);
             obj.ActionButtonCommand.Add(FIX.ZERO_IMMUNITY);
+            obj.MaxGain();
             UnitList.Add(obj);
 
             Unit obj2 = objPlayer.AddComponent<Unit>();
@@ -85,12 +129,15 @@ namespace ObsidianPortal
             obj2.BaseIntelligence = FIX.ANNA_HAMILTON_INIT_INT;
             obj2.BaseStamina = FIX.ANNA_HAMILTON_INIT_STM;
             obj2.BaseMind = FIX.ANNA_HAMILTON_INIT_MND;
+            obj2.BaseLife = FIX.ANNA_HAMILTON_INIT_BASELIFE;
+
             obj2.MainWeapon = new Item(FIX.COMMON_FINE_BOW);
             obj2.ActionButtonCommand.Add(FIX.NORMAL_MOVE);
             obj2.ActionButtonCommand.Add(FIX.NORMAL_ATTACK);
             obj2.ActionButtonCommand.Add(FIX.ZERO_IMMUNITY);
             obj2.ActionButtonCommand.Add(FIX.ZERO_IMMUNITY);
             obj2.ActionButtonCommand.Add(FIX.ZERO_IMMUNITY);
+            obj2.MaxGain();
             UnitList.Add(obj2);
 
             Unit obj3 = objPlayer.AddComponent<Unit>();
@@ -104,12 +151,14 @@ namespace ObsidianPortal
             obj3.BaseIntelligence = FIX.EONE_FULNEA_INIT_INT;
             obj3.BaseStamina = FIX.EONE_FULNEA_INIT_STM;
             obj3.BaseMind = FIX.EONE_FULNEA_INIT_MND;
+            obj3.BaseLife = FIX.EONE_FULNEA_INIT_BASELIFE;
             obj3.MainWeapon = new Item(FIX.COMMON_WOOD_ROD);
             obj3.ActionButtonCommand.Add(FIX.NORMAL_MOVE);
             obj3.ActionButtonCommand.Add(FIX.NORMAL_ATTACK);
             obj3.ActionButtonCommand.Add(FIX.FIRE_BOLT);
             obj3.ActionButtonCommand.Add(FIX.FRESH_HEAL);
             obj3.ActionButtonCommand.Add(FIX.FIRE_BOLT);
+            obj3.MaxGain();
             UnitList.Add(obj3);
 
             //Unit obj4 = objPlayer.AddComponent<Unit>();
@@ -144,7 +193,11 @@ namespace ObsidianPortal
             //Player.Exp = 65;
             //Player.Race = FIX.Race.Angel;
 
-
+            Day = 3;
+            HomeTownArea = "フェンリーの村";
+            Gold = 150;
+            SoulFragment = 2;
+            ObsidianStone = 4;
 
             WE2 = objWE2.AddComponent<TruthWorldEnvironment>();
             SQL = objSQL.AddComponent<ControlSQL>();
