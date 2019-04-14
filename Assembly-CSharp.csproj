@@ -62,16 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Hit &amp; Slashes Vol.3\SelfDestruct.cs" />
-    <Compile Include="Assets\Magic_Particle_Effects\Scripts\CameraMovement.cs" />
-    <Compile Include="Assets\PyroParticles\Demo\DemoScript.cs" />
-    <Compile Include="Assets\PyroParticles\Demo\DemoScriptEditor.cs" />
-    <Compile Include="Assets\PyroParticles\Prefab\Script\FireBaseScript.cs" />
-    <Compile Include="Assets\PyroParticles\Prefab\Script\FireCollisionForwardScript.cs" />
-    <Compile Include="Assets\PyroParticles\Prefab\Script\FireConstantBaseScript.cs" />
-    <Compile Include="Assets\PyroParticles\Prefab\Script\FireLightScript.cs" />
-    <Compile Include="Assets\PyroParticles\Prefab\Script\FireProjectileScript.cs" />
-    <Compile Include="Assets\PyroParticles\Prefab\Script\MeteorSwarmScript.cs" />
-    <Compile Include="Assets\PyroParticles\Prefab\Script\SingleLineAttribute.cs" />
     <Compile Include="Assets\Scripts\Achievement.cs" />
     <Compile Include="Assets\Scripts\ActionCommand.cs" />
     <Compile Include="Assets\Scripts\ap.cs" />
@@ -105,9 +95,6 @@
     <Compile Include="Assets\Scripts\UnitData.cs" />
     <Compile Include="Assets\Scripts\UnitStatus.cs" />
     <Compile Include="Assets\Scripts\UnityColor.cs" />
-    <None Include="Assets\PyroParticles\Prefab\Materials\AdditiveTintable.shader" />
-    <None Include="Assets\PyroParticles\Readme.txt" />
-    <None Include="Assets\Magic_Particle_Effects\Readme.txt" />
     <Reference Include="UnityEngine.AIModule">
       <HintPath>D:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
     </Reference>
