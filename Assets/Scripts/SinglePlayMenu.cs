@@ -176,17 +176,17 @@ namespace ObsidianPortal
         
         public void TapQuest()
         {
-            Debug.Log("TapQuest");
-            if (ONE.WE2.EventHomeTown_0001 == false)
-            {
-                TapBottomMenu(false, false, false, false, false);
-                MessagePack.Message10001(ref m_list, ref e_list);
-                TapOK();
-            }
-            else
-            {
-                TapBottomMenu(true, false, false, false, false);
-            }
+            //Debug.Log("TapQuest");
+            //if (ONE.WE2.EventHomeTown_0001 == false)
+            //{
+            //    TapBottomMenu(false, false, false, false, false);
+            //    MessagePack.Message10001(ref m_list, ref e_list);
+            //    TapOK();
+            //}
+            //else
+            //{
+            //    TapBottomMenu(true, false, false, false, false);
+            //}
         }
         public void TapMember()
         {
@@ -800,7 +800,7 @@ namespace ObsidianPortal
             if (groupBackpackNormal.activeInHierarchy)
             {
                 Debug.Log("TapItemDelete: group Normal");
-                ONE.UnitList[0].DeleteBackPack(deleteItem, 10);
+                ONE.BP.DeleteBackPack(deleteItem, 10);
                 foreach (Transform t in ItemNormalContent.transform)
                 {
                     GameObject.Destroy(t.gameObject);
@@ -810,7 +810,7 @@ namespace ObsidianPortal
             else
             {
                 Debug.Log("TapItemDelete: group else");
-                ONE.UnitList[0].DeleteValuables(deleteItem, 10);
+                ONE.BP.DeleteValuables(deleteItem, 10);
                 foreach (Transform t in ItemValuablesContent.transform)
                 {
                     GameObject.Destroy(t.gameObject);
@@ -975,14 +975,14 @@ namespace ObsidianPortal
             groupBackpack.SetActive(true);
             groupBackpackNormal.SetActive(true);
             groupBackpackValuables.SetActive(false);
-            AbstractSetupItemList(ItemNormalContent, ONE.UnitList[0].GetBackPackInfo());
+            AbstractSetupItemList(ItemNormalContent, ONE.BP.GetBackPackInfo());
         }
         private void SetupValuablesList()
         {
             groupBackpack.SetActive(true);
             groupBackpackNormal.SetActive(false);
             groupBackpackValuables.SetActive(true);
-            AbstractSetupItemList(ItemValuablesContent, ONE.UnitList[0].GetValuablesInfo());
+            AbstractSetupItemList(ItemValuablesContent, ONE.BP.GetValuablesInfo());
         }
         private void AbstractSetupItemList(GameObject groupContent, List<Item> list)
         {

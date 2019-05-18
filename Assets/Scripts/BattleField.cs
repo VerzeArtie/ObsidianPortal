@@ -140,8 +140,8 @@ namespace ObsidianPortal
             SelectCommand,
             SelectTarget,
             ExecCommand,
-            ExecAnimation,
-            ExecEnd,
+            //ExecAnimation,
+            //ExecEnd,
             End
         }
         public enum CommandResult
@@ -276,35 +276,28 @@ namespace ObsidianPortal
             ConstructStringTile(ref tileList, DAT.Tile1_01); ConstructIntTile(ref heightList, DAT.TileH1_01); ConstructIntTile(ref objectList, DAT.Obj1_01);
             ConstructStringTile(ref tileList, DAT.Tile1_00); ConstructIntTile(ref heightList, DAT.TileH1_00); ConstructIntTile(ref objectList, DAT.Obj1_00);
 
-            if (ONE.CurrentStage == FIX.Stage.Stage1_1) { column = DAT.COLUMN_1_1; }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_2) { column = DAT.COLUMN_1_2;  }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_3) { column = DAT.COLUMN_1_3;  }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_4) { column = DAT.COLUMN_1_4;  }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_5) { column = DAT.COLUMN_1_5;  }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_1) { column = DAT.COLUMN_2_1;  }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_2) { column = DAT.COLUMN_2_2;  }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_3) { column = DAT.COLUMN_2_3;  }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_4) { column = DAT.COLUMN_2_4;  }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_5) { column = DAT.COLUMN_2_5;  }
+            // todo
+            column = DAT.COLUMN_1_1;
+            //if (ONE.CurrentStage == FIX.Stage.Stage1_1) { column = DAT.COLUMN_1_1; }
 
             for (int ii = 0; ii < tileList.Count; ii++)
             {
-                AreaInformation current = this.prefab_Tile;
-                current.field = AreaInformation.Field.Plain;
+                AreaInformation currentArea = this.prefab_Tile;
+                currentArea.field = AreaInformation.Field.Plain;
                 if (tileList[ii] == "UnknownTile")
                 {
-                    current = this.prefab_NoneTile;
-                    current.field = AreaInformation.Field.None;
+                    currentArea = this.prefab_NoneTile;
+                    currentArea.field = AreaInformation.Field.None;
                 }
                 else if (tileList[ii] == "Field_Forest")
                 {
-                    current = this.prefab_Forest;
-                    current.field = AreaInformation.Field.Forest;
+                    currentArea = this.prefab_Forest;
+                    currentArea.field = AreaInformation.Field.Forest;
                 }
                 else if (tileList[ii] == "Field_Plain")
                 {
-                    current = this.prefab_Tile;
-                    current.field = AreaInformation.Field.Plain;
+                    currentArea = this.prefab_Tile;
+                    currentArea.field = AreaInformation.Field.Plain;
                 }
                 //else if (tileData[ii] == Convert.ToInt32(AreaInformation.Field.Mountain))
                 //{
@@ -361,7 +354,7 @@ namespace ObsidianPortal
                     Debug.Log("TapArea else routine..." + tileList[ii].ToString());
                 }
                 AreaInformation tile;
-                tile = Instantiate(current, new Vector3(HEX_MOVE_X * (ii % column), HEX_MOVE_Z * (ii / column), -0.5f * heightList[ii]), Quaternion.identity) as AreaInformation;
+                tile = Instantiate(currentArea, new Vector3(HEX_MOVE_X * (ii % column), HEX_MOVE_Z * (ii / column), -0.5f * heightList[ii]), Quaternion.identity) as AreaInformation;
                 tile.transform.Rotate(new Vector3(0, 0, 0));
                 tile.gameObject.SetActive(true);
                 if (tileList[ii] == "UnknownTile")
@@ -463,9 +456,6 @@ namespace ObsidianPortal
                 }
             }
 
-            if (ONE.CurrentStage == FIX.Stage.Stage1_1)
-            {
-                Debug.Log("stage Stage1_1");
                 int counter = 0;
                 Unit current = null;
                 GameObject currentObj = null;
@@ -478,130 +468,129 @@ namespace ObsidianPortal
                 // ユニット配置
                 int COLUMN = DAT.COLUMN_1_1;
                 int unitNumber = 0;
-                for (int ii = 0; ii < objectList.Count; ii++)
+            for (int ii = 0; ii < objectList.Count; ii++)
+            {
+                if (objectList[ii] > 0)
                 {
-                    if (objectList[ii] > 0)
+                    switch (objectList[ii])
                     {
-                        switch (objectList[ii])
-                        {
-                            case 0:
-                                // no action
-                                break;
+                        case 0:
+                            // no action
+                            break;
 
-                            case 1:
-                                // treasure
-                                GameObject obj = Instantiate(prefab_Treasure, new Vector3(ii % COLUMN, ii / COLUMN, -0.5f), Quaternion.identity) as GameObject;
-                                obj.transform.Rotate(new Vector3(-90, 0, 0));
-                                obj.SetActive(true);
-                                TreasureList.Add(obj);
-                                TreasureGetList.Add(false);
-                                break;
+                        case 1:
+                            // treasure
+                            GameObject obj = Instantiate(prefab_Treasure, new Vector3(ii % COLUMN, ii / COLUMN, -0.5f), Quaternion.identity) as GameObject;
+                            obj.transform.Rotate(new Vector3(-90, 0, 0));
+                            obj.SetActive(true);
+                            TreasureList.Add(obj);
+                            TreasureGetList.Add(false);
+                            break;
 
-                            case 2:
-                                // info-board
-                                break;
+                        case 2:
+                            // info-board
+                            break;
 
-                            case 3:
-                                // upstair
-                                currentObj = Instantiate(prefab_ArrowLeft, new Vector3(ii % COLUMN, ii / COLUMN, -0.6f), Quaternion.identity) as GameObject;
-                                currentObj.SetActive(true);
-                                break;
+                        case 3:
+                            // upstair
+                            currentObj = Instantiate(prefab_ArrowLeft, new Vector3(ii % COLUMN, ii / COLUMN, -0.6f), Quaternion.identity) as GameObject;
+                            currentObj.SetActive(true);
+                            break;
 
-                            case 4:
-                                // downstair
-                                currentObj = Instantiate(prefab_ArrowRight, new Vector3(ii % COLUMN, ii / COLUMN, -0.6f), Quaternion.identity) as GameObject;
-                                currentObj.SetActive(true);
-                                GoalList.Add(currentObj);
-                                break;
+                        case 4:
+                            // downstair
+                            currentObj = Instantiate(prefab_ArrowRight, new Vector3(ii % COLUMN, ii / COLUMN, -0.6f), Quaternion.identity) as GameObject;
+                            currentObj.SetActive(true);
+                            GoalList.Add(currentObj);
+                            break;
 
-                            case 5:
-                                // mirror
-                                break;
+                        case 5:
+                            // mirror
+                            break;
 
-                            case 6:
-                                // blue-orb
-                                break;
+                        case 6:
+                            // blue-orb
+                            break;
 
-                            case 7:
-                                // fountain
-                                break;
+                        case 7:
+                            // fountain
+                            break;
 
-                            case 8:
-                                // enemy
-                                current = SetupUnitEnemy(counter, FIX.ENEMY_HIYOWA_BEATLE, ii % COLUMN, ii / COLUMN);
-                                EnemyList.Add(current);
-                                AllList.Add(current);
-                                counter++;
-                                break;
+                        case 8:
+                            // enemy
+                            current = SetupUnitEnemy(counter, FIX.ENEMY_HIYOWA_BEATLE, ii % COLUMN, ii / COLUMN);
+                            EnemyList.Add(current);
+                            AllList.Add(current);
+                            counter++;
+                            break;
 
-                            case 9:
-                                // soul-fragment
-                                break;
+                        case 9:
+                            // soul-fragment
+                            break;
 
-                            case 10:
-                                // player
-                                Unit prefab = null;
-                                switch (ONE.UnitList[unitNumber].Job)
-                                {
-                                    case FIX.JobClass.Fighter:
-                                        Debug.Log("Fighter choice");
-                                        prefab = prefab_Fighter;
-                                        break;
-                                    case FIX.JobClass.Ranger:
-                                        Debug.Log("Ranger choice");
-                                        prefab = prefab_Archer;
-                                        break;
-                                    case FIX.JobClass.Magician:
-                                        Debug.Log("Magician choice");
-                                        prefab = prefab_Magician;
-                                        break;
-                                    default:
-                                        Debug.Log("default choice");
-                                        prefab = prefab_Fighter;
-                                        break;
-                                }
-                                float x = ii % COLUMN;
-                                float y = ii / COLUMN;
-                                x = x * FIX.HEX_MOVE_X;
-                                y = y * FIX.HEX_MOVE_Z;
+                        case 10:
+                            // player
+                            Unit prefab = null;
+                            switch (ONE.UnitList[unitNumber].Job)
+                            {
+                                case FIX.JobClass.Fighter:
+                                    Debug.Log("Fighter choice");
+                                    prefab = prefab_Fighter;
+                                    break;
+                                case FIX.JobClass.Ranger:
+                                    Debug.Log("Ranger choice");
+                                    prefab = prefab_Archer;
+                                    break;
+                                case FIX.JobClass.Magician:
+                                    Debug.Log("Magician choice");
+                                    prefab = prefab_Magician;
+                                    break;
+                                default:
+                                    Debug.Log("default choice");
+                                    prefab = prefab_Fighter;
+                                    break;
+                            }
+                            float x = ii % COLUMN;
+                            float y = ii / COLUMN;
+                            x = x * FIX.HEX_MOVE_X;
+                            y = y * FIX.HEX_MOVE_Z;
 
-                                current = Instantiate(prefab, new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f), Quaternion.identity) as Unit;
-                                current.FullName = ONE.UnitList[unitNumber].FullName;
-                                current.Level = ONE.UnitList[unitNumber].Level;
-                                current.Job = ONE.UnitList[unitNumber].Job;
-                                current.Race = ONE.UnitList[unitNumber].Race;
-                                current.BaseStrength = ONE.UnitList[unitNumber].BaseStrength;
-                                current.BaseAgility = ONE.UnitList[unitNumber].BaseAgility;
-                                current.BaseIntelligence = ONE.UnitList[unitNumber].BaseIntelligence;
-                                current.BaseStamina = ONE.UnitList[unitNumber].BaseStamina;
-                                current.BaseMind = ONE.UnitList[unitNumber].BaseMind;
-                                current.MainWeapon = ONE.UnitList[unitNumber].MainWeapon;
-                                current.SubWeapon = ONE.UnitList[unitNumber].SubWeapon;
-                                current.MainArmor = ONE.UnitList[unitNumber].MainArmor;
-                                current.Accessory = ONE.UnitList[unitNumber].Accessory;
-                                current.Accessory2 = ONE.UnitList[unitNumber].Accessory2;
-                                current.Accessory3 = ONE.UnitList[unitNumber].Accessory3;
-                                current.Stone = ONE.UnitList[unitNumber].Stone;
-                                current.ObsidianStone = ONE.UnitList[unitNumber].ObsidianStone;
-                                for (int jj = 0; jj < ONE.UnitList[unitNumber].ActionButtonCommand.Count; jj++)
-                                {
-                                    current.ActionButtonCommand.Add(ONE.UnitList[unitNumber].ActionButtonCommand[jj]);
-                                }
-                                current.Initialize(current.FullName, current.Race, current.Job, Unit.Ally.Ally);
-                                current.name = current.FullName + "_" + counter.ToString();
-                                current.gameObject.SetActive(true);
-                                AddUnitWithAdjustTime(current);
-                                AllyList.Add(current);
-                                AllList.Add(current);
-                                counter++;
-                                unitNumber++;
-                                Debug.Log("unitNumber: " + unitNumber.ToString());
-                                break;
+                            current = Instantiate(prefab, new Vector3(x, y, ExistAreaFromLocation(new Vector3(x, y, 0)).transform.localPosition.z - 0.5f), Quaternion.identity) as Unit;
+                            current.FullName = ONE.UnitList[unitNumber].FullName;
+                            current.Level = ONE.UnitList[unitNumber].Level;
+                            current.Job = ONE.UnitList[unitNumber].Job;
+                            current.Race = ONE.UnitList[unitNumber].Race;
+                            current.BaseStrength = ONE.UnitList[unitNumber].BaseStrength;
+                            current.BaseAgility = ONE.UnitList[unitNumber].BaseAgility;
+                            current.BaseIntelligence = ONE.UnitList[unitNumber].BaseIntelligence;
+                            current.BaseStamina = ONE.UnitList[unitNumber].BaseStamina;
+                            current.BaseMind = ONE.UnitList[unitNumber].BaseMind;
+                            current.MainWeapon = ONE.UnitList[unitNumber].MainWeapon;
+                            current.SubWeapon = ONE.UnitList[unitNumber].SubWeapon;
+                            current.MainArmor = ONE.UnitList[unitNumber].MainArmor;
+                            current.Accessory = ONE.UnitList[unitNumber].Accessory;
+                            current.Accessory2 = ONE.UnitList[unitNumber].Accessory2;
+                            current.Accessory3 = ONE.UnitList[unitNumber].Accessory3;
+                            current.Stone = ONE.UnitList[unitNumber].Stone;
+                            current.ObsidianStone = ONE.UnitList[unitNumber].ObsidianStone;
+                            for (int jj = 0; jj < ONE.UnitList[unitNumber].ActionButtonCommand.Count; jj++)
+                            {
+                                current.ActionButtonCommand.Add(ONE.UnitList[unitNumber].ActionButtonCommand[jj]);
+                            }
+                            current.Initialize(current.FullName, current.Race, current.Job, Unit.Ally.Ally);
+                            current.name = current.FullName + "_" + counter.ToString();
+                            current.gameObject.SetActive(true);
+                            AddUnitWithAdjustTime(current);
+                            AllyList.Add(current);
+                            AllList.Add(current);
+                            counter++;
+                            unitNumber++;
+                            Debug.Log("unitNumber: " + unitNumber.ToString());
+                            break;
 
-                            default:
-                                // no action
-                                break;
-                        }
+                        default:
+                            // no action
+                            break;
                     }
                 }
             }
@@ -663,6 +652,10 @@ namespace ObsidianPortal
                     //    this.AllyList[ii].CleanUp();
                     //}
 
+                    for (int ii = 0; ii < ONE.BattleGetItem.Count; ii++)
+                    {
+                        ONE.BP.AddBackPack(ONE.BattleGetItem[ii], 1);
+                    }
                     SceneManager.LoadSceneAsync(FIX.SCENE_GAMERESULT);
                 }
                 return;
@@ -976,7 +969,6 @@ namespace ObsidianPortal
                                 AllList[ii].CurrentLife -= AllList[ii].CurrentPoisonValue;
                                 currentCommand = FIX.EFFECT_POISON;
                                 StartAnimation(AllList[ii], FIX.EFFECT_POISON, new Color(1.0f, 0.3f, 0.3f));
-                                this.Phase = ActionPhase.ExecAnimation;
                                 return;
                             }
                             if (AllList[ii].CurrentHeartOfLife > 0)
@@ -988,7 +980,6 @@ namespace ObsidianPortal
                                 CurrentEffect = AllList[ii];
                                 currentCommand = FIX.EFFECT_HEART_OF_LIFE;
                                 StartAnimation(AllList[ii], "LIFE +" + (AllList[ii].CurrentHeartOfLifeValue).ToString(), Color.yellow);
-                                this.Phase = ActionPhase.ExecAnimation;
                                 return;
                             }
                             if (AllList[ii].CurrentSlip > 0)
@@ -1000,7 +991,6 @@ namespace ObsidianPortal
                                 AllList[ii].CurrentLife -= AllList[ii].CurrentSlipValue;
                                 currentCommand = FIX.EFFECT_SLIP;
                                 StartAnimation(AllList[ii], "SLIP -" + (AllList[ii].CurrentSlipValue).ToString(), Color.red);
-                                this.Phase = ActionPhase.ExecAnimation;
                                 return;
                             }
                         }
@@ -1011,14 +1001,9 @@ namespace ObsidianPortal
                         this.Phase = ActionPhase.End;
                     }
                 }
-                else if (this.Phase == ActionPhase.ExecAnimation)
+                else if (this.Phase == ActionPhase.End)
                 {
-                    ExecAnimationDamage();
-                    if (WaitAnimation()) { return; }
-                    this.Phase = ActionPhase.ExecEnd;
-                }
-                else if (this.Phase == ActionPhase.ExecEnd)
-                {
+                    Debug.Log("TimeKeeper End");
                     if (this.currentCommand == FIX.EFFECT_POISON)
                     {
                         EffectPoisonDamage(CurrentEffect, CurrentEffect);
@@ -1030,14 +1015,6 @@ namespace ObsidianPortal
 
                     JudgeUnitDead();
                     JudgeGameEnd();
-                    if (this.GameEnd == false)
-                    {
-                        this.Phase = ActionPhase.End;
-                    }
-                }
-                else if (this.Phase == ActionPhase.End)
-                {
-                    Debug.Log("TimeKeeper End");
                     UnitEnd();
                     this.fieldMode = FieldMode.Move;
                 }
@@ -1070,7 +1047,7 @@ namespace ObsidianPortal
                                     Debug.Log("Enemy ExecCommand detect Complete.");
                                     CurrentUnit.CurrentAP -= 2;
                                     UpdateUnitAP(ActionPoint, CurrentUnit);
-                                    this.Phase = ActionPhase.ExecAnimation;
+                                    this.Phase = ActionPhase.End;
                                 }
                                 else if (result == CommandResult.Fail)
                                 {
@@ -1092,25 +1069,10 @@ namespace ObsidianPortal
                         }
                         break;
 
-                    case ActionPhase.ExecAnimation:
-                        //Debug.Log("Enemy ActionPhase.ExecAnimation");
-                        ExecAnimationDamage();
-                        if (WaitAnimation()) { return; }
-                        this.Phase = ActionPhase.ExecEnd;
-                        break;
-
-                    case ActionPhase.ExecEnd:
-                        Debug.Log("Enemy ActionPhase.ExecEnd");
-                        JudgeUnitDead();
-                        JudgeGameEnd();
-                        if (this.GameEnd == false)
-                        {
-                            this.Phase = ActionPhase.End;
-                        }
-                        break;
-
                     case ActionPhase.End:
                         Debug.Log("Enemy ActionPhase.End");
+                        JudgeUnitDead();
+                        JudgeGameEnd();
                         UnitEnd();
                         this.fieldMode = FieldMode.Move;
                         break;
@@ -1295,7 +1257,7 @@ namespace ObsidianPortal
                         {
                             Item current = new Item(Method.GetNewItem(Method.NewItemCategory.Lottery_L1));
                             UpdateMssage("get item: " + current.ItemName);
-                            OwnerUnit.AddBackPack(current, 1);
+                            ONE.BattleGetItem.Add(current);
                             TreasureGetList[ii] = true;
                         }
                     }
@@ -1341,7 +1303,7 @@ namespace ObsidianPortal
                                 GetTacticsPoint(this.CurrentUnit);
                                 CurrentUnit.CurrentAP -= 2;
                                 UpdateUnitAP(ActionPoint, CurrentUnit);
-                                this.Phase = ActionPhase.ExecAnimation;
+                                this.Phase = ActionPhase.End;
                             }
                             else if (result == CommandResult.Fail)
                             {
@@ -1493,30 +1455,13 @@ namespace ObsidianPortal
                         Debug.Log("Unknown command.");
                     }
                     UpdateUnitAP(ActionPoint, CurrentUnit);
-                    this.Phase = ActionPhase.ExecAnimation;
-                }
-                // アニメーション実行
-                else if (this.Phase == ActionPhase.ExecAnimation)
-                {
-                    ExecAnimationDamage();
-                    if (WaitAnimation()) { return; }
-
-                    this.Phase = ActionPhase.ExecEnd;
-                }
-                // 実処理実行
-                else if (this.Phase == ActionPhase.ExecEnd)
-                {
-                    Debug.Log("ExecEnd: " + this.currentCommand);
-                    JudgeUnitDead();
-                    JudgeGameEnd();
-                    if (this.GameEnd == false)
-                    {
-                        this.Phase = ActionPhase.End;
-                    }
+                    this.Phase = ActionPhase.End;
                 }
                 // 終了
                 else if (this.Phase == ActionPhase.End)
                 {
+                    JudgeUnitDead();
+                    JudgeGameEnd();
                     UnitEnd();
                     this.fieldMode = FieldMode.Move;
                 }
@@ -1539,6 +1484,19 @@ namespace ObsidianPortal
                     Talos.TraceOpponent(AllList, fieldTile, this.OwnerUnit, this.animationDstPoint.gameObject);
                 }
             }
+
+            // アニメーション実行
+            for (int ii = 0; ii < currentDamageObject.Count; ii++)
+            {
+                ExecAnimationDamage();
+            }
+            //else if (this.Phase == ActionPhase.ExecAnimation)
+            //{
+            //    ExecAnimationDamage();
+            //    if (WaitAnimation()) { return; }
+
+            //    this.Phase = ActionPhase.ExecEnd;
+            //}
         }
 
         private void UpdateMssage(string message)
@@ -1979,7 +1937,7 @@ namespace ObsidianPortal
             image.sprite = Resources.Load<Sprite>("Unit_" + unit.Job.ToString());
         }
 
-        private int ANIMATION_LENGTH = 100;
+        private int ANIMATION_LENGTH = 60;
         private const int MAX_ANIMATION_COUNT = 100;
         private List<GameObject> currentDamageObject = new List<GameObject>(MAX_ANIMATION_COUNT);
         private List<string> nowAnimationString = new List<string>(MAX_ANIMATION_COUNT);
@@ -2002,7 +1960,10 @@ namespace ObsidianPortal
             {
                 if (this.currentDamageObject[ii] == null) { continue; }
 
-                currentDamageObject[ii].SetActive(true);
+                if (currentDamageObject[ii].activeInHierarchy == false)
+                {
+                    currentDamageObject[ii].SetActive(true);
+                }
                 currentDamageObject[ii].GetComponent<TextMesh>().text = nowAnimationString[ii];
                 if (this.nowAnimationCounter[ii] <= 0)
                 {
@@ -2012,6 +1973,12 @@ namespace ObsidianPortal
                 float movement = 0.05f;
                 if (this.nowAnimationCounter[ii] > 10) { movement = 0; }
                 currentDamageObject[ii].transform.position = new Vector3(currentDamageObject[ii].transform.position.x + movement, currentDamageObject[ii].transform.position.y, currentDamageObject[ii].transform.position.z);
+                TextMesh currentText = currentDamageObject[ii].GetComponent<TextMesh>();
+
+                if (this.nowAnimationCounter[ii] > 20)
+                {
+                    currentText.color = new Color(currentText.color.r, currentText.color.g, currentText.color.b, currentText.color.a - 0.025f);
+                }
 
                 this.nowAnimationCounter[ii]++;
                 if (this.nowAnimationCounter[ii] > ANIMATION_LENGTH)

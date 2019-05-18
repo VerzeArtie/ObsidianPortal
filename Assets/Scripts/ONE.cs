@@ -7,12 +7,15 @@ namespace ObsidianPortal
     public static class ONE
     {
         private static GameObject objPlayer;
+        private static GameObject objBackpack;
         private static GameObject objSQL = null;
         private static GameObject objWE2 = null;
         private static GameObject objAchieve = null;
 
-        public static List<Unit> UnitList; // キャラクター１
+        public static List<Unit> UnitList;
+        //public static List<Item> BackpackList;
 
+        public static Backpack BP = null; // バックパック
         public static ControlSQL SQL = null; // SQLログ情報
         public static TruthWorldEnvironment WE2 = null; // ゲームストーリー全体のワールド環境フラグ
         public static Achievement ACV = null; // アチーヴ
@@ -28,8 +31,7 @@ namespace ObsidianPortal
         public static int ObsidianStone = 0;
 
         // BattleField
-        public static FIX.PortalArea CurrentArea = FIX.PortalArea.Area_Esmilia;
-        public static FIX.Stage CurrentStage = FIX.Stage.Stage1_1;
+        public static string CurrentArea = string.Empty;
         public static bool BattleWin = false;
         public static int BattleElimination = 0;
         public static int BattleTacticsPoint = 0;
@@ -37,6 +39,7 @@ namespace ObsidianPortal
         public static int BattleDamageDone = 0;
         public static int BattleHealingDone = 0;
         public static int BattleGettingExp = 0;
+        public static List<Item> BattleGetItem = new List<Item>();
             
         public static void Initialize()
         {
@@ -46,6 +49,7 @@ namespace ObsidianPortal
 
             // オブジェクトを生成
             objPlayer = new GameObject("objPlayer");
+            objBackpack = new GameObject("objBackpack");
             objWE2 = new GameObject("objWE2");
             objSQL = new GameObject("objSQL");
             objAchieve = new GameObject("objAchieve");
@@ -92,26 +96,11 @@ namespace ObsidianPortal
             obj.MainArmor = new Item(FIX.COMMON_FINE_ARMOR);
             obj.Accessory = new Item(FIX.COMMON_RED_PENDANT);
             obj.Accessory2 = new Item(FIX.COMMON_BLUE_AMULET);
-            obj.Accessory3 = new Item(FIX.COMMON_YELLOW_CHARM);
+            //obj.Accessory3 = new Item(FIX.COMMON_YELLOW_CHARM);
 
-            obj.AddBackPack(new Item(FIX.COMMON_GREEN_PENDANT), 1);
-            obj.AddBackPack(new Item(FIX.COMMON_BASTARD_SWORD), 1);
-            obj.AddBackPack(new Item(FIX.COMMON_FINE_SWORD), 1);
-            obj.AddBackPack(new Item(FIX.COMMON_FINE_ARMOR), 1);
-            //obj.AddBackPack(new Item(FIX.COMMON_LARGE_RED_POTION), 3);
-            obj.AddBackPack(new Item(FIX.RARE_STRONG_SERPENT_SHIELD), 1);
-            obj.AddBackPack(new Item(FIX.RARE_ADERKER_FALSE_ROD), 1);
-            obj.AddBackPack(new Item(FIX.EPIC_FLOW_FUNNEL_OF_THE_ZVELDOZE), 1);
-            //obj.AddBackPack(new Item(FIX.COMMON_AOSAME_KENSHI), 1);
-            obj.AddBackPack(new Item(FIX.COMMON_WOOD_ROD), 1);
-            //obj.AddBackPack(new Item(FIX.COMMON_LARGE_RED_POTION), 2);
-            obj.AddBackPack(new Item(FIX.EPIC_SHEZL_MYSTIC_FORTUNE), 1);
-            obj.AddBackPack(new Item(FIX.COMMON_ONRYOU_HAKO), 1);
-            obj.AddBackPack(new Item(FIX.COMMON_EVERMIND_OMEN), 1);
-
-            obj.AddValuables(new Item(FIX.RARE_EARRING_OF_LANA), 1);
-            obj.ActionButtonCommand.Add(FIX.NORMAL_MOVE);
+            //obj.AddValuables(new Item(FIX.RARE_EARRING_OF_LANA), 1);
             obj.ActionButtonCommand.Add(FIX.NORMAL_ATTACK);
+            obj.ActionButtonCommand.Add(FIX.NORMAL_MOVE);
             obj.ActionButtonCommand.Add(FIX.STRAIGHT_SMASH);
             obj.ActionButtonCommand.Add(FIX.STRAIGHT_SMASH);
             obj.ActionButtonCommand.Add(FIX.ZERO_IMMUNITY);
@@ -193,8 +182,26 @@ namespace ObsidianPortal
             //Player.Exp = 65;
             //Player.Race = FIX.Race.Angel;
 
+            // デバッグ用データ（バックパック）
+            BP = objBackpack.AddComponent<Backpack>();
+            BP.AddBackPack(new Item(FIX.COMMON_GREEN_PENDANT), 1);
+            BP.AddBackPack(new Item(FIX.COMMON_BASTARD_SWORD),1);
+            BP.AddBackPack(new Item(FIX.COMMON_FINE_SWORD),1);
+            BP.AddBackPack(new Item(FIX.COMMON_FINE_ARMOR),1);
+            //BP.AddBackPack(new Item(FIX.COMMON_LARGE_RED_POTION),1);
+            BP.AddBackPack(new Item(FIX.RARE_STRONG_SERPENT_SHIELD),1);
+            BP.AddBackPack(new Item(FIX.RARE_ADERKER_FALSE_ROD),1);
+            BP.AddBackPack(new Item(FIX.EPIC_FLOW_FUNNEL_OF_THE_ZVELDOZE),1);
+            //BP.AddBackPack(new Item(FIX.COMMON_AOSAME_KENSHI),1);
+            BP.AddBackPack(new Item(FIX.COMMON_WOOD_ROD),1);
+            //BP.AddBackPack(new Item(FIX.COMMON_LARGE_RED_POTION),1);
+            BP.AddBackPack(new Item(FIX.EPIC_SHEZL_MYSTIC_FORTUNE),1);
+            BP.AddBackPack(new Item(FIX.COMMON_ONRYOU_HAKO),1);
+            BP.AddBackPack(new Item(FIX.COMMON_EVERMIND_OMEN),1);
+
+            // デバッグ用データ（地点）
             Day = 3;
-            HomeTownArea = "フェンリーの村";
+            HomeTownArea = FIX.TOWN_ANSHETT;
             Gold = 150;
             SoulFragment = 2;
             ObsidianStone = 4;
@@ -204,10 +211,29 @@ namespace ObsidianPortal
             SQL.SetupSql();
             ACV = objAchieve.AddComponent<Achievement>();
 
+            // デバッグ用データ（WE2フラグ）
+            WE2.Event_Message100010 = true;
+            WE2.Event_Message100020 = true;
+            WE2.Event_Message100030 = true;
+            WE2.Event_Message100040 = true;
+            WE2.Event_Message200010 = true;
+            WE2.Event_Message200020 = true;
+            WE2.Event_Message200030 = true;
+            WE2.Event_Message300010 = true;
+            WE2.Event_Message300020 = true;
+            WE2.Event_Message300021 = true;
+            WE2.Event_Message300022 = true;
+            WE2.Event_Message300023 = true;
+            WE2.Event_Message300024 = true;
+            //WE2.EventHomeTown_0004 = true;
+
             for (int ii = 0; ii < UnitList.Count; ii++)
             {
                 UnityEngine.Object.DontDestroyOnLoad(UnitList[ii]);
             }
+            UnityEngine.Object.DontDestroyOnLoad(BP);
+
+            Debug.Log("ONE backpack count: " + BP.GetBackPackInfo().Count.ToString());
             UnityEngine.Object.DontDestroyOnLoad(WE2);
         }
 

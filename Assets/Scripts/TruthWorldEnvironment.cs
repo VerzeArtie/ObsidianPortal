@@ -7,6 +7,7 @@ namespace ObsidianPortal
 {
     public class TruthWorldEnvironment : MonoBehaviour
     {
+        // battle
         public int TotalPlayed { get; set; }
         public int TotalWin { get; set; }
         public int TotalLose { get; set; }
@@ -67,10 +68,26 @@ namespace ObsidianPortal
         public bool CompleteStage54 { get; set; }
         public bool CompleteStage55 { get; set; }
 
-        public bool EventHomeTown_0001 { get; set; }
-        public bool EventHomeTown_0002 { get; set; }
-        public bool EventHomeTown_0003 { get; set; }
-        public bool EventHomeTown_0004 { get; set; }
+        public bool Zetanium_001 { get; set; }
+        public bool Zetanium_002 { get; set; }
+        public bool Zetanium_003 { get; set; }
+        public bool Zetanium_004 { get; set; }
+        public bool Zetanium_005 { get; set; }
+
+        public bool Event_Message100010 { get; set; }
+        public bool Event_Message100020 { get; set; }
+        public bool Event_Message100030 { get; set; }
+        public bool Event_Message100040 { get; set; }
+        public bool Event_Message200010 { get; set; }
+        public bool Event_Message200020 { get; set; }
+        public bool Event_Message200030 { get; set; }
+        public bool Event_Message300010 { get; set; }
+        public bool Event_Message300020 { get; set; }
+        public bool Event_Message300021 { get; set; }
+        public bool Event_Message300022 { get; set; }
+        public bool Event_Message300023 { get; set; }
+        public bool Event_Message300024 { get; set; }
+
         // SQLログ採取用アカウント
         public string Account { get; set; }
     }

@@ -106,31 +106,8 @@ namespace ObsidianPortal
             medal = GOLD;
             MedalTotalTurn.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(medal);
 
-            if (ONE.CurrentStage == FIX.Stage.Stage1_1) { ONE.WE2.CompleteStage11 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_2) { ONE.WE2.CompleteStage12 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_3) { ONE.WE2.CompleteStage13 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_4) { ONE.WE2.CompleteStage14 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage1_5) { ONE.WE2.CompleteStage15 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_1) { ONE.WE2.CompleteStage21 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_2) { ONE.WE2.CompleteStage22 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_3) { ONE.WE2.CompleteStage23 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_4) { ONE.WE2.CompleteStage24 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage2_5) { ONE.WE2.CompleteStage25 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage3_1) { ONE.WE2.CompleteStage31 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage3_2) { ONE.WE2.CompleteStage32 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage3_3) { ONE.WE2.CompleteStage33 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage3_4) { ONE.WE2.CompleteStage34 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage3_5) { ONE.WE2.CompleteStage35 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage4_1) { ONE.WE2.CompleteStage41 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage4_2) { ONE.WE2.CompleteStage42 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage4_3) { ONE.WE2.CompleteStage43 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage4_4) { ONE.WE2.CompleteStage44 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage4_5) { ONE.WE2.CompleteStage45 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage5_1) { ONE.WE2.CompleteStage51 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage5_2) { ONE.WE2.CompleteStage52 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage5_3) { ONE.WE2.CompleteStage53 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage5_4) { ONE.WE2.CompleteStage54 = true; }
-            if (ONE.CurrentStage == FIX.Stage.Stage5_5) { ONE.WE2.CompleteStage55 = true; }
+            // todo
+            //if (ONE.CurrentStage == FIX.Stage.Stage1_1) { ONE.WE2.CompleteStage11 = true; }
 
             Method.AutoSaveTruthWorldEnvironment();
 

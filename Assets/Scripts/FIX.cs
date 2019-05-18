@@ -144,6 +144,7 @@ namespace ObsidianPortal
         public const string SHADOWINJURY = "Shadow Injury";
         public const string GALE_WIND = "ゲイル・ウィンド";
 
+        public const int TOTAL_ACTIONCOMMAND_NUM = 84;
         // Delve I
         public const string STRAIGHT_SMASH = "Straight Smash";
         public const string SHIELD_BASH = "Shield Bash";
@@ -275,48 +276,6 @@ namespace ObsidianPortal
         public const string SCENE_BATTLEFIELD = "BattleField";
         public const string SCENE_GAMERESULT = "GameResult";
         public const string SCENE_SINGLEPLAYMENU = "SinglePlayMenu";
-
-        public enum PortalArea
-        {
-            Area_None,
-            Area_Esmilia,
-            Area_Kilcood,
-            Area_Vagas,
-            Area_Arvidia,
-            Area_Dorgan,
-            Area_MoonForder,
-            Area_Iveltoon,
-        }
-
-        public enum Stage
-        {
-            Stage_None,
-            Stage1_1,
-            Stage1_2,
-            Stage1_3,
-            Stage1_4,
-            Stage1_5,
-            Stage2_1,
-            Stage2_2,
-            Stage2_3,
-            Stage2_4,
-            Stage2_5,
-            Stage3_1,
-            Stage3_2,
-            Stage3_3,
-            Stage3_4,
-            Stage3_5,
-            Stage4_1,
-            Stage4_2,
-            Stage4_3,
-            Stage4_4,
-            Stage4_5,
-            Stage5_1,
-            Stage5_2,
-            Stage5_3,
-            Stage5_4,
-            Stage5_5,
-        }
 
         public enum Direction
         {
@@ -1562,6 +1521,35 @@ namespace ObsidianPortal
         public const string SOUND_ICE_NEEDLE = "IceNeedle";
         public const string SOUND_SEAL_OF_THE_FORCE = "SealoftheForce";
         public const string SOUND_SKY_SHIELD = "SkyShield";
+
+        public const string TOWN_FAZIL_CASTLE = "ファージル宮殿";
+        public const string TOWN_ANSHETT = "アンシェット街";
+        public const string TOWN_QVELTA_TOWN = "クヴェルタ街";
+        public const string TOWN_COTUHSYE = "港町コチューシェ";
+        public const string TOWN_ARCANEDINE = "アーケンダイン街";
+        public const string TOWN_DALE = "ディルの街";
+        public const string TOWN_LATA = "ラタの小屋";
+        
+        public const string FIELD_ESMILIA_GRASS_AREA = "エスミリア草原区域";
+        public const string FIELD_ARTHARIUM_FACTORY = "アーサリウム工場跡地";
+        public const string FIELD_GORATRUM_DUNGEON = "ゴラトルムの洞窟";
+        public const string FIELD_ZHALMAN_VILLAGE = "ツァルマンの里";
+        public const string FIELD_KIZIK_MOUNTAIN_ROAD = "キージク山道";
+        public const string FIELD_ORAN_TOWER = "オーランの塔";
+        public const string FIELD_ESMILIA_GRASS_TOWNROD = "エスミリア草原街道";
+        public const string FIELD_VELGUS_SEA_TEMPLE = "ヴェルガスの海底神殿";
+        public const string FIELD_MOONFORDER_SNOW_AREA = "ムーンフォーダー雪原区域";
+        public const string FIELD_RUINS_OF_SARITAN = "廃墟サリタン";
+        public const string FIELD_WOSM_ISOLATED_ISLAND = "離島ウォズム";
+        public const string FIELD_VINSGARDE_OLDROAD = "ヴィンスガルデ古道";
+        public const string FIELD_DISKEL_BATTLE_FIELD = "ディスケル戦場地";
+        public const string FIELD_GANRO_FORTRESS = "ガンロー要塞";
+        public const string FIELD_LOSLON_DUNGEON = "ロスロンの洞窟";
+        public const string FIELD_EDELGARZEN_CASTLE = "エデルガイゼン城";
+        public const string FIELD_MYSTIC_ZELMAN = "秘境の地ゼールマン";
+        public const string FIELD_SNOWTREE_LATA = "雪原の大樹ラタ";
+        public const string FIELD_KILCOOD_MOUNTAIN_AREA = "キルクード山岳地帯";
+        public const string FIELD_HEAVENS_GENESIS_GATE = "天上界ジェネシスゲート";
         #endregion
 
         #region "GUI Layout"

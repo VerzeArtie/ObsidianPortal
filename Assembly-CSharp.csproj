@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\ActionCommand.cs" />
     <Compile Include="Assets\Scripts\ap.cs" />
     <Compile Include="Assets\Scripts\AreaInformation.cs" />
+    <Compile Include="Assets\Scripts\Backpack.cs" />
     <Compile Include="Assets\Scripts\BattleField.cs" />
     <Compile Include="Assets\Scripts\BattleField_Support1.cs" />
     <Compile Include="Assets\Scripts\BattleField_Support2.cs" />
@@ -95,6 +96,21 @@
     <Compile Include="Assets\Scripts\UnitData.cs" />
     <Compile Include="Assets\Scripts\UnitStatus.cs" />
     <Compile Include="Assets\Scripts\UnityColor.cs" />
+    <Reference Include="Unity.TextMeshPro.Editor">
+      <HintPath>D:/GO/ObsidianPortal/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.PackageManagerUI.Editor">
+      <HintPath>D:/GO/ObsidianPortal/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.CollabProxy.Editor">
+      <HintPath>D:/GO/ObsidianPortal/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>D:/GO/ObsidianPortal/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Analytics.DataPrivacy">
+      <HintPath>D:/GO/ObsidianPortal/Library/ScriptAssemblies/Unity.Analytics.DataPrivacy.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>D:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
     </Reference>

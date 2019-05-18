@@ -321,6 +321,18 @@ namespace ObsidianPortal
             return null;
         }
 
+        public static void SetupActionCommand(GameObject obj, string commandName)
+        {
+            Image[] imgList = obj.GetComponentsInChildren<Image>();
+            for (int ii = 0; ii < imgList.Length; ii++)
+            {
+                if (imgList[ii].name == "imgActionCommand")
+                {
+                    imgList[ii].sprite = Resources.Load<Sprite>(commandName);
+                }
+            }
+        }
+
         // panel(gameobject)の色をレアに応じて変更
         public static void UpdateRareColor(Item item, Text target1, GameObject target2, Text target3)
         {

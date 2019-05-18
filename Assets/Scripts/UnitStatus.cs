@@ -169,7 +169,7 @@ namespace ObsidianPortal
                     break;
             }
             this.ExchangeEquipNumber = num;
-            AbstractSetupItemList(ItemNormalContent, ONE.UnitList[0].GetBackPackInfo(), list);
+            AbstractSetupItemList(ItemNormalContent, ONE.BP.GetBackPackInfo(), list);
         }
         public void ExchangeEquipItem(Text txt)
         {
@@ -212,8 +212,8 @@ namespace ObsidianPortal
                 return;
             }
 
-            ONE.UnitList[0].DeleteBackPack(new Item(txt.text), 1);
-            ONE.UnitList[0].AddBackPack(current, 1);
+            ONE.BP.DeleteBackPack(new Item(txt.text), 1);
+            ONE.BP.AddBackPack(current, 1);
             SetupUnitStatus();
 
             this.ExchangeEquipNumber = 0;

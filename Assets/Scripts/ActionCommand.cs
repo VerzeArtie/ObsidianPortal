@@ -32,6 +32,107 @@ namespace ObsidianPortal
             Skill,
         }
 
+        public static List<int> GetRequiredLV(string playerName)
+        {
+            List<int> ssList = new List<int>();
+
+            // とりあえず全員同じルールとする。
+            ssList.Add(3);
+            ssList.Add(6);
+            ssList.Add(10);
+            ssList.Add(15);
+            ssList.Add(20);
+            ssList.Add(25);
+            ssList.Add(30);
+            ssList.Add(35);
+            ssList.Add(40);
+            ssList.Add(50);
+            ssList.Add(60);
+            ssList.Add(70);
+
+            return ssList;
+        }
+
+        public static List<string> GetActionCommandPrimary(string playerName)
+        {
+            List<string> ssName = new List<string>();
+
+            // ビリー・ラキ
+            if (playerName == FIX.DUEL_BILLY_RAKI)
+            {
+                ssName.Add(FIX.STRAIGHT_SMASH);
+                ssName.Add(FIX.STANCE_OF_THE_BLADE);
+                ssName.Add(FIX.DOUBLE_SLASH);
+                ssName.Add(FIX.WAR_SWING);
+                ssName.Add(FIX.KINETIC_SMASH);
+                ssName.Add(FIX.STANCE_OF_THE_IAI);
+                ssName.Add(FIX.DESTROYER_SMASH);
+            }
+            // アンナ・ハミルトン
+            else if (playerName == FIX.DUEL_ANNA_HAMILTON)
+            {
+                ssName.Add(FIX.FIRE_BOLT);
+                ssName.Add(FIX.FLAME_BLADE);
+                ssName.Add(FIX.METEOR_BULLET);
+                ssName.Add(FIX.FLAME_STRIKE);
+                ssName.Add(FIX.SIGIL_OF_THE_HOMURA);
+                ssName.Add(FIX.PIERCING_FLAME);
+                ssName.Add(FIX.LAVA_ANNIHILATION);
+            }
+            // エオネ・フルネア
+            else if (playerName == FIX.DUEL_EONE_FULNEA)
+            {
+                ssName.Add(FIX.FRESH_HEAL);
+                ssName.Add(FIX.DIVINE_CIRCLE);
+                ssName.Add(FIX.HOLY_BREATH);
+                ssName.Add(FIX.SANCTION_FIELD);
+                ssName.Add(FIX.VALKYRIE_BREAK);
+                ssName.Add(FIX.SHINING_HEAL);
+                ssName.Add(FIX.RESURRECTION);
+            }
+            return ssName;
+        }
+
+        public static List<string> GetActionCommandSecondary(string playerName)
+        {
+            List<string> ssName = new List<string>();
+
+            // ビリー・ラキ
+            if (playerName == FIX.DUEL_BILLY_RAKI)
+            {
+                ssName.Add(FIX.AURA_OF_POWER);
+                ssName.Add(FIX.STORM_ARMOR);
+                ssName.Add(FIX.AETHER_DRIVE);
+                ssName.Add(FIX.CIRCLE_OF_THE_POWER);
+                ssName.Add(FIX.RUNE_STRIKE);
+                ssName.Add(FIX.WORD_OF_THE_REVOLUTION);
+                ssName.Add(FIX.BRILLIANT_FORM);
+            }
+            // アンナ・ハミルトン
+            else if (playerName == FIX.DUEL_ANNA_HAMILTON)
+            {
+                ssName.Add(FIX.HUNTER_SHOT);
+                ssName.Add(FIX.MULTIPLE_SHOT);
+                ssName.Add(FIX.REACHABLE_TARGET);
+                ssName.Add(FIX.HAWK_EYE);
+                ssName.Add(FIX.PIERCING_ARROW);
+                ssName.Add(FIX.WIND_RUNNER);
+                ssName.Add(FIX.DEADLY_ARROW);
+            }
+            // エオネ・フルネア
+            else if (playerName == FIX.DUEL_EONE_FULNEA)
+            {
+                ssName.Add(FIX.ICE_NEEDLE);
+                ssName.Add(FIX.PURE_PURIFICATION);
+                ssName.Add(FIX.BLUE_BULLET);
+                ssName.Add(FIX.FREEZING_CUBE);
+                ssName.Add(FIX.FROST_LANCE);
+                ssName.Add(FIX.WATER_SPLASH);
+                ssName.Add(FIX.ABSOLUTE_ZERO);
+            }
+            return ssName;
+        }
+
         public static Attribute GetAttribute(string command)
         {
             if (command == FIX.NORMAL_ATTACK) { return Attribute.NormalAttack; }
