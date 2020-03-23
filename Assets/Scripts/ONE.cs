@@ -58,7 +58,7 @@ namespace ObsidianPortal
             // オブジェクトにクラスを付与
             Unit obj = objPlayer.AddComponent<Unit>();
             // デバッグ用データ
-            obj.FullName = FIX.DUEL_BILLY_RAKI;
+            obj.FullName = FIX.NAME_BILLY_RAKI;
             obj.Level = 1;
             obj.Race = FIX.RaceType.Human;
             obj.Job = FIX.JobClass.Fighter;
@@ -109,7 +109,7 @@ namespace ObsidianPortal
 
             Unit obj2 = objPlayer.AddComponent<Unit>();
             // デバッグ用データ
-            obj2.FullName = FIX.DUEL_ANNA_HAMILTON;
+            obj2.FullName = FIX.NAME_ANNA_HAMILTON;
             obj2.Level = 1;
             obj2.Race = FIX.RaceType.Human;
             obj2.Job = FIX.JobClass.Ranger;
@@ -131,7 +131,7 @@ namespace ObsidianPortal
 
             Unit obj3 = objPlayer.AddComponent<Unit>();
             // デバッグ用データ
-            obj3.FullName = FIX.DUEL_EONE_FULNEA;
+            obj3.FullName = FIX.NAME_EONE_FULNEA;
             obj3.Level = 1;
             obj3.Race = FIX.RaceType.Human;
             obj3.Job = FIX.JobClass.Magician;
@@ -151,7 +151,7 @@ namespace ObsidianPortal
             UnitList.Add(obj3);
 
             //Unit obj4 = objPlayer.AddComponent<Unit>();
-            //obj4.FullName = FIX.DUEL_KARTIN_MAI;
+            //obj4.FullName = FIX.KARTIN_MAI;
             //obj4.Level = 1;
             //obj4.Job = FIX.JobClass.Apprentice;
             //obj4.BaseStrength = FIX.KARTIN_MAI_INIT_STR;
@@ -163,7 +163,7 @@ namespace ObsidianPortal
             //Chara.Add(obj4);
 
             //Unit obj5 = objPlayer.AddComponent<Unit>();
-            //obj5.FullName = FIX.DUEL_JEDA_ARUS;
+            //obj5.FullName = FIX.JEDA_ARUS;
             //obj5.Level = 1;
             //obj5.Job = FIX.JobClass.Armorer;
             //obj5.BaseStrength = FIX.JEDA_ARUS_INIT_STR;
@@ -225,7 +225,8 @@ namespace ObsidianPortal
             WE2.Event_Message300022 = true;
             WE2.Event_Message300023 = true;
             WE2.Event_Message300024 = true;
-            //WE2.EventHomeTown_0004 = true;
+            WE2.Event_Message400010 = true;
+            //WE2.Event_Message400020 = true;
 
             for (int ii = 0; ii < UnitList.Count; ii++)
             {

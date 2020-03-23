@@ -310,12 +310,12 @@ namespace ObsidianPortal
                     imgMainList.Add(Resources.Load<Sprite>("Mark_Dungeon"));
                     imgMainList.Add(Resources.Load<Sprite>("Mark_Dungeon"));
                     List<string> textTopList = new List<string>();
-                    textTopList.Add(FIX.DUEL_EONE_FULNEA);
-                    textTopList.Add(FIX.DUEL_MAGI_ZELKIS);
-                    textTopList.Add(FIX.DUEL_SELMOI_RO);
-                    textTopList.Add(FIX.DUEL_KARTIN_MAI);
-                    textTopList.Add(FIX.DUEL_JEDA_ARUS);
-                    textTopList.Add(FIX.DUEL_SINIKIA_VEILHANZ);
+                    textTopList.Add(FIX.NAME_EONE_FULNEA);
+                    textTopList.Add(FIX.NAME_MAGI_ZELKIS);
+                    textTopList.Add(FIX.NAME_SELMOI_RO);
+                    textTopList.Add(FIX.NAME_KARTIN_MAI);
+                    textTopList.Add(FIX.NAME_JEDA_ARUS);
+                    textTopList.Add(FIX.NAME_SINIKIA_VEILHANZ);
                     List<string> textCenterList = new List<string>();
                     textCenterList.Add(FIX.DUEL_DESC_001);
                     textCenterList.Add(FIX.DUEL_DESC_002);
@@ -1347,6 +1347,16 @@ namespace ObsidianPortal
             else if (ONE.WE2.Event_Message300024 == false)
             {
                 MessagePack.Message300024(ref m_list, ref e_list);
+                TapOK();
+            }
+            else if (ONE.WE2.Event_Message400010 == false)
+            {
+                MessagePack.Message400010(ref m_list, ref e_list);
+                TapOK();
+            }
+            else if (ONE.WE2.Event_Message400020 == false)
+            {
+                MessagePack.Message400020(ref m_list, ref e_list);
                 TapOK();
             }
             else

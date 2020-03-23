@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Npgsql;
-using NpgsqlTypes;
+//using Npgsql;
+//using NpgsqlTypes;
 using System.Data;
 using UnityEngine;
 
@@ -50,17 +50,17 @@ namespace ObsidianPortal
             string jsonData = String.Empty;
             try
             {
-                using (Npgsql.NpgsqlConnection con = new NpgsqlConnection(connection))
-                {
-                    //Debug.Log("SelectOwner timeout: " + con.ConnectionTimeout);
-                    con.Open();
-                    NpgsqlCommand cmd = new NpgsqlCommand(@"select to_json(" + table + ") from " + table + " where name = '" + name + "'", con);
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
-                    {
-                        jsonData += dataReader[0].ToString();
-                    }
-                }
+                //using (Npgsql.NpgsqlConnection con = new NpgsqlConnection(connection))
+                //{
+                //    //Debug.Log("SelectOwner timeout: " + con.ConnectionTimeout);
+                //    con.Open();
+                //    NpgsqlCommand cmd = new NpgsqlCommand(@"select to_json(" + table + ") from " + table + " where name = '" + name + "'", con);
+                //    var dataReader = cmd.ExecuteReader();
+                //    while (dataReader.Read())
+                //    {
+                //        jsonData += dataReader[0].ToString();
+                //    }
+                //}
             }
             catch
             {
@@ -76,20 +76,20 @@ namespace ObsidianPortal
 
             try
             {
-                System.Guid guid = System.Guid.NewGuid();
-                DateTime create_time = DateTime.Now;
-                using (Npgsql.NpgsqlConnection con = new NpgsqlConnection(connection))
-                {
-                    Debug.Log("CreateOwner timeout: " + con.ConnectionTimeout);
-                    con.Open();
-                    string sqlCmd = "INSERT INTO " + TABLE_OWNER_DATA + " ( name, guid, create_time ) VALUES ( :name, :guid, :create_time )";
-                    var cmd = new NpgsqlCommand(sqlCmd, con);
-                    //cmd.Prepare();
-                    cmd.Parameters.Add(new NpgsqlParameter("name", NpgsqlDbType.Varchar) { Value = name });
-                    cmd.Parameters.Add(new NpgsqlParameter("guid", NpgsqlDbType.Varchar) { Value = guid });
-                    cmd.Parameters.Add(new NpgsqlParameter("create_time", NpgsqlDbType.Timestamp) { Value = create_time });
-                    cmd.ExecuteNonQuery();
-                }
+                //System.Guid guid = System.Guid.NewGuid();
+                //DateTime create_time = DateTime.Now;
+                //using (Npgsql.NpgsqlConnection con = new NpgsqlConnection(connection))
+                //{
+                //    Debug.Log("CreateOwner timeout: " + con.ConnectionTimeout);
+                //    con.Open();
+                //    string sqlCmd = "INSERT INTO " + TABLE_OWNER_DATA + " ( name, guid, create_time ) VALUES ( :name, :guid, :create_time )";
+                //    var cmd = new NpgsqlCommand(sqlCmd, con);
+                //    //cmd.Prepare();
+                //    cmd.Parameters.Add(new NpgsqlParameter("name", NpgsqlDbType.Varchar) { Value = name });
+                //    cmd.Parameters.Add(new NpgsqlParameter("guid", NpgsqlDbType.Varchar) { Value = guid });
+                //    cmd.Parameters.Add(new NpgsqlParameter("create_time", NpgsqlDbType.Timestamp) { Value = create_time });
+                //    cmd.ExecuteNonQuery();
+                //}
             }
             catch
             {
@@ -103,27 +103,27 @@ namespace ObsidianPortal
 
             try
             {
-                string existName = String.Empty;
+                //string existName = String.Empty;
 
-                using (Npgsql.NpgsqlConnection con = new NpgsqlConnection(connection))
-                {
-                    con.Open();
-                    NpgsqlCommand cmd = new NpgsqlCommand(@"select name from " + TABLE_OWNER_DATA + " where name = '" + name + "'", con);
-                    var dataReader = cmd.ExecuteReader();
-                    while (dataReader.Read())
-                    {
-                        existName += dataReader[0].ToString();
-                    }
-                }
+                //using (Npgsql.NpgsqlConnection con = new NpgsqlConnection(connection))
+                //{
+                //    con.Open();
+                //    NpgsqlCommand cmd = new NpgsqlCommand(@"select name from " + TABLE_OWNER_DATA + " where name = '" + name + "'", con);
+                //    var dataReader = cmd.ExecuteReader();
+                //    while (dataReader.Read())
+                //    {
+                //        existName += dataReader[0].ToString();
+                //    }
+                //}
 
-                if (existName == name)
-                {
-                    return true;
-                }
-                else
-                {
+                //if (existName == name)
+                //{
+                //    return true;
+                //}
+                //else
+                //{
                     return false;
-                }
+                //}
 
             }
             catch

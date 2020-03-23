@@ -58,7 +58,7 @@ namespace ObsidianPortal
             List<string> ssName = new List<string>();
 
             // ビリー・ラキ
-            if (playerName == FIX.DUEL_BILLY_RAKI)
+            if (playerName == FIX.NAME_BILLY_RAKI)
             {
                 ssName.Add(FIX.STRAIGHT_SMASH);
                 ssName.Add(FIX.STANCE_OF_THE_BLADE);
@@ -69,7 +69,7 @@ namespace ObsidianPortal
                 ssName.Add(FIX.DESTROYER_SMASH);
             }
             // アンナ・ハミルトン
-            else if (playerName == FIX.DUEL_ANNA_HAMILTON)
+            else if (playerName == FIX.NAME_ANNA_HAMILTON)
             {
                 ssName.Add(FIX.FIRE_BOLT);
                 ssName.Add(FIX.FLAME_BLADE);
@@ -80,7 +80,7 @@ namespace ObsidianPortal
                 ssName.Add(FIX.LAVA_ANNIHILATION);
             }
             // エオネ・フルネア
-            else if (playerName == FIX.DUEL_EONE_FULNEA)
+            else if (playerName == FIX.NAME_EONE_FULNEA)
             {
                 ssName.Add(FIX.FRESH_HEAL);
                 ssName.Add(FIX.DIVINE_CIRCLE);
@@ -98,7 +98,7 @@ namespace ObsidianPortal
             List<string> ssName = new List<string>();
 
             // ビリー・ラキ
-            if (playerName == FIX.DUEL_BILLY_RAKI)
+            if (playerName == FIX.NAME_BILLY_RAKI)
             {
                 ssName.Add(FIX.AURA_OF_POWER);
                 ssName.Add(FIX.STORM_ARMOR);
@@ -109,7 +109,7 @@ namespace ObsidianPortal
                 ssName.Add(FIX.BRILLIANT_FORM);
             }
             // アンナ・ハミルトン
-            else if (playerName == FIX.DUEL_ANNA_HAMILTON)
+            else if (playerName == FIX.NAME_ANNA_HAMILTON)
             {
                 ssName.Add(FIX.HUNTER_SHOT);
                 ssName.Add(FIX.MULTIPLE_SHOT);
@@ -120,7 +120,7 @@ namespace ObsidianPortal
                 ssName.Add(FIX.DEADLY_ARROW);
             }
             // エオネ・フルネア
-            else if (playerName == FIX.DUEL_EONE_FULNEA)
+            else if (playerName == FIX.NAME_EONE_FULNEA)
             {
                 ssName.Add(FIX.ICE_NEEDLE);
                 ssName.Add(FIX.PURE_PURIFICATION);

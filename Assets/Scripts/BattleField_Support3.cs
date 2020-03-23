@@ -389,9 +389,9 @@ namespace ObsidianPortal
             Debug.Log(MethodBase.GetCurrentMethod().Name + "(S)");
             double damage = PrimaryLogic.FireBoltValue(player);
             PlayerMagicAttack(player, target, damage, FIX.SOUND_FIRE_BOLT);
-            GameObject instance = Instantiate(fx_FireRing, new Vector3(target.transform.localPosition.x, target.transform.localPosition.y, target.transform.localPosition.z - 1), Quaternion.identity);
-            instance.AddComponent<SelfDestruct>();
-            instance.GetComponent<SelfDestruct>().selfdestruct_in = 1;
+            //GameObject instance = Instantiate(fx_FireRing, new Vector3(target.transform.localPosition.x, target.transform.localPosition.y, target.transform.localPosition.z - 1), Quaternion.identity);
+            //instance.AddComponent<SelfDestruct>();
+            //instance.GetComponent<SelfDestruct>().selfdestruct_in = 1;
             Debug.Log(MethodBase.GetCurrentMethod().Name + "(E)");
         }
 

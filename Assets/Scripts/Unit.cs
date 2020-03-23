@@ -889,7 +889,7 @@ namespace ObsidianPortal
             this.SoulFragment++;
             switch (playerName)
             {
-                case FIX.DUEL_BILLY_RAKI:
+                case FIX.NAME_BILLY_RAKI:
                     this.BaseStrength += 3;
                     this.BaseAgility += 2;
                     this.BaseIntelligence += 1;
@@ -897,7 +897,7 @@ namespace ObsidianPortal
                     this.BaseMind = 1;
                     break;
 
-                case FIX.DUEL_ANNA_HAMILTON:
+                case FIX.NAME_ANNA_HAMILTON:
                     this.BaseStrength += 2;
                     this.BaseAgility += 3;
                     this.BaseIntelligence += 1;
@@ -905,7 +905,7 @@ namespace ObsidianPortal
                     this.BaseMind = 1;
                     break;
 
-                case FIX.DUEL_EONE_FULNEA:
+                case FIX.NAME_EONE_FULNEA:
                     this.BaseStrength += 1;
                     this.BaseAgility += 1;
                     this.BaseIntelligence += 3;

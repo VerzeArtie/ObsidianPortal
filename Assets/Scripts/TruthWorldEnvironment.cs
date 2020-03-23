@@ -87,6 +87,10 @@ namespace ObsidianPortal
         public bool Event_Message300022 { get; set; }
         public bool Event_Message300023 { get; set; }
         public bool Event_Message300024 { get; set; }
+        public bool Event_Message400010 { get; set; }
+        public bool Event_Message400020 { get; set; }
+        public bool Event_Message500010 { get; set; }
+        public bool Event_Message500020 { get; set; }
 
         // SQLログ採取用アカウント
         public string Account { get; set; }

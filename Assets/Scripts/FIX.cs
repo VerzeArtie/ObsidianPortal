@@ -1396,53 +1396,6 @@ namespace ObsidianPortal
         public const string ENEMY_LAST_SIN_VERZE_ARTIE = @"【原罪】ヴェルゼ・アーティ";
         #endregion
 
-        #region "Duel闘技場"
-        public const string DUEL_SIN_OSCURETE = @"シン・オスキュレーテ"; // 60
-        public const string DUEL_SIN_OSCURETE_DB = @"sin_oscurete";
-        public const string DUEL_LADA_MYSTORUS = @"ラダ・ミストゥルス"; // 58
-        public const string DUEL_LADA_MYSTORUS_DB = @"lada_mystorus";
-        public const string DUEL_OHRYU_GENMA = @"オウリュウ・ゲンマ"; // 56
-        public const string DUEL_OHRYU_GENMA_DB = @"ohryu_genma";
-        public const string DUEL_VAN_HEHGUSTEL = @"ヴァン・ヘーグステル"; // 54
-        public const string DUEL_VAN_HEHGUSTEL_DB = @"van_hehgustel";
-        public const string DUEL_RVEL_ZELKIS = @"ルベル・ゼルキス"; // 52
-        public const string DUEL_RVEL_ZELKIS_DB = @"rvel_zelkis";
-
-        public const string DUEL_SHUVALTZ_FLORE = @"シュヴァルツェ・フローレ"; // 50
-        public const string DUEL_SHUVALTZ_FLORE_DB = @"shuvaltz_flore";
-        public const string DUEL_SUN_YU = @"サン・ユウ"; // 47
-        public const string DUEL_SUN_YU_DB = @"sun_yu";
-        public const string DUEL_CALMANS_OHN = @"カルマンズ・オーン"; // 44
-        public const string DUEL_CALMANS_OHN_DB = @"calmans_ohn";
-        public const string DUEL_ANNA_HAMILTON = @"アンナ・ハミルトン"; // 41
-        public const string DUEL_ANNA_HAMILTON_DB = @"anna_hamilton";
-        public const string DUEL_BILLY_RAKI = @"ビリー・ラキ"; // 38
-        public const string DUEL_BILLY_RAKI_DB = @"billy_raki";
-
-        public const string DUEL_KILT_JORJU = @"キルト・ジョルジュ"; // 35
-        public const string DUEL_KILT_JORJU_DB = @"kilt_jorju";
-        public const string DUEL_PERMA_WARAMY = @"ペルマ・ワラミィ"; // 32
-        public const string DUEL_PERMA_WARAMY_DB = @"perma_waramy";
-        public const string DUEL_SCOTY_ZALGE = @"スコーティ・ザルゲ"; // 29
-        public const string DUEL_SCOTY_ZALGE_DB = @"scoty_zalge";
-        public const string DUEL_LENE_COLTOS = @"レネ・コルトス"; // 26
-        public const string DUEL_LENE_COLTOS_DB = @"lene_coltos";
-        public const string DUEL_ADEL_BRIGANDY = @"アデル・ブリガンディ"; // 23
-        public const string DUEL_ADEL_BRIGANDY_DB = @"adel_brigandy";
-
-        public const string DUEL_SINIKIA_VEILHANZ = @"シニキア・ヴェイルハンツ"; // 20
-        public const string DUEL_SINIKIA_VEILHANZ_DB = @"sinikia_veilhanz";
-        public const string DUEL_JEDA_ARUS = @"ジェダ・アルス"; // 16
-        public const string DUEL_JEDA_ARUS_DB = @"jeda_arus";
-        public const string DUEL_KARTIN_MAI = @"カーティン・マイ"; // 13
-        public const string DUEL_KARTIN_MAI_DB = @"kartin_mai";
-        public const string DUEL_SELMOI_RO = @"セルモイ・ロウ"; // 10
-        public const string DUEL_SELMOI_RO_DB = @"selmoi_ro";
-        public const string DUEL_MAGI_ZELKIS = @"マーギ・ゼルキス"; // 7
-        public const string DUEL_MAGI_ZELKIS_DB = @"magi_zelkis";
-        public const string DUEL_EONE_FULNEA = @"エオネ・フルネア"; // 4
-        public const string DUEL_EONE_FULNEA_DB = @"eone_fulnea";
-        #endregion
         #region "闘技場、Duelist説明"
         public const string DUEL_DESC_001 = "";
         public const string DUEL_DESC_002 = "";
@@ -1522,6 +1475,10 @@ namespace ObsidianPortal
         public const string SOUND_SEAL_OF_THE_FORCE = "SealoftheForce";
         public const string SOUND_SKY_SHIELD = "SkyShield";
 
+        public const string AREA_FAZIL = "ファージル";
+        public const string AREA_VINSGARDE = "ヴィンスガルデ";
+        public const string AREA_MOONFORDER = "ムーンフォーダー";
+
         public const string TOWN_FAZIL_CASTLE = "ファージル宮殿";
         public const string TOWN_ANSHETT = "アンシェット街";
         public const string TOWN_QVELTA_TOWN = "クヴェルタ街";
@@ -1550,6 +1507,53 @@ namespace ObsidianPortal
         public const string FIELD_SNOWTREE_LATA = "雪原の大樹ラタ";
         public const string FIELD_KILCOOD_MOUNTAIN_AREA = "キルクード山岳地帯";
         public const string FIELD_HEAVENS_GENESIS_GATE = "天上界ジェネシスゲート";
+
+        #region "キャラクターネーム"
+        public const string NAME_SIN_OSCURETE = @"シン・オスキュレーテ";
+
+        public const string NAME_LADA_MYSTORUS = @"ラダ・ミストゥルス";
+
+        public const string NAME_OHRYU_GENMA = @"オウリュウ・ゲンマ";
+
+        public const string NAME_VAN_HEHGUSTEL = @"ヴァン・ヘーグステル";
+
+        public const string NAME_RVEL_ZELKIS = @"ルベル・ゼルキス";
+
+        public const string NAME_SHUVALTZ_FLORE = @"シュヴァルツェ・フローレ";
+
+        public const string NAME_SUN_YU = @"サン・ユウ";
+
+        public const string NAME_CALMANS_OHN = @"カルマンズ・オーン";
+
+        public const string NAME_ANNA_HAMILTON = @"アンナ・ハミルトン";
+
+        public const string NAME_BILLY_RAKI = @"ビリー・ラキ";
+
+        public const string NAME_KILT_JORJU = @"キルト・ジョルジュ";
+
+        public const string NAME_PERMA_WARAMY = @"ペルマ・ワラミィ";
+
+        public const string NAME_SCOTY_ZALGE = @"スコーティ・ザルゲ";
+
+        public const string NAME_LENE_COLTOS = @"レネ・コルトス";
+
+        public const string NAME_ADEL_BRIGANDY = @"アデル・ブリガンディ";
+        
+        public const string NAME_SINIKIA_VEILHANZ = @"シニキア・ヴェイルハンツ";
+
+        public const string NAME_JEDA_ARUS = @"ジェダ・アルス";
+
+        public const string NAME_KARTIN_MAI = @"カーティン・マイ";
+
+        public const string NAME_SELMOI_RO = @"セルモイ・ロウ";
+
+        public const string NAME_MAGI_ZELKIS = @"マーギ・ゼルキス";
+
+        public const string NAME_EONE_FULNEA = @"エオネ・フルネア";
+        
+        public const string NAME_EIN_WOLENCE = @"アイン・ウォーレンス";
+        #endregion
+
         #endregion
 
         #region "GUI Layout"
